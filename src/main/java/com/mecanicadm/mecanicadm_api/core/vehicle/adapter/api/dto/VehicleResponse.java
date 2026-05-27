@@ -2,6 +2,10 @@ package com.mecanicadm.mecanicadm_api.core.vehicle.adapter.api.dto;
 
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 
+/**
+ * DTO de resposta para Vehicle.
+ * Separa a representação da entidade de domínio da resposta HTTP.
+ */
 public class VehicleResponse {
 
     private final String licensePlate;
@@ -14,6 +18,10 @@ public class VehicleResponse {
         this.model = vehicle.getModel();
         this.brand = vehicle.getBrand();
         this.modelYear = vehicle.getModelYear();
+    }
+
+    public static VehicleResponse fromEntity(Vehicle vehicle) {
+        return new VehicleResponse(vehicle);
     }
 
     public String getLicensePlate() {

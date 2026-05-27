@@ -20,6 +20,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Adapter de API REST para a feature de Vehicle.
+ * Responsabilidades:
+ * - Receber requisições HTTP
+ * - Converter DTOs de entrada em Commands/Queries
+ * - Chamar os use cases
+ * - Converter entidades de domínio em Response DTOs
+ * - Retornar respostas HTTP
+ */
 @RestController
 @RequestMapping("/vehicle")
 public class VehicleController implements VehicleOpenApi {
@@ -66,7 +75,7 @@ public class VehicleController implements VehicleOpenApi {
     @GetMapping("/{licensePlate}")
     public ResponseEntity<VehicleResponse> findVehicle(@PathVariable String licensePlate) {
         Vehicle vehicle = getVehicleByIdUseCase.handle(new GetVehicleByIdQuery(licensePlate));
-        return ResponseEntity.ok(new VehicleResponse(vehicle));
+        return ResponseEntity.ok(VehicleResponse.fromEntity(vehicle));
     }
 
     @Override
@@ -78,6 +87,6 @@ public class VehicleController implements VehicleOpenApi {
             @RequestParam(required = false) Short modelYear,
             @PageableDefault(size = 20) Pageable pageable) {
         Page<Vehicle> vehicles = getAllVehicleUseCase.handle(new GetAllVehiclesQuery(licensePlate, model, brand, modelYear, pageable));
-        return ResponseEntity.ok(vehicles.map(VehicleResponse::new));
+        return ResponseEntity.ok(vehicles.map(VehicleResponse::fromEntity));
     }
 }

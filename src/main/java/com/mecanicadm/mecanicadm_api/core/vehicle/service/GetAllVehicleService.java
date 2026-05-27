@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import static io.micrometer.common.util.StringUtils.isNotBlank;
 import static java.util.Objects.nonNull;
 
+/**
+ * Implementação do use case de busca de todos os veículos com filtros.
+ * VehicleRepository implementa VehicleGateway, então podemos fazer cast se necessário.
+ */
 @Service
 public class GetAllVehicleService implements GetAllVehicleUseCase {
 
@@ -38,7 +42,7 @@ public class GetAllVehicleService implements GetAllVehicleUseCase {
 
         if (isNotBlank(query.brand())) {
             spec = spec.and((root, q, cb) ->
-                    cb.equal(root.get("model"), query.brand()));
+                    cb.equal(root.get("brand"), query.brand()));
         }
 
         if (nonNull(query.modelYear())) {
