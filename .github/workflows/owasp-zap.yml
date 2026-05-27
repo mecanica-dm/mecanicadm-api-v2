@@ -1,0 +1,46 @@
+name: Security Scan OWASP ZAP
+
+on: [ push ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build and Start Application
+        env:
+          SPRING_PROFILES_ACTIVE: ci
+        run: |
+          docker compose up -d --build
+          sleep 15
+
+      - name: Give permissions for ZAP
+        run: chmod -R 777 .
+
+      - name: ZAP Scan para OpenAPI
+        uses: zaproxy/action-api-scan@v0.10.0
+        with:
+          target: 'http://localhost:8080/v3/api-docs'
+          format: openapi
+          rules_file_name: '.zap/rules.tsv'
+          allow_issue_writing: false
+
+      - name: Upload ZAP Scan Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-scan-report
+          path: |
+            report_html.html
+            report_md.md
+            report_json.json
+
+      - name: Stop Containers
+        if: always()
+        run: docker compose down

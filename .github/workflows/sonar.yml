@@ -1,0 +1,32 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarqube:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante para que o Sonar veja o histórico de commits
+
+      - name: Set up JDK 21  # Forçar Java 21 para não dar erro -> Por padrão pega a versão pré-instalada do ubuntu (Atualmente 17)
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven and Run Sonar Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn -B verify sonar:sonar -Dsonar.projectKey=mecanica-dm_mecanicadm-api-v1 \
+            -Dsonar.organization=mecanica-dm \
+            -Dsonar.host.url=https://sonarcloud.io/

@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: mecanicadm-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=mecanicadmdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d mecanicadmdb" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: mecanicadm-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-default}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  seeder:
+    image: postgres:15-alpine
+    container_name: mecanicadm-seeder
+    depends_on:
+      - api
+    volumes:
+      - ./docker/database/init.sql:/seed/init.sql:ro
+    command: >
+      sh -c '
+        until PGPASSWORD=admin psql -h db -U admin -d mecanicadmdb -tAc "SELECT 1 FROM flyway_schema_history WHERE success = true AND script = '\''V08__add_indexes_for_work_order_execution_report.sql'\''" | grep -q 1; do
+          echo "Aguardando o Flyway concluir as migrations...";
+          sleep 3;
+        done;
+      
+        echo "Flyway concluído! Rodando o init.sql...";
+        PGPASSWORD=admin psql -h db -U admin -d mecanicadmdb -f /seed/init.sql
+      '
+
+volumes:
+  postgres_data:

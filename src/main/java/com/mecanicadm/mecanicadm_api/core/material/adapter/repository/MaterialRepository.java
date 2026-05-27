@@ -1,0 +1,19 @@
+package com.mecanicadm.mecanicadm_api.core.material.adapter.repository;
+
+import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+@Repository
+public interface MaterialRepository extends JpaRepository<Material, UUID>, JpaSpecificationExecutor<Material> {
+
+    @Query("SELECT m FROM Material m WHERE m.id IN :ids")
+    List<Material> findAllByIds(@Param("ids") Set<UUID> ids);
+}

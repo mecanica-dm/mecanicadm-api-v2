@@ -1,0 +1,66 @@
+package com.mecanicadm.mecanicadm_api.core.material.service;
+
+import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
+import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
+import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
+import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.AddStockUseCase;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.AddStockCommand;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class CreateMaterialServiceTest {
+
+    @Mock
+    private MaterialRepository repository;
+
+    @Mock
+    private AddStockUseCase addStockUseCase;
+
+    @InjectMocks
+    private CreateMaterialService createMaterialService;
+
+    private CreateMaterialCommand command;
+
+    @BeforeEach
+    void setUp() {
+        command = new CreateMaterialCommand(
+                "Pastilha de Freio",
+                "Brembo",
+                "Pastilha cerâmica",
+                new BigDecimal("250.00"),
+                MaterialType.PART,
+                10
+        );
+    }
+
+    @Test
+    @DisplayName("Deve criar um material com sucesso e disparar a adição de estoque")
+    void shouldCreateMaterialSuccessfully() {
+        UUID expectedId = UUID.randomUUID();
+        Material savedMaterial = mock(Material.class);
+        when(savedMaterial.getId()).thenReturn(expectedId);
+        when(repository.save(any(Material.class))).thenReturn(savedMaterial);
+
+        UUID resultId = createMaterialService.handle(command);
+
+        assertNotNull(resultId);
+        assertEquals(expectedId, resultId);
+        verify(repository).save(any(Material.class));
+        verify(addStockUseCase).handle(new AddStockCommand(expectedId, 10));
+    }
+}
