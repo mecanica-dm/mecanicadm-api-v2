@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.domain;
 
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
+import io.micrometer.common.util.StringUtils;
 
 import static java.util.Objects.isNull;
 
@@ -58,7 +59,7 @@ public class Vehicle {
     }
 
     private boolean isBlank(String value) {
-        return isNull(value) || value.trim().isEmpty();
+        return StringUtils.isBlank(value);
     }
 
     public String getLicensePlate() { return licensePlate; }
