@@ -9,7 +9,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn clean package -DskipTests
 FROM amazoncorretto:21-alpine
 WORKDIR /app
 
-COPY --from=builder /app/target/mecanica-dm-api-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /app/target/*.jar /app/app.jar
 
 EXPOSE 8080
 
