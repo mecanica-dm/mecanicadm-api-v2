@@ -1,12 +1,9 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.adapter.api;
 
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.CreateVehicleUseCase;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.DeleteVehicleUseCase;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.GetVehicleByIdUseCase;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.UpdateVehicleUseCase;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
+import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.*;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.DeleteVehicleCommand;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetVehicleByIdQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.CreateVehicleRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.UpdateVehicleRequest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -22,6 +19,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +47,9 @@ class VehicleControllerTest {
     @MockitoBean
     private DeleteVehicleUseCase deleteVehicleUseCase;
 
+    @MockitoBean
+    private GetAllVehicleUseCase getAllVehicleUseCase;
+
     @BeforeEach
     void setUp() {
         RestAssuredMockMvc.mockMvc(mockMvc);
@@ -57,7 +59,7 @@ class VehicleControllerTest {
     @WithMockUser
     @DisplayName("Deve criar um veículo e retornar 201 Created")
     void shouldCreateVehicleAndReturn201() {
-        CreateVehicleRequest request = new CreateVehicleRequest("Civic", "ABC1234", "Honda", Short.valueOf("2023"));
+        CreateVehicleRequest request = new CreateVehicleRequest("Civic", "ABC1234", "Honda", (short) 2023);
         when(createVehicleUseCase.execute(any())).thenReturn("ABC1234");
 
         RestAssuredMockMvc.given()
@@ -91,10 +93,11 @@ class VehicleControllerTest {
     @Test
     @WithMockUser
     @DisplayName("Deve atualizar um veículo e retornar 204 No Content")
-    void shouldUpdateVehicleAndReturn200() {
+    void shouldUpdateVehicleAndReturn204() {
         String licensePlate = "ABC1234";
-        UpdateVehicleRequest command = new UpdateVehicleRequest("Civic Updated", "Honda", Short.valueOf("2019"));
-        when(updateVehicleUseCase.execute(any())).thenReturn(new Vehicle(command.model(), licensePlate, command.brand(), command.modelYear()));
+        UpdateVehicleRequest command = new UpdateVehicleRequest("Civic Updated", "Honda", (short) 2019);
+        var vehicle = new Vehicle("Civic Updated", licensePlate, "Honda", (short) 2019);
+        when(updateVehicleUseCase.execute(any())).thenReturn(vehicle);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -146,8 +149,8 @@ class VehicleControllerTest {
     @DisplayName("Deve buscar um veículo e retornar 200 OK")
     void shouldFindVehicleAndReturn200() {
         String licensePlate = "ABC1234";
-        var vehicleResponse = new Vehicle("Civic", licensePlate, "Honda", Short.valueOf("2023"));
-        when(getVehicleByIdUseCase.execute(new GetVehicleByIdQuery(licensePlate))).thenReturn(vehicleResponse);
+        var vehicleResponse = new Vehicle("Civic", licensePlate, "Honda", (short) 2023);
+        when(getVehicleByIdUseCase.execute(any())).thenReturn(vehicleResponse);
 
         RestAssuredMockMvc.given()
                 .when()
@@ -156,5 +159,24 @@ class VehicleControllerTest {
                 .statusCode(HttpStatus.OK.value())
                 .body("licensePlate", equalTo(licensePlate))
                 .body("model", equalTo("Civic"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve listar os veículos e retornar 200 OK")
+    void shouldGetAllVehiclesAndReturn200() {
+        var vehicle = new Vehicle("Civic", "ABC1234", "Honda", (short) 2023);
+        var pageResult = new VehiclePageResult(List.of(vehicle), 1L);
+        when(getAllVehicleUseCase.execute(any())).thenReturn(pageResult);
+
+        RestAssuredMockMvc.given()
+                .when()
+                .get("/vehicle")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("content[0].licensePlate", equalTo("ABC1234"))
+                .body("page.totalElements", equalTo(1));
+
+        verify(getAllVehicleUseCase, times(1)).execute(any());
     }
 }
