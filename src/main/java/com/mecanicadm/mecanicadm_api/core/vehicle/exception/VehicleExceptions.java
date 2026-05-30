@@ -1,58 +1,37 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.exception;
 
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import org.springframework.http.HttpStatus;
 
-public class VehicleExceptions {
+public final class VehicleExceptions {
 
-    private VehicleExceptions() {
+    public static class LicensePlateNotEmpty extends DomainExceptionCore {
+        public LicensePlateNotEmpty() { super("validation.vehicle.licensePlate.not.blank", HttpStatus.BAD_REQUEST); }
     }
 
-    public static class NotFound extends DomainException {
-        public NotFound() {
-            super("vehicle.not.found", HttpStatus.NOT_FOUND);
-        }
+    public static class InvalidLicensePlate extends DomainExceptionCore {
+        public InvalidLicensePlate() { super("validation.vehicle.licensePlate.invalid", HttpStatus.BAD_REQUEST); }
     }
 
-    public static class VehicleExists extends DomainException {
-        public VehicleExists() {
-            super("vehicle.license.plate.exists", HttpStatus.CONFLICT);
-        }
+    public static class ModelNotEmpty extends DomainExceptionCore {
+        public ModelNotEmpty() { super("validation.vehicle.model.not.blank", HttpStatus.BAD_REQUEST); }
     }
 
-    public static class LicensePlateNotEmpty extends DomainException {
-        public LicensePlateNotEmpty() {
-            super("vehicle.license.plate.not.empty", HttpStatus.BAD_REQUEST);
-        }
+    public static class BrandNotEmpty extends DomainExceptionCore {
+        public BrandNotEmpty() { super("validation.vehicle.brand.not.blank", HttpStatus.BAD_REQUEST); }
     }
 
-    public static class InvalidLicensePlate extends DomainException {
-        public InvalidLicensePlate() {
-            super("vehicle.license.plate.invalid", HttpStatus.BAD_REQUEST);
-        }
+    public static class InvalidModelYear extends DomainExceptionCore {
+        public InvalidModelYear() { super("validation.vehicle.modelYear.invalid", HttpStatus.BAD_REQUEST); }
     }
 
-    public static class ModelNotEmpty extends DomainException {
-        public ModelNotEmpty() {
-            super("vehicle.model.not.empty", HttpStatus.BAD_REQUEST);
-        }
+    public static class NotFound extends DomainExceptionCore {
+        public NotFound() { super("vehicle.not.found", HttpStatus.NOT_FOUND); }
     }
 
-    public static class BrandNotEmpty extends DomainException {
-        public BrandNotEmpty() {
-            super("vehicle.brand.not.empty", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public static class InvalidModelYear extends DomainException {
-        public InvalidModelYear() {
-            super("vehicle.model.year.invalid", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public static class ModelYearCannotBeInFuture extends DomainException {
-        public ModelYearCannotBeInFuture() {
-            super("vehicle.model.year.cannot.be.future", HttpStatus.BAD_REQUEST);
-        }
+    public static class VehicleExists extends DomainExceptionCore {
+        public VehicleExists(String licensePlate) { super("vehicle.exists", HttpStatus.BAD_REQUEST, licensePlate); }
+        public VehicleExists() { super("vehicle.licensePlate.exists", HttpStatus.BAD_REQUEST); }
     }
 }
+

@@ -1,8 +1,8 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.domain;
 
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -123,7 +123,7 @@ class WorkOrderTest {
     void shouldThrowExceptionWhenMarkingAsInExecutionWithInvalidStatus() {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
 
-        DomainException exception = assertThrows(DomainException.class, workOrder::markAsInExecution);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsInExecution);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
@@ -151,7 +151,7 @@ class WorkOrderTest {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
         workOrder.markAsAwaitingExecution();
 
-        DomainException exception = assertThrows(DomainException.class, workOrder::markAsExecutionCompleted);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsExecutionCompleted);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
@@ -170,7 +170,7 @@ class WorkOrderTest {
         WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID());
         workOrder.addLaborItem(laborItem);
 
-        DomainException exception = assertThrows(DomainException.class, workOrder::markAsExecutionCompleted);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsExecutionCompleted);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.PendingLaborItems.class, exception.getClass()),
@@ -211,7 +211,7 @@ class WorkOrderTest {
     void shouldThrowExceptionWhenMarkingAsDeliveredWithInvalidStatus() {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
 
-        DomainException exception = assertThrows(DomainException.class, workOrder::markAsDelivered);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsDelivered);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
@@ -225,7 +225,7 @@ class WorkOrderTest {
     void shouldThrowExceptionWhenMarkingAsPaidWithInvalidStatus() {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
 
-        DomainException exception = assertThrows(DomainException.class, workOrder::markAsPaid);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsPaid);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
@@ -256,7 +256,7 @@ class WorkOrderTest {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
         workOrder.markAsDiagnosed();
 
-        DomainException exception = assertThrows(DomainException.class, workOrder::markAsDiagnosed);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsDiagnosed);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
@@ -307,8 +307,8 @@ class WorkOrderTest {
 
         UUID newId = UUID.randomUUID();
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> workOrder.update(newId, "VEH-999", "Nova Descricao")
         );
 

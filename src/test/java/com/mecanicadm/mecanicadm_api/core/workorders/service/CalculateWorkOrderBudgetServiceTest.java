@@ -1,12 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderBudget;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderBudgetStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CalculateWorkOrderBudgetCommand;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -111,8 +111,8 @@ class CalculateWorkOrderBudgetServiceTest {
         CalculateWorkOrderBudgetCommand cmd = new CalculateWorkOrderBudgetCommand(workOrderId);
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.empty());
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(cmd)
         );
 

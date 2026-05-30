@@ -2,7 +2,8 @@ package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
 import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
-import com.mecanicadm.mecanicadm_api.core.vehicle.adapter.repository.VehicleRepository;
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
@@ -13,12 +14,10 @@ import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptio
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.CalculateWorkOrderBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CalculateWorkOrderBudgetCommand;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DiagnoseWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -41,12 +40,11 @@ class DiagnoseWorkOrderServiceTest {
     private ClientRepository clientRepository;
 
     @Mock
-    private VehicleRepository vehicleRepository;
+    private VehicleGateway vehicleRepository;
 
     @Mock
     private CalculateWorkOrderBudgetUseCase calculateWorkOrderBudgetUseCase;
 
-    @InjectMocks
     private DiagnoseWorkOrderService service;
 
     private WorkOrder workOrder;
@@ -54,6 +52,7 @@ class DiagnoseWorkOrderServiceTest {
 
     @BeforeEach
     void setUp() {
+        service = new DiagnoseWorkOrderService(workOrderRepository, clientRepository, vehicleRepository, calculateWorkOrderBudgetUseCase);
         workOrder = WorkOrder.create(UUID.randomUUID(), "ABC-1234", "Diagnostico eletrico");
         workOrderId = workOrder.getId();
     }
@@ -67,7 +66,7 @@ class DiagnoseWorkOrderServiceTest {
 
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.of(workOrder));
         when(clientRepository.existsById(workOrder.getClientId())).thenReturn(true);
-        when(vehicleRepository.existsById(workOrder.getVehicleId())).thenReturn(true);
+        when(vehicleRepository.existsByLicensePlate(workOrder.getVehicleId())).thenReturn(true);
 
         UUID result = service.handle(new DiagnoseWorkOrderCommand(workOrderId));
 
@@ -86,8 +85,8 @@ class DiagnoseWorkOrderServiceTest {
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -109,8 +108,8 @@ class DiagnoseWorkOrderServiceTest {
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -132,8 +131,8 @@ class DiagnoseWorkOrderServiceTest {
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -155,8 +154,8 @@ class DiagnoseWorkOrderServiceTest {
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -178,8 +177,8 @@ class DiagnoseWorkOrderServiceTest {
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -188,7 +187,7 @@ class DiagnoseWorkOrderServiceTest {
                 () -> assertEquals("client.not.found", exception.getMessageKey()),
                 () -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus())
         );
-        verify(vehicleRepository, never()).existsById(any());
+        verify(vehicleRepository, never()).existsByLicensePlate(any());
         verifyNoInteractions(calculateWorkOrderBudgetUseCase);
     }
 
@@ -198,13 +197,13 @@ class DiagnoseWorkOrderServiceTest {
         ReflectionTestUtils.setField(workOrder, "laborItems", Set.of(WorkOrderLaborItem.create(UUID.randomUUID())));
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.of(workOrder));
         when(clientRepository.existsById(workOrder.getClientId())).thenReturn(true);
-        when(vehicleRepository.existsById(workOrder.getVehicleId())).thenReturn(false);
+        when(vehicleRepository.existsByLicensePlate(workOrder.getVehicleId())).thenReturn(false);
 
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -224,8 +223,8 @@ class DiagnoseWorkOrderServiceTest {
         DiagnoseWorkOrderCommand command =
                 new DiagnoseWorkOrderCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 

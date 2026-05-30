@@ -1,8 +1,8 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.domain;
 
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.LaborExecutionStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -48,7 +48,7 @@ class WorkOrderLaborItemTest {
         WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID());
         item.startExecution();
 
-        DomainException exception = assertThrows(DomainException.class, item::startExecution);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, item::startExecution);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidLaborStatusTransition.class, exception.getClass()),
@@ -74,7 +74,7 @@ class WorkOrderLaborItemTest {
     void shouldThrowExceptionWhenFinishingExecutionWithInvalidStatus() {
         WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID());
 
-        DomainException exception = assertThrows(DomainException.class, item::finishExecution);
+        DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, item::finishExecution);
 
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidLaborStatusTransition.class, exception.getClass()),

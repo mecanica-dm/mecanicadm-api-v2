@@ -1,10 +1,10 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.service;
 
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository.StockMovementsRepository;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.exception.StockMovementsExceptions;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.DeductStockCommand;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,8 +48,8 @@ class DeductStockServiceTest {
 
         DeductStockCommand command = new DeductStockCommand(materialId, workOrderId, 0);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> deductStockService.handle(command)
         );
 
@@ -70,8 +70,8 @@ class DeductStockServiceTest {
 
         DeductStockCommand command = new DeductStockCommand(materialId, workOrderId, 5);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> deductStockService.handle(command)
         );
 

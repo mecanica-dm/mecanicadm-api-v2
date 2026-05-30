@@ -5,10 +5,10 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.CreateVehicleUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.DeleteVehicleUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.GetVehicleByIdUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.UpdateVehicleUseCase;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.CreateVehicleCommand;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.DeleteVehicleCommand;
-import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.UpdateVehicleCommand;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetVehicleByIdQuery;
+import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.CreateVehicleRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.UpdateVehicleRequest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,18 +57,18 @@ class VehicleControllerTest {
     @WithMockUser
     @DisplayName("Deve criar um veículo e retornar 201 Created")
     void shouldCreateVehicleAndReturn201() {
-        CreateVehicleCommand command = new CreateVehicleCommand("Civic", "ABC1234", "Honda", Short.valueOf("2023"));
-        when(createVehicleUseCase.handle(any(CreateVehicleCommand.class))).thenReturn("ABC1234");
+        CreateVehicleRequest request = new CreateVehicleRequest("Civic", "ABC1234", "Honda", Short.valueOf("2023"));
+        when(createVehicleUseCase.execute(any())).thenReturn("ABC1234");
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(command)
+                .body(request)
                 .when()
                 .post("/vehicle")
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
-                .header("Location", equalTo("http://localhost/vehicle/ABC1234"))
+                .header("Location", equalTo("/vehicle/ABC1234"))
                 .body(equalTo("ABC1234"));
     }
 
@@ -76,7 +76,7 @@ class VehicleControllerTest {
     @WithMockUser
     @DisplayName("Deve retornar 400 Bad Request ao tentar criar veículo com dados inválidos")
     void shouldReturn400WhenCommandIsInvalid() {
-        CreateVehicleCommand invalidCommand = new CreateVehicleCommand("", "", "", null);
+        CreateVehicleRequest invalidCommand = new CreateVehicleRequest("", "", "", null);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -93,8 +93,8 @@ class VehicleControllerTest {
     @DisplayName("Deve atualizar um veículo e retornar 204 No Content")
     void shouldUpdateVehicleAndReturn200() {
         String licensePlate = "ABC1234";
-        UpdateVehicleCommand command = new UpdateVehicleCommand(null, "Civic Updated", "Honda", Short.valueOf("2019"));
-        when(updateVehicleUseCase.handle(any(UpdateVehicleCommand.class))).thenReturn(null);
+        UpdateVehicleRequest command = new UpdateVehicleRequest("Civic Updated", "Honda", Short.valueOf("2019"));
+        when(updateVehicleUseCase.execute(any())).thenReturn(new Vehicle(command.model(), licensePlate, command.brand(), command.modelYear()));
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -105,7 +105,7 @@ class VehicleControllerTest {
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
-        verify(updateVehicleUseCase, times(1)).handle(any(UpdateVehicleCommand.class));
+        verify(updateVehicleUseCase, times(1)).execute(any());
     }
 
     @Test
@@ -113,7 +113,7 @@ class VehicleControllerTest {
     @DisplayName("Deve retornar 400 Bad Request ao tentar atualizar veículo com dados inválidos")
     void shouldReturn400WhenUpdateCommandIsInvalid() {
         String licensePlate = "ABC1234";
-        UpdateVehicleCommand invalidCommand = new UpdateVehicleCommand(null, "", "", null);
+        UpdateVehicleRequest invalidCommand = new UpdateVehicleRequest("", "", null);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -138,7 +138,7 @@ class VehicleControllerTest {
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
 
-        verify(deleteVehicleUseCase, times(1)).handle(any(DeleteVehicleCommand.class));
+        verify(deleteVehicleUseCase, times(1)).execute(any(DeleteVehicleCommand.class));
     }
 
     @Test
@@ -147,7 +147,7 @@ class VehicleControllerTest {
     void shouldFindVehicleAndReturn200() {
         String licensePlate = "ABC1234";
         var vehicleResponse = new Vehicle("Civic", licensePlate, "Honda", Short.valueOf("2023"));
-        when(getVehicleByIdUseCase.handle(new GetVehicleByIdQuery(licensePlate))).thenReturn(vehicleResponse);
+        when(getVehicleByIdUseCase.execute(new GetVehicleByIdQuery(licensePlate))).thenReturn(vehicleResponse);
 
         RestAssuredMockMvc.given()
                 .when()

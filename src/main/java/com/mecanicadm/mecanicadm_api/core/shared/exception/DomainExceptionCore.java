@@ -1,12 +1,12 @@
-package com.mecanicadm.mecanicadm_api.infra.exception;
+package com.mecanicadm.mecanicadm_api.core.shared.exception;
 
 import org.springframework.http.HttpStatus;
 
-public abstract class DomainException extends RuntimeException {
+public abstract class DomainExceptionCore extends RuntimeException {
     private final transient Object[] args;
     private final HttpStatus status;
 
-    protected DomainException(String messageKey, HttpStatus status, Object... args) {
+    protected DomainExceptionCore(String messageKey, HttpStatus status, Object... args) {
         super(messageKey);
         this.status = status;
         this.args = args;
@@ -24,3 +24,4 @@ public abstract class DomainException extends RuntimeException {
         return status;
     }
 }
+

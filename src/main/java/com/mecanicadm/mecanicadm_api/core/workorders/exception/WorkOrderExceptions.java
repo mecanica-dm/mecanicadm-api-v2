@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.exception;
 
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import org.springframework.http.HttpStatus;
 
 public class WorkOrderExceptions {
@@ -8,97 +8,97 @@ public class WorkOrderExceptions {
     private WorkOrderExceptions() {
     }
 
-    public static class NotFound extends DomainException {
+    public static class NotFound extends DomainExceptionCore {
         public NotFound() {
             super("work.order.not.found", HttpStatus.NOT_FOUND);
         }
     }
 
-    public static class LaborItemNotFound extends DomainException {
+    public static class LaborItemNotFound extends DomainExceptionCore {
         public LaborItemNotFound() {
             super("work.order.labor.item.not.found", HttpStatus.NOT_FOUND);
         }
     }
 
-    public static class InvalidMaterialQuantity extends DomainException {
+    public static class InvalidMaterialQuantity extends DomainExceptionCore {
         public InvalidMaterialQuantity() {
             super("work.order.material.quantity.invalid", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class InvalidStatusTransition extends DomainException {
+    public static class InvalidStatusTransition extends DomainExceptionCore {
         public InvalidStatusTransition(String from, String to) {
             super("work.order.status.transition.invalid", HttpStatus.BAD_REQUEST, from, to);
         }
     }
 
-    public static class InvalidLaborStatusTransition extends DomainException {
+    public static class InvalidLaborStatusTransition extends DomainExceptionCore {
         public InvalidLaborStatusTransition(String from, String to) {
             super("work.order.labor.status.transition.invalid", HttpStatus.BAD_REQUEST, from, to);
         }
     }
 
-    public static class InvalidStatus extends DomainException {
+    public static class InvalidStatus extends DomainExceptionCore {
         public InvalidStatus(String status) {
             super("work.order.status.invalid", HttpStatus.BAD_REQUEST, status);
         }
     }
 
-    public static class LaborCannotStartIfNotInExecution extends DomainException {
+    public static class LaborCannotStartIfNotInExecution extends DomainExceptionCore {
         public LaborCannotStartIfNotInExecution() {
             super("work.order.labor.start.not.in.execution", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class PendingLaborItems extends DomainException {
+    public static class PendingLaborItems extends DomainExceptionCore {
         public PendingLaborItems() {
             super("work.order.labor.pending.items", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class LaborItemsRequired extends DomainException {
+    public static class LaborItemsRequired extends DomainExceptionCore {
         public LaborItemsRequired() {
             super("work.order.labor.required", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class ClientRequired extends DomainException {
+    public static class ClientRequired extends DomainExceptionCore {
         public ClientRequired() {
             super("work.order.client.required", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class VehicleRequired extends DomainException {
+    public static class VehicleRequired extends DomainExceptionCore {
         public VehicleRequired() {
             super("work.order.vehicle.required", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class BudgetNotFound extends DomainException {
+    public static class BudgetNotFound extends DomainExceptionCore {
         public BudgetNotFound() {
             super("work.order.budget.not.found", HttpStatus.NOT_FOUND);
         }
     }
 
-    public static class BudgetDecisionInvalid extends DomainException {
+    public static class BudgetDecisionInvalid extends DomainExceptionCore {
         public BudgetDecisionInvalid(String decision) {
             super("work.order.budget.decision.invalid", HttpStatus.BAD_REQUEST, decision);
         }
     }
 
-    public static class BudgetRejectionReasonRequired extends DomainException {
+    public static class BudgetRejectionReasonRequired extends DomainExceptionCore {
         public BudgetRejectionReasonRequired() {
             super("work.order.budget.rejection.reason.required", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class BudgetNotWaitingDecision extends DomainException {
+    public static class BudgetNotWaitingDecision extends DomainExceptionCore {
         public BudgetNotWaitingDecision() {
             super("work.order.budget.not.waiting.decision", HttpStatus.BAD_REQUEST);
         }
     }
 
-    public static class InvalidReportPeriod extends DomainException {
+    public static class InvalidReportPeriod extends DomainExceptionCore {
         public InvalidReportPeriod() {
             super("work.order.report.period.invalid", HttpStatus.BAD_REQUEST);
         }

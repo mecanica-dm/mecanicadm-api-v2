@@ -3,7 +3,7 @@ package com.mecanicadm.mecanicadm_api.core.vehicle.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class VehicleTest {
 
@@ -24,15 +24,6 @@ class VehicleTest {
     }
 
     @Test
-    @DisplayName("Deve permitir instanciar veículo com construtor vazio (exigência JPA)")
-    void shouldInstantiateWithEmptyConstructor() {
-        Vehicle vehicle = new Vehicle();
-        assertNotNull(vehicle);
-        assertNull(vehicle.getLicensePlate());
-        assertNull(vehicle.getModel());
-    }
-
-    @Test
     @DisplayName("Deve atualizar o modelo do veículo com sucesso")
     void shouldUpdateVehicleModel() {
         Vehicle vehicle = new Vehicle("Fox", "ABC1234", "VW", Short.valueOf("2015"));
@@ -40,8 +31,9 @@ class VehicleTest {
         String newBrand = "Toyota";
         Short newYear = Short.valueOf("2015");
 
-        vehicle.update(newModel, newBrand, newYear);
+        Vehicle updatedVehicle = vehicle.update(newModel, newBrand, newYear);
 
-        assertEquals(newModel, vehicle.getModel());
+        assertEquals(newModel, updatedVehicle.getModel());
+        assertEquals("Fox", vehicle.getModel());
     }
 }

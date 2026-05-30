@@ -1,15 +1,14 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.service;
 
-import com.mecanicadm.mecanicadm_api.core.vehicle.adapter.repository.VehicleRepository;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
+import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.CreateVehicleUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.CreateVehicleCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -21,16 +20,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateVehicleServiceTest {
 
-    @Mock
-    private VehicleRepository repository;
+    private VehicleGateway repository;
 
-    @InjectMocks
-    private CreateVehicleService createVehicleService;
+    private CreateVehicleUseCase createVehicleUseCase;
 
     private CreateVehicleCommand command;
 
     @BeforeEach
     void setUp() {
+        repository = mock(VehicleGateway.class);
+        createVehicleUseCase = new CreateVehicleUseCase(repository);
         command = new CreateVehicleCommand(
                 "Civic",
                 "ABC1234",
@@ -45,14 +44,14 @@ class CreateVehicleServiceTest {
         when(repository.findByLicensePlate(command.licensePlate())).thenReturn(Optional.empty());
 
         Vehicle savedVehicle = new Vehicle(command.model(), command.licensePlate(), command.brand(), command.modelYear());
-        when(repository.save(any(Vehicle.class))).thenReturn(savedVehicle);
+        when(repository.create(any(Vehicle.class))).thenReturn(savedVehicle);
 
-        String resultLicensePlate = createVehicleService.handle(command);
+        String resultLicensePlate = createVehicleUseCase.execute(command);
 
         assertNotNull(resultLicensePlate);
         assertEquals(command.licensePlate(), resultLicensePlate);
         verify(repository).findByLicensePlate(command.licensePlate());
-        verify(repository).save(any(Vehicle.class));
+        verify(repository).create(any(Vehicle.class));
     }
 
     @Test
@@ -60,9 +59,9 @@ class CreateVehicleServiceTest {
     void shouldThrowExceptionWhenVehicleExists() {
         when(repository.findByLicensePlate(command.licensePlate())).thenReturn(Optional.of(mock(Vehicle.class)));
 
-        assertThrows(VehicleExceptions.VehicleExists.class, () -> createVehicleService.handle(command));
+        assertThrows(VehicleExceptions.VehicleExists.class, () -> createVehicleUseCase.execute(command));
 
         verify(repository).findByLicensePlate(command.licensePlate());
-        verify(repository, never()).save(any(Vehicle.class));
+        verify(repository, never()).create(any(Vehicle.class));
     }
 }

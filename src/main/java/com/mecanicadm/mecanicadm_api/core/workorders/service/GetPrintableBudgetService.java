@@ -7,7 +7,7 @@ import com.mecanicadm.mecanicadm_api.core.labor.adapter.repository.LaborReposito
 import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
 import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
-import com.mecanicadm.mecanicadm_api.core.vehicle.adapter.repository.VehicleRepository;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
@@ -33,14 +33,14 @@ public class GetPrintableBudgetService implements GetPrintableBudgetUseCase {
 
     private final WorkOrderRepository workOrderRepository;
     private final ClientRepository clientRepository;
-    private final VehicleRepository vehicleRepository;
+    private final VehicleGateway vehicleRepository;
     private final LaborRepository laborRepository;
     private final MaterialRepository materialRepository;
     private final PdfGenerator pdfGenerator;
 
     public GetPrintableBudgetService(WorkOrderRepository workOrderRepository,
                                      ClientRepository clientRepository,
-                                     VehicleRepository vehicleRepository,
+                                     VehicleGateway vehicleRepository,
                                      LaborRepository laborRepository,
                                      MaterialRepository materialRepository,
                                      PdfGenerator pdfGenerator) {
@@ -97,7 +97,7 @@ public class GetPrintableBudgetService implements GetPrintableBudgetUseCase {
     }
 
     private PrintableVehicleDTO buildVehicleDTO(String vehicleId) {
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+        Vehicle vehicle = vehicleRepository.findByLicensePlate(vehicleId)
                 .orElseThrow(VehicleExceptions.NotFound::new);
 
         return new PrintableVehicleDTO(

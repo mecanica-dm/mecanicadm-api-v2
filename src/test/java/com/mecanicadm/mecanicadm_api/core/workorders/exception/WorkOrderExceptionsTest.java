@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.exception;
 
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
+import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ class WorkOrderExceptionsTest {
         assertException(new WorkOrderExceptions.InvalidReportPeriod(), HttpStatus.BAD_REQUEST, "work.order.report.period.invalid");
     }
 
-    private void assertException(DomainException ex, HttpStatus status, String messageKey) {
+    private void assertException(DomainExceptionCore ex, HttpStatus status, String messageKey) {
         assertEquals(status, ex.getStatus());
         assertEquals(messageKey, ex.getMessageKey());
     }
