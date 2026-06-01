@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
+import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.ClientJpaRepository;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
@@ -21,12 +21,12 @@ import java.util.UUID;
 public class DiagnoseWorkOrderService implements DiagnoseWorkOrderUseCase {
 
     private final WorkOrderRepository workOrderRepository;
-    private final ClientRepository clientRepository;
+    private final ClientJpaRepository clientRepository;
     private final VehicleGateway vehicleRepository;
     private final CalculateWorkOrderBudgetUseCase calculateWorkOrderBudgetUseCase;
 
     public DiagnoseWorkOrderService(WorkOrderRepository workOrderRepository,
-                                    ClientRepository clientRepository,
+                                    ClientJpaRepository clientRepository,
                                     VehicleGateway vehicleRepository,
                                     CalculateWorkOrderBudgetUseCase calculateWorkOrderBudgetUseCase) {
         this.workOrderRepository = workOrderRepository;

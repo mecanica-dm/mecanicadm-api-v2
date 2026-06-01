@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
+import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.ClientJpaRepository;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
@@ -37,7 +37,7 @@ class DiagnoseWorkOrderServiceTest {
     private WorkOrderRepository workOrderRepository;
 
     @Mock
-    private ClientRepository clientRepository;
+    private ClientJpaRepository clientRepository;
 
     @Mock
     private VehicleGateway vehicleRepository;

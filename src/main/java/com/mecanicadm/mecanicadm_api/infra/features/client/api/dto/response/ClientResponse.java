@@ -1,4 +1,4 @@
-package com.mecanicadm.mecanicadm_api.core.client.adapter.api.dto;
+package com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.response;
 
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 

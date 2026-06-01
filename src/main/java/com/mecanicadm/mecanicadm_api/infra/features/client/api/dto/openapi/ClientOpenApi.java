@@ -1,8 +1,8 @@
-package com.mecanicadm.mecanicadm_api.core.client.adapter.api.openapi;
+package com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.openapi;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.api.dto.ClientResponse;
-import com.mecanicadm.mecanicadm_api.core.client.usecase.command.CreateClientCommand;
-import com.mecanicadm.mecanicadm_api.core.client.usecase.command.UpdateClientCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.request.CreateClientRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.request.UpdateClientRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.response.ClientResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,14 +25,14 @@ public interface ClientOpenApi {
             content = @Content(schema = @Schema(implementation = UUID.class)))
     @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
     @ApiResponse(responseCode = "409", description = "Email ou Documento já cadastrado", content = @Content)
-    ResponseEntity<UUID> create(CreateClientCommand cmd);
+    ResponseEntity<UUID> create(CreateClientRequest request);
 
     @Operation(summary = "Listar com Filtros", description = "Lista clientes com paginação (Page) e filtros opcionais de nome e documento.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Page.class)))
     })
-    ResponseEntity<Page<ClientResponse>> list(
+    ResponseEntity<Page<ClientResponse>> getAll(
             @Parameter(description = "Nome do cliente") String name,
             @Parameter(description = "Documento (CPF/CNPJ) do cliente") String document,
             @ParameterObject Pageable pageable
@@ -43,7 +43,7 @@ public interface ClientOpenApi {
     @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
     @ApiResponse(responseCode = "404", description = "Cliente não encontrado", content = @Content)
     @ApiResponse(responseCode = "409", description = "Novo Documento já está em uso", content = @Content)
-    ResponseEntity<Void> update(UUID id, UpdateClientCommand cmd);
+    ResponseEntity<Void> update(UUID id, UpdateClientRequest request);
 
     @Operation(summary = "Excluir cliente", description = "Realiza a exclusão lógica de um cliente e seu usuário associado")
     @ApiResponse(responseCode = "204", description = "Cliente excluído com sucesso", content = @Content)

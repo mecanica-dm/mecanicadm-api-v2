@@ -1,37 +1,43 @@
 package com.mecanicadm.mecanicadm_api.core.client.service;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
+import com.mecanicadm.mecanicadm_api.core.client.usecase.CreateClientUseCase;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.command.CreateClientCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateClientServiceTest {
 
     @Mock
-    private ClientRepository repository;
+    private ClientGateway repository;
 
-    @InjectMocks
-    private CreateClientService createClientService;
+    private CreateClientUseCase createClientUseCase;
 
     private CreateClientCommand command;
 
     @BeforeEach
     void setUp() {
+        createClientUseCase = new CreateClientUseCase(repository);
         command = new CreateClientCommand(
                 "Test Client",
                 "test@example.com",
@@ -49,15 +55,15 @@ class CreateClientServiceTest {
         Client savedClient = mock(Client.class);
         UUID expectedId = UUID.randomUUID();
         when(savedClient.getId()).thenReturn(expectedId);
-        when(repository.save(any(Client.class))).thenReturn(savedClient);
+        when(repository.create(any(Client.class))).thenReturn(savedClient);
 
-        UUID resultId = createClientService.handle(command);
+        UUID resultId = createClientUseCase.execute(command);
 
         assertNotNull(resultId);
         assertEquals(expectedId, resultId);
         verify(repository).findClientByEmail(command.email());
         verify(repository).findClientByDocument(command.document());
-        verify(repository).save(any(Client.class));
+        verify(repository).create(any(Client.class));
     }
 
     @Test
@@ -65,10 +71,10 @@ class CreateClientServiceTest {
     void shouldThrowExceptionWhenEmailExists() {
         when(repository.findClientByEmail(command.email())).thenReturn(Optional.of(mock(Client.class)));
 
-        assertThrows(ClientExceptions.EmailExists.class, () -> createClientService.handle(command));
+        assertThrows(ClientExceptions.EmailExists.class, () -> createClientUseCase.execute(command));
 
         verify(repository).findClientByEmail(command.email());
-        verify(repository, never()).save(any(Client.class));
+        verify(repository, never()).create(any(Client.class));
     }
 
     @Test
@@ -77,10 +83,10 @@ class CreateClientServiceTest {
         when(repository.findClientByEmail(command.email())).thenReturn(Optional.empty());
         when(repository.findClientByDocument(command.document())).thenReturn(Optional.of(mock(Client.class)));
 
-        assertThrows(ClientExceptions.DocumentExists.class, () -> createClientService.handle(command));
+        assertThrows(ClientExceptions.DocumentExists.class, () -> createClientUseCase.execute(command));
 
         verify(repository).findClientByDocument(command.document());
-        verify(repository, never()).save(any(Client.class));
+        verify(repository, never()).create(any(Client.class));
     }
 
     @Test
@@ -92,10 +98,10 @@ class CreateClientServiceTest {
                 "17871234053",
                 "48999999999"
         );
-        assertThrows(ClientExceptions.NameNotEmpty.class, () -> createClientService.handle(invalidCommand));
+        assertThrows(ClientExceptions.NameNotEmpty.class, () -> createClientUseCase.execute(invalidCommand));
         verify(repository, never()).findClientByEmail(anyString());
         verify(repository, never()).findClientByDocument(anyString());
-        verify(repository, never()).save(any(Client.class));
+        verify(repository, never()).create(any(Client.class));
     }
 
     @Test
@@ -107,10 +113,10 @@ class CreateClientServiceTest {
                 "17871234053",
                 "48999999999"
         );
-        assertThrows(ClientExceptions.EmailNotEmpty.class, () -> createClientService.handle(invalidCommand));
+        assertThrows(ClientExceptions.EmailNotEmpty.class, () -> createClientUseCase.execute(invalidCommand));
         verify(repository, never()).findClientByEmail(anyString());
         verify(repository, never()).findClientByDocument(anyString());
-        verify(repository, never()).save(any(Client.class));
+        verify(repository, never()).create(any(Client.class));
     }
 
     @Test
@@ -122,9 +128,9 @@ class CreateClientServiceTest {
                 "",
                 "48999999999"
         );
-        assertThrows(ClientExceptions.DocumentNotEmpty.class, () -> createClientService.handle(invalidCommand));
+        assertThrows(ClientExceptions.DocumentNotEmpty.class, () -> createClientUseCase.execute(invalidCommand));
         verify(repository, never()).findClientByEmail(anyString());
         verify(repository, never()).findClientByDocument(anyString());
-        verify(repository, never()).save(any(Client.class));
+        verify(repository, never()).create(any(Client.class));
     }
 }

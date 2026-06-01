@@ -1,14 +1,14 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.labor.adapter.repository.LaborRepository;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
 import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
-import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
@@ -17,14 +17,24 @@ import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderMaterialItem;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetPrintableBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.*;
+import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableBudgetDTO;
+import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableBudgetResponse;
+import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableClientDTO;
+import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableLaborItemDTO;
+import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableMaterialItemDTO;
+import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableVehicleDTO;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetPrintableBudgetQuery;
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,14 +42,14 @@ import java.util.stream.Collectors;
 public class GetPrintableBudgetService implements GetPrintableBudgetUseCase {
 
     private final WorkOrderRepository workOrderRepository;
-    private final ClientRepository clientRepository;
+    private final ClientGateway clientRepository;
     private final VehicleGateway vehicleRepository;
     private final LaborRepository laborRepository;
     private final MaterialRepository materialRepository;
     private final PdfGenerator pdfGenerator;
 
     public GetPrintableBudgetService(WorkOrderRepository workOrderRepository,
-                                     ClientRepository clientRepository,
+                                     ClientGateway clientRepository,
                                      VehicleGateway vehicleRepository,
                                      LaborRepository laborRepository,
                                      MaterialRepository materialRepository,

@@ -1,0 +1,87 @@
+package com.mecanicadm.mecanicadm_api.infra.features.client.persistence.entity;
+
+import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "clients")
+@SQLDelete(sql = "UPDATE clients SET deleted_at = now() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
+public class ClientJpaEntity extends AuditEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "document", nullable = false, unique = true)
+    private String document;
+
+    @Column(name = "phone")
+    private String phone;
+
+    protected ClientJpaEntity() {
+    }
+
+    public ClientJpaEntity(UUID id, String name, String email, String document, String phone) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.document = document;
+        this.phone = phone;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+}
