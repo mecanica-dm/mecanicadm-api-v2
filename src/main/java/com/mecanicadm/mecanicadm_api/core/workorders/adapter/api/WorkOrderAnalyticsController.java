@@ -1,12 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.adapter.api;
 
-import com.mecanicadm.mecanicadm_api.core.labor.adapter.api.dto.LaborExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetAllLaborExecutionTimeReportUseCase;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetAllLaborExecutionTimeReportQuery;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.api.dto.WorkOrderExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.api.openapi.WorkOrderAnalyticsOpenApi;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetAllWorkOrderExecutionTimeReportUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetAllWorkOrderExecutionTimeReportQuery;
+import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +42,7 @@ public class WorkOrderAnalyticsController implements WorkOrderAnalyticsOpenApi {
     public ResponseEntity<LaborExecutionReportResponse> getLaborExecutionReport(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate initialDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finalDate) {
-        return ResponseEntity.ok(getAllLaborExecutionTimeReportUseCase.handle(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate)));
+        var report = getAllLaborExecutionTimeReportUseCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
+        return ResponseEntity.ok(report);
     }
 }

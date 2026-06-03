@@ -7,10 +7,10 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.DeleteVehicleC
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.UpdateVehicleCommand;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetAllVehiclesQuery;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetVehicleByIdQuery;
-import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.openapi.VehicleOpenApi;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.CreateVehicleRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.UpdateVehicleRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.response.VehicleResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.openapi.VehicleOpenApi;
 import com.mecanicadm.mecanicadm_api.infra.validation.annotation.LicensePlate;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

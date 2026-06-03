@@ -3,8 +3,8 @@ package com.mecanicadm.mecanicadm_api.core.workorders.service;
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
-import com.mecanicadm.mecanicadm_api.core.labor.adapter.repository.LaborRepository;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
@@ -44,20 +44,20 @@ public class GetPrintableBudgetService implements GetPrintableBudgetUseCase {
     private final WorkOrderRepository workOrderRepository;
     private final ClientGateway clientRepository;
     private final VehicleGateway vehicleRepository;
-    private final LaborRepository laborRepository;
+    private final LaborGateway laborGateway;
     private final MaterialRepository materialRepository;
     private final PdfGenerator pdfGenerator;
 
     public GetPrintableBudgetService(WorkOrderRepository workOrderRepository,
                                      ClientGateway clientRepository,
                                      VehicleGateway vehicleRepository,
-                                     LaborRepository laborRepository,
+                                     LaborGateway laborGateway,
                                      MaterialRepository materialRepository,
                                      PdfGenerator pdfGenerator) {
         this.workOrderRepository = workOrderRepository;
         this.clientRepository = clientRepository;
         this.vehicleRepository = vehicleRepository;
-        this.laborRepository = laborRepository;
+        this.laborGateway = laborGateway;
         this.materialRepository = materialRepository;
         this.pdfGenerator = pdfGenerator;
     }
@@ -121,7 +121,7 @@ public class GetPrintableBudgetService implements GetPrintableBudgetUseCase {
                 .map(WorkOrderLaborItem::getLaborId)
                 .collect(Collectors.toSet());
 
-        Map<UUID, Labor> laborsById = laborRepository.findAllByIds(laborIds).stream()
+        Map<UUID, Labor> laborsById = laborGateway.findAllByIds(laborIds).stream()
                 .collect(Collectors.toMap(Labor::getId, Function.identity()));
 
         return laborItems.stream()

@@ -2,7 +2,7 @@ package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
-import com.mecanicadm.mecanicadm_api.core.labor.adapter.repository.LaborRepository;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
 import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
@@ -46,7 +46,7 @@ class GetPrintableBudgetServiceTest {
     private WorkOrderRepository workOrderRepository;
     private ClientGateway clientRepository;
     private VehicleGateway vehicleRepository;
-    private LaborRepository laborRepository;
+    private LaborGateway laborGateway;
     private MaterialRepository materialRepository;
     private PdfGenerator pdfGenerator;
 
@@ -57,10 +57,10 @@ class GetPrintableBudgetServiceTest {
         workOrderRepository = mock(WorkOrderRepository.class);
         clientRepository = mock(ClientGateway.class);
         vehicleRepository = mock(VehicleGateway.class);
-        laborRepository = mock(LaborRepository.class);
+        laborGateway = mock(LaborGateway.class);
         materialRepository = mock(MaterialRepository.class);
         pdfGenerator = mock(PdfGenerator.class);
-        getPrintableBudgetService = new GetPrintableBudgetService(workOrderRepository, clientRepository, vehicleRepository, laborRepository, materialRepository, pdfGenerator);
+        getPrintableBudgetService = new GetPrintableBudgetService(workOrderRepository, clientRepository, vehicleRepository, laborGateway, materialRepository, pdfGenerator);
     }
 
     @Test
@@ -225,7 +225,7 @@ class GetPrintableBudgetServiceTest {
         when(workOrderRepository.findByIdWithItems(any())).thenReturn(Optional.of(workOrder));
         when(clientRepository.findById(any())).thenReturn(Optional.of(client));
         when(vehicleRepository.findByLicensePlate(any())).thenReturn(Optional.of(vehicle));
-        when(laborRepository.findAllByIds(any())).thenReturn(List.of(labor));
+        when(laborGateway.findAllByIds(any())).thenReturn(List.of(labor));
         when(materialRepository.findAllByIds(any())).thenReturn(List.of(material));
 
         ArgumentCaptor<Map<String, Object>> variablesCaptor = ArgumentCaptor.forClass(Map.class);

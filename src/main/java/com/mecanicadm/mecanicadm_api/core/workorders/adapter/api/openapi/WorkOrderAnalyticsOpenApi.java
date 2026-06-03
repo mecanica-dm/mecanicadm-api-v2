@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.adapter.api.openapi;
 
-import com.mecanicadm.mecanicadm_api.core.labor.adapter.api.dto.LaborExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.api.dto.WorkOrderExecutionReportResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
