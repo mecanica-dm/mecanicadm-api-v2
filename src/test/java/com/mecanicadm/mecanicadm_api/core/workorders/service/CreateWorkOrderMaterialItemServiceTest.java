@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.DeductStockCommand;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 class CreateWorkOrderMaterialItemServiceTest {
 
     @Mock
-    private MaterialRepository materialRepository;
+    private MaterialGateway materialGateway;
 
     @Mock
     private DeductStockUseCase deductStockUseCase;
@@ -56,24 +56,24 @@ class CreateWorkOrderMaterialItemServiceTest {
     void shouldCreateWorkOrderMaterialItemSuccessfully() {
         Material material = mock(Material.class);
         when(material.getId()).thenReturn(materialId);
-        when(materialRepository.findById(materialId)).thenReturn(Optional.of(material));
+        when(materialGateway.findById(materialId)).thenReturn(Optional.of(material));
 
         WorkOrderMaterialItem result = createWorkOrderMaterialItemService.handle(command);
 
         assertNotNull(result);
         assertEquals(materialId, result.getMaterialId());
         assertEquals(quantity, result.getQuantity());
-        verify(materialRepository).findById(materialId);
+        verify(materialGateway).findById(materialId);
         verify(deductStockUseCase).handle(new DeductStockCommand(materialId, workOrderId, quantity));
     }
 
     @Test
     @DisplayName("Deve lançar exceção quando o material não for encontrado")
     void shouldThrowExceptionWhenMaterialNotFound() {
-        when(materialRepository.findById(materialId)).thenReturn(Optional.empty());
+        when(materialGateway.findById(materialId)).thenReturn(Optional.empty());
 
         assertThrows(MaterialExceptions.MaterialNotFound.class, () -> createWorkOrderMaterialItemService.handle(command));
-        verify(materialRepository).findById(materialId);
+        verify(materialGateway).findById(materialId);
         verifyNoInteractions(deductStockUseCase);
     }
 }

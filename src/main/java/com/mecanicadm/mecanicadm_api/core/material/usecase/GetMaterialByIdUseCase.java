@@ -1,8 +1,20 @@
 package com.mecanicadm.mecanicadm_api.core.material.usecase;
 
-import com.mecanicadm.mecanicadm_api.core.material.adapter.api.dto.MaterialResponse;
+import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
+import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.query.GetMaterialByIdQuery;
 
-public interface GetMaterialByIdUseCase {
-    MaterialResponse handle(GetMaterialByIdQuery query);
+public class GetMaterialByIdUseCase {
+
+    public final MaterialGateway gateway;
+
+    public GetMaterialByIdUseCase(MaterialGateway gateway) {
+        this.gateway = gateway;
+    }
+
+    public Material execute(GetMaterialByIdQuery query) {
+        return gateway.findById(query.id())
+                .orElseThrow(MaterialExceptions.MaterialNotFound::new);
+    }
 }

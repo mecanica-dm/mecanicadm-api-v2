@@ -1,8 +1,9 @@
 package com.mecanicadm.mecanicadm_api.core.material.service;
 
-import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
+import com.mecanicadm.mecanicadm_api.core.material.usecase.CreateMaterialUseCase;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.AddStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.AddStockCommand;
@@ -20,19 +21,21 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateMaterialServiceTest {
 
     @Mock
-    private MaterialRepository repository;
+    private MaterialGateway gateway;
 
     @Mock
     private AddStockUseCase addStockUseCase;
 
     @InjectMocks
-    private CreateMaterialService createMaterialService;
+    private CreateMaterialUseCase createMaterialUseCase;
 
     private CreateMaterialCommand command;
 
@@ -54,13 +57,13 @@ class CreateMaterialServiceTest {
         UUID expectedId = UUID.randomUUID();
         Material savedMaterial = mock(Material.class);
         when(savedMaterial.getId()).thenReturn(expectedId);
-        when(repository.save(any(Material.class))).thenReturn(savedMaterial);
+        when(gateway.create(any(Material.class))).thenReturn(savedMaterial);
 
-        UUID resultId = createMaterialService.handle(command);
+        UUID resultId = createMaterialUseCase.execute(command);
 
         assertNotNull(resultId);
         assertEquals(expectedId, resultId);
-        verify(repository).save(any(Material.class));
+        verify(gateway).create(any(Material.class));
         verify(addStockUseCase).handle(new AddStockCommand(expectedId, 10));
     }
 }

@@ -2,10 +2,10 @@ package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
-import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
-import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
@@ -47,7 +47,7 @@ class GetPrintableBudgetServiceTest {
     private ClientGateway clientRepository;
     private VehicleGateway vehicleRepository;
     private LaborGateway laborGateway;
-    private MaterialRepository materialRepository;
+    private MaterialGateway materialGateway;
     private PdfGenerator pdfGenerator;
 
     private GetPrintableBudgetService getPrintableBudgetService;
@@ -58,9 +58,9 @@ class GetPrintableBudgetServiceTest {
         clientRepository = mock(ClientGateway.class);
         vehicleRepository = mock(VehicleGateway.class);
         laborGateway = mock(LaborGateway.class);
-        materialRepository = mock(MaterialRepository.class);
+        materialGateway = mock(MaterialGateway.class);
         pdfGenerator = mock(PdfGenerator.class);
-        getPrintableBudgetService = new GetPrintableBudgetService(workOrderRepository, clientRepository, vehicleRepository, laborGateway, materialRepository, pdfGenerator);
+        getPrintableBudgetService = new GetPrintableBudgetService(workOrderRepository, clientRepository, vehicleRepository, laborGateway, materialGateway, pdfGenerator);
     }
 
     @Test
@@ -226,7 +226,7 @@ class GetPrintableBudgetServiceTest {
         when(clientRepository.findById(any())).thenReturn(Optional.of(client));
         when(vehicleRepository.findByLicensePlate(any())).thenReturn(Optional.of(vehicle));
         when(laborGateway.findAllByIds(any())).thenReturn(List.of(labor));
-        when(materialRepository.findAllByIds(any())).thenReturn(List.of(material));
+        when(materialGateway.findAllByIds(any())).thenReturn(List.of(material));
 
         ArgumentCaptor<Map<String, Object>> variablesCaptor = ArgumentCaptor.forClass(Map.class);
         when(pdfGenerator.generatePdfFromHtml(anyString(), variablesCaptor.capture())).thenReturn(new byte[]{});

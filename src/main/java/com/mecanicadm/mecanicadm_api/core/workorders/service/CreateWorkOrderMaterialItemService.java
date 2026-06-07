@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.DeductStockCommand;
@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CreateWorkOrderMaterialItemService implements CreateWorkOrderMaterialItemUseCase {
 
-    private final MaterialRepository materialRepository;
+    private final MaterialGateway materialGateway;
     private final DeductStockUseCase deductStockUseCase;
 
-    public CreateWorkOrderMaterialItemService(MaterialRepository materialRepository, DeductStockUseCase deductStockUseCase) {
-        this.materialRepository = materialRepository;
+    public CreateWorkOrderMaterialItemService(MaterialGateway materialGateway, DeductStockUseCase deductStockUseCase) {
+        this.materialGateway = materialGateway;
         this.deductStockUseCase = deductStockUseCase;
     }
 
     @Override
     @Transactional
     public WorkOrderMaterialItem handle(CreateWorkOrderMaterialItemCommand cmd) {
-        Material material = materialRepository.findById(cmd.materialId())
+        Material material = materialGateway.findById(cmd.materialId())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);
 
         deductStockUseCase.handle(new DeductStockCommand(material.getId(), cmd.workOrderId(), cmd.quantity()));

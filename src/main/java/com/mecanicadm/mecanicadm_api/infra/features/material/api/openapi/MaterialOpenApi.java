@@ -1,9 +1,9 @@
-package com.mecanicadm.mecanicadm_api.core.material.adapter.api.openapi;
+package com.mecanicadm.mecanicadm_api.infra.features.material.api.openapi;
 
-import com.mecanicadm.mecanicadm_api.core.material.adapter.api.dto.MaterialResponse;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
-import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
-import com.mecanicadm.mecanicadm_api.core.material.usecase.command.UpdateMaterialCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.material.api.dto.request.CreateMaterialRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.material.api.dto.request.UpdateMaterialRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.material.api.dto.response.MaterialResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,13 +25,13 @@ public interface MaterialOpenApi {
     @ApiResponse(responseCode = "201", description = "Material criado com sucesso",
             content = @Content(schema = @Schema(implementation = UUID.class)))
     @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
-    ResponseEntity<UUID> create(CreateMaterialCommand cmd);
+    ResponseEntity<UUID> create(CreateMaterialRequest request);
 
     @Operation(summary = "Atualizar material", description = "Atualiza os dados de um material existente")
     @ApiResponse(responseCode = "200", description = "Material atualizado com sucesso", content = @Content)
     @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
     @ApiResponse(responseCode = "404", description = "Material não encontrado", content = @Content)
-    ResponseEntity<Void> update(UUID id, UpdateMaterialCommand cmd);
+    ResponseEntity<Void> update(UUID id, UpdateMaterialRequest request);
 
     @Operation(summary = "Buscar material por ID", description = "Retorna os detalhes de um material específico")
     @ApiResponse(responseCode = "200", description = "Material encontrado",
