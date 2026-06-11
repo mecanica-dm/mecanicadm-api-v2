@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request;
 
-import com.mecanicadm.mecanicadm_api.infra.validation.annotation.LicensePlate;
+import com.mecanicadm.mecanicadm_api.shared.validation.annotation.LicensePlate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 

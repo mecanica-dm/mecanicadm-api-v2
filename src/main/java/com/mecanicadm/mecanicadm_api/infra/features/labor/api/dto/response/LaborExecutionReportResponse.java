@@ -8,6 +8,5 @@ public record LaborExecutionReportResponse(
 		Double averageLaborExecutionTime,
 		List<LaborTypeExecutionStatsResponse> statsByLaborType
 ) {
-	// Response DTO for labor execution report. Built by infra or use-case layer.
 }
 

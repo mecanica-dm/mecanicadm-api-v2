@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.material.exception;
 
-import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.springframework.http.HttpStatus;
 
 public class MaterialExceptions {

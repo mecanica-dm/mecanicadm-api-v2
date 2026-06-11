@@ -1,8 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.ClientJpaRepository;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
-import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
@@ -14,6 +12,8 @@ import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptio
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.CalculateWorkOrderBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CalculateWorkOrderBudgetCommand;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DiagnoseWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.ClientJpaRepository;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

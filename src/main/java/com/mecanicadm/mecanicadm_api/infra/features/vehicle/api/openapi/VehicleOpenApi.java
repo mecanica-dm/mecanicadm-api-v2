@@ -3,7 +3,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.openapi;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.CreateVehicleRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.UpdateVehicleRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.response.VehicleResponse;
-import com.mecanicadm.mecanicadm_api.infra.validation.annotation.LicensePlate;
+import com.mecanicadm.mecanicadm_api.shared.validation.annotation.LicensePlate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

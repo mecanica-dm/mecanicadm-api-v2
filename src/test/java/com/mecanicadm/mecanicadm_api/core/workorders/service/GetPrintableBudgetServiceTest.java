@@ -24,20 +24,10 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -135,8 +125,8 @@ class GetPrintableBudgetServiceTest {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "ABC1234", "Teste Bad Format");
 
         Client client = mock(Client.class);
-        when(client.getDocument()).thenReturn("12345"); // neither 11 nor 14
-        when(client.getPhone()).thenReturn("123"); // neither 10 nor 11
+        when(client.getDocument()).thenReturn("12345");
+        when(client.getPhone()).thenReturn("123");
 
         Vehicle vehicle = mock(Vehicle.class);
 
@@ -235,7 +225,7 @@ class GetPrintableBudgetServiceTest {
 
         PrintableBudgetDTO capturedBudget = (PrintableBudgetDTO) variablesCaptor.getValue().get("budget");
         assertEquals(0, new BigDecimal("100.00").compareTo(capturedBudget.totalLaborPrice()));
-        assertEquals(0, new BigDecimal("100.00").compareTo(capturedBudget.totalMaterialPrice())); // 2 * 50
+        assertEquals(0, new BigDecimal("100.00").compareTo(capturedBudget.totalMaterialPrice()));
         assertEquals(0, new BigDecimal("200.00").compareTo(capturedBudget.totalBudgetPrice()));
     }
 }

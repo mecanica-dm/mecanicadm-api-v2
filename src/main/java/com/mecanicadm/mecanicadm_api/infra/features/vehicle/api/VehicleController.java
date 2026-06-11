@@ -11,7 +11,7 @@ import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.Crea
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.UpdateVehicleRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.response.VehicleResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.openapi.VehicleOpenApi;
-import com.mecanicadm.mecanicadm_api.infra.validation.annotation.LicensePlate;
+import com.mecanicadm.mecanicadm_api.shared.validation.annotation.LicensePlate;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

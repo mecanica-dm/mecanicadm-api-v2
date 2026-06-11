@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.user.exception;
 
-import com.mecanicadm.mecanicadm_api.core.shared.exception.DomainExceptionCore;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.springframework.http.HttpStatus;
 
 public class UserExceptions {
@@ -11,6 +11,12 @@ public class UserExceptions {
     public static class NotFound extends DomainExceptionCore {
         public NotFound() {
             super("user.not.found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public static class UserAlreadyExists extends DomainExceptionCore {
+        public UserAlreadyExists() {
+            super("user.already.exists", HttpStatus.CONFLICT);
         }
     }
 

@@ -1,10 +1,10 @@
 package com.mecanicadm.mecanicadm_api.core.user.adapter.api;
 
-import com.mecanicadm.mecanicadm_api.core.user.adapter.api.dto.ForgotPasswordRequest;
-import com.mecanicadm.mecanicadm_api.core.user.adapter.api.dto.ResetPasswordRequest;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.CreateUserCommand;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.UpdateUserCommand;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.query.AuthenticateUserQuery;
+import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ForgotPasswordRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ResetPasswordRequest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,9 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static com.mecanicadm.mecanicadm_api.testutils.AuthUtils.getAuthToken;
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc

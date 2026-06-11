@@ -42,6 +42,6 @@ class StockMovementsRepositoryTest {
 
         Integer balance = stockMovementsRepository.getCurrentBalanceByMaterialId(materialId);
 
-        assertEquals(7, balance); // 10 (ADDITION) - 3 (REDUCTION) = 7
+        assertEquals(7, balance);
     }
 }

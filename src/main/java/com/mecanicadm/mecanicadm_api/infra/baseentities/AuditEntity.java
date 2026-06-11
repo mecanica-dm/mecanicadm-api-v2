@@ -26,11 +26,23 @@ public abstract class AuditEntity {
         return dateCreated;
     }
 
+    public void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
     public LocalDateTime getDateUpdated() {
         return dateUpdated;
     }
 
+    public void setDateUpdated(LocalDateTime dateUpdated) {
+        this.dateUpdated = dateUpdated;
+    }
+
     public Optional<LocalDateTime> getDeletedAt() {
         return Optional.ofNullable(deletedAt);
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

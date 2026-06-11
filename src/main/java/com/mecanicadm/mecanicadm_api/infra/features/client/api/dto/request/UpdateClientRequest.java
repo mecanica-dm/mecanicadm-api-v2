@@ -2,8 +2,8 @@ package com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.command.UpdateClientCommand;
-import com.mecanicadm.mecanicadm_api.infra.validation.annotation.CpfCnpj;
-import com.mecanicadm.mecanicadm_api.infra.validation.annotation.Phone;
+import com.mecanicadm.mecanicadm_api.shared.validation.annotation.CpfCnpj;
+import com.mecanicadm.mecanicadm_api.shared.validation.annotation.Phone;
 import jakarta.validation.constraints.Email;
 
 import java.util.UUID;
