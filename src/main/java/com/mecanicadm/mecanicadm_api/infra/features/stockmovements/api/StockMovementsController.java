@@ -1,9 +1,9 @@
-package com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.api;
+package com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.api.openapi.StockMovementsOpenApi;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.GetStockStatementUseCase;
-import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.dto.StockStatementDTO;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.query.GetStockStatementQuery;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api.dto.response.StockStatementResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api.openapi.StockMovementsOpenApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +24,8 @@ public class StockMovementsController implements StockMovementsOpenApi {
 
     @Override
     @GetMapping("/{materialId}/statement")
-    public ResponseEntity<StockStatementDTO> getStatement(@PathVariable UUID materialId) {
-        StockStatementDTO statement = getStockStatementUseCase.handle(new GetStockStatementQuery(materialId));
+    public ResponseEntity<StockStatementResponse> getStatement(@PathVariable UUID materialId) {
+        StockStatementResponse statement = getStockStatementUseCase.execute(new GetStockStatementQuery(materialId));
         return ResponseEntity.ok(statement);
     }
 }

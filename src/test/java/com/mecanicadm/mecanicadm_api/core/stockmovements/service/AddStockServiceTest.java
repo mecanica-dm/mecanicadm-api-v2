@@ -1,8 +1,9 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.service;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository.StockMovementsRepository;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.exception.StockMovementsExceptions;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.AddStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.AddStockCommand;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +16,10 @@ import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -24,19 +28,19 @@ import static org.mockito.Mockito.verify;
 class AddStockServiceTest {
 
     @Mock
-    private StockMovementsRepository stockMovementsRepository;
+    private StockMovementsGateway gateway;
 
     @InjectMocks
-    private AddStockService addStockService;
+    private AddStockUseCase addStockUseCase;
 
     @Test
     @DisplayName("Deve registrar adicao de estoque como novo movimento")
     void shouldRecordAdditionAsNewMovement() {
         UUID materialId = UUID.randomUUID();
 
-        addStockService.handle(new AddStockCommand(materialId, 10));
+        addStockUseCase.execute(new AddStockCommand(materialId, 10));
 
-        verify(stockMovementsRepository).save(any(StockMovements.class));
+        verify(gateway).create(any(StockMovements.class));
     }
 
     @Test
@@ -48,7 +52,7 @@ class AddStockServiceTest {
 
         DomainExceptionCore exception = assertThrows(
                 DomainExceptionCore.class,
-                () -> addStockService.handle(command)
+                () -> addStockUseCase.execute(command)
         );
 
         assertAll(
@@ -56,6 +60,6 @@ class AddStockServiceTest {
                 () -> assertEquals("stock.quantity.invalid", exception.getMessageKey()),
                 () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
         );
-        verify(stockMovementsRepository, never()).save(any());
+        verify(gateway, never()).create(any());
     }
 }

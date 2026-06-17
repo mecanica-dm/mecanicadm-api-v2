@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository;
 
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.jpa.StockMovementsJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @ActiveProfiles("test")
-class StockMovementsRepositoryIT {
+class StockMovementsJpaRepositoryIT {
 
     @Autowired
-    private StockMovementsRepository stockMovementsRepository;
+    private StockMovementsJpaRepository stockMovementsRepository;
 
     @Test
     @Sql(scripts = "/sql/stock_movements_test_data.sql")

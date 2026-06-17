@@ -1,9 +1,11 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.service;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository.StockMovementsRepository;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
-import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.dto.StockStatementDTO;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsFilter;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.GetStockStatementUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.query.GetStockStatementQuery;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api.dto.response.StockStatementResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,10 +23,10 @@ import static org.mockito.Mockito.when;
 class GetStockStatementServiceTest {
 
     @Mock
-    private StockMovementsRepository stockMovementsRepository;
+    private StockMovementsGateway gateway;
 
     @InjectMocks
-    private GetStockStatementService getStockStatementService;
+    private GetStockStatementUseCase getStockStatementUseCase;
 
     @BeforeEach
     void setUp() {
@@ -40,11 +42,11 @@ class GetStockStatementServiceTest {
         StockMovements addition = StockMovements.recordAddition(materialId, 10);
         StockMovements reduction = StockMovements.recordReduction(materialId, UUID.randomUUID(), 3);
 
-        when(stockMovementsRepository.getCurrentBalanceByMaterialId(materialId)).thenReturn(7);
-        when(stockMovementsRepository.findAllByMaterialIdOrderByDateCreatedDesc(materialId))
+        when(gateway.getCurrentBalanceByMaterialId(materialId)).thenReturn(7);
+        when(gateway.findAllByMaterialIdOrderByDateCreatedDesc(new StockMovementsFilter(materialId)))
                 .thenReturn(List.of(addition, reduction));
 
-        StockStatementDTO result = getStockStatementService.handle(query);
+        StockStatementResponse result = getStockStatementUseCase.execute(query);
 
         assertNotNull(result);
         assertEquals(materialId, result.materialId());

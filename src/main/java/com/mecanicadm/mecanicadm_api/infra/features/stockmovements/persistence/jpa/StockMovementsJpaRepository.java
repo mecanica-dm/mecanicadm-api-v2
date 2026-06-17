@@ -1,6 +1,6 @@
-package com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository;
+package com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.jpa;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.entity.StockMovementsJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface StockMovementsRepository extends JpaRepository<StockMovements, UUID> {
+public interface StockMovementsJpaRepository extends JpaRepository<StockMovementsJpaEntity, UUID> {
 
     @Query("""
             SELECT COALESCE(SUM(
@@ -20,14 +20,14 @@ public interface StockMovementsRepository extends JpaRepository<StockMovements, 
                     ELSE -sm.quantity
                 END
             ), 0)
-            FROM StockMovements sm
+            FROM StockMovementsJpaEntity sm
             WHERE sm.materialId = :materialId
             """)
     Integer getCurrentBalanceByMaterialId(@Param("materialId") UUID materialId);
 
-    Optional<StockMovements> findByMaterialId(UUID materialId);
+    Optional<StockMovementsJpaEntity> findByMaterialId(UUID materialId);
 
-    Optional<StockMovements> findByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId);
+    Optional<StockMovementsJpaEntity> findByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId);
 
-    List<StockMovements> findAllByMaterialIdOrderByDateCreatedDesc(UUID materialId);
+    List<StockMovementsJpaEntity> findAllByMaterialIdOrderByDateCreatedDesc(UUID materialId);
 }

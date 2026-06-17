@@ -1,6 +1,6 @@
-package com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.api.openapi;
+package com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api.openapi;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.dto.StockStatementDTO;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api.dto.response.StockStatementResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +20,7 @@ public interface StockMovementsOpenApi {
             @ApiResponse(responseCode = "200", description = "Extrato retornado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Material não encontrado")
     })
-    ResponseEntity<StockStatementDTO> getStatement(
+    ResponseEntity<StockStatementResponse> getStatement(
             @Parameter(description = "ID do material", required = true)
             @PathVariable UUID materialId);
 }

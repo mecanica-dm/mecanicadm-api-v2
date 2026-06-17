@@ -28,7 +28,7 @@ public class CreateMaterialUseCase {
         );
 
         material = gateway.create(material);
-        addStockUseCase.handle(new AddStockCommand(material.getId(), cmd.quantity()));
+        addStockUseCase.execute(new AddStockCommand(material.getId(), cmd.quantity()));
 
         return material.getId();
     }

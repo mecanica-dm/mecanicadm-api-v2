@@ -1,7 +1,8 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.enums.MovementType;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.entity.StockMovementsJpaEntity;
+import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.jpa.StockMovementsJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @ActiveProfiles("test")
-class StockMovementsRepositoryTest {
+class StockMovementsJpaRepositoryTest {
 
     @Autowired
-    private StockMovementsRepository stockMovementsRepository;
+    private StockMovementsJpaRepository repository;
 
     @Test
     @DisplayName("Deve buscar todas as movimentacoes de um material ordenadas por data descrescente")
@@ -27,7 +28,7 @@ class StockMovementsRepositoryTest {
     void shouldFindAllMovementsOrderedByDateDesc() {
         UUID materialId = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
-        List<StockMovements> results = stockMovementsRepository.findAllByMaterialIdOrderByDateCreatedDesc(materialId);
+        List<StockMovementsJpaEntity> results = repository.findAllByMaterialIdOrderByDateCreatedDesc(materialId);
 
         assertEquals(2, results.size());
         assertEquals(MovementType.REDUCTION, results.get(0).getType());
@@ -40,7 +41,7 @@ class StockMovementsRepositoryTest {
     void shouldCalculateCurrentBalance() {
         UUID materialId = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
-        Integer balance = stockMovementsRepository.getCurrentBalanceByMaterialId(materialId);
+        Integer balance = repository.getCurrentBalanceByMaterialId(materialId);
 
         assertEquals(7, balance);
     }

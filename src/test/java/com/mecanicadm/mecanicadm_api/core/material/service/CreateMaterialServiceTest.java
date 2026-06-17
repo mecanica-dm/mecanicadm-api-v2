@@ -64,6 +64,6 @@ class CreateMaterialServiceTest {
         assertNotNull(resultId);
         assertEquals(expectedId, resultId);
         verify(gateway).create(any(Material.class));
-        verify(addStockUseCase).handle(new AddStockCommand(expectedId, 10));
+        verify(addStockUseCase).execute(new AddStockCommand(expectedId, 10));
     }
 }

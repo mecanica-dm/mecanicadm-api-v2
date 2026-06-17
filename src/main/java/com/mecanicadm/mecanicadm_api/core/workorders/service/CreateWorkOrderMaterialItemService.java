@@ -28,7 +28,7 @@ public class CreateWorkOrderMaterialItemService implements CreateWorkOrderMateri
         Material material = materialGateway.findById(cmd.materialId())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);
 
-        deductStockUseCase.handle(new DeductStockCommand(material.getId(), cmd.workOrderId(), cmd.quantity()));
+        deductStockUseCase.execute(new DeductStockCommand(material.getId(), cmd.workOrderId(), cmd.quantity()));
 
         return WorkOrderMaterialItem.create(material.getId(), cmd.quantity());
     }

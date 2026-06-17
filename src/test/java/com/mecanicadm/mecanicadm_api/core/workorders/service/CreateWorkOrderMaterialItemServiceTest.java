@@ -64,7 +64,7 @@ class CreateWorkOrderMaterialItemServiceTest {
         assertEquals(materialId, result.getMaterialId());
         assertEquals(quantity, result.getQuantity());
         verify(materialGateway).findById(materialId);
-        verify(deductStockUseCase).handle(new DeductStockCommand(materialId, workOrderId, quantity));
+        verify(deductStockUseCase).execute(new DeductStockCommand(materialId, workOrderId, quantity));
     }
 
     @Test
