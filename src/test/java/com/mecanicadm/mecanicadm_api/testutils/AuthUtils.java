@@ -13,7 +13,10 @@ public class AuthUtils {
         RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(createCommand)
-                .post("/user");
+                .when()
+                .post("/user")
+                .then()
+                .statusCode(HttpStatus.CREATED.value());
 
         AuthenticateUserQuery query = new AuthenticateUserQuery(email, password);
         return RestAssuredMockMvc.given()
@@ -31,7 +34,10 @@ public class AuthUtils {
         RestAssuredMockMvc.given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(createCommand)
-                .post("/user");
+                .when()
+                .post("/user")
+                .then()
+                .statusCode(HttpStatus.CREATED.value());
 
         AuthenticateUserQuery query = new AuthenticateUserQuery(email, "password123");
         return RestAssuredMockMvc.given()

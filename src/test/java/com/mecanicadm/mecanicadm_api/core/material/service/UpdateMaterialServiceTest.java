@@ -1,9 +1,10 @@
 package com.mecanicadm.mecanicadm_api.core.material.service;
 
-import com.mecanicadm.mecanicadm_api.core.material.adapter.repository.MaterialRepository;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
+import com.mecanicadm.mecanicadm_api.core.material.usecase.UpdateMaterialUseCase;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.UpdateMaterialCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,16 +21,18 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateMaterialServiceTest {
 
     @Mock
-    private MaterialRepository repository;
+    private MaterialGateway gateway;
 
     @InjectMocks
-    private UpdateMaterialService updateMaterialService;
+    private UpdateMaterialUseCase updateMaterialUseCase;
 
     private UUID materialId;
     private UpdateMaterialCommand command;
@@ -58,13 +61,13 @@ class UpdateMaterialServiceTest {
     @Test
     @DisplayName("Deve atualizar um material existente com sucesso")
     void shouldUpdateExistingMaterialSuccessfully() {
-        when(repository.findById(materialId)).thenReturn(Optional.of(existingMaterial));
-        when(repository.save(any(Material.class))).thenReturn(existingMaterial);
+        when(gateway.findById(materialId)).thenReturn(Optional.of(existingMaterial));
+        when(gateway.update(any(Material.class))).thenReturn(existingMaterial);
 
-        updateMaterialService.handle(command);
+        updateMaterialUseCase.execute(command);
 
-        verify(repository).findById(materialId);
-        verify(repository).save(existingMaterial);
+        verify(gateway).findById(materialId);
+        verify(gateway).update(existingMaterial);
 
         assertEquals(command.name(), existingMaterial.getName());
         assertEquals(command.brand(), existingMaterial.getBrand());
@@ -75,11 +78,11 @@ class UpdateMaterialServiceTest {
     @Test
     @DisplayName("Deve lançar exceção quando o material não for encontrado para atualização")
     void shouldThrowExceptionWhenMaterialNotFound() {
-        when(repository.findById(materialId)).thenReturn(Optional.empty());
+        when(gateway.findById(materialId)).thenReturn(Optional.empty());
 
-        assertThrows(MaterialExceptions.MaterialNotFound.class, () -> updateMaterialService.handle(command));
+        assertThrows(MaterialExceptions.MaterialNotFound.class, () -> updateMaterialUseCase.execute(command));
 
-        verify(repository).findById(materialId);
-        verify(repository, never()).save(any(Material.class));
+        verify(gateway).findById(materialId);
+        verify(gateway, never()).create(any(Material.class));
     }
 }

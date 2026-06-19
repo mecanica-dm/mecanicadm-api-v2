@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.security;
 
-import com.mecanicadm.mecanicadm_api.core.user.adapter.repository.UserRepository;
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.infra.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,12 +21,12 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
-    private final UserRepository userRepository;
+    private final UserGateway userGateway;
 
     @Autowired
-    public SecurityFilter(TokenService tokenService, UserRepository userRepository) {
+    public SecurityFilter(TokenService tokenService, UserGateway userGateway) {
         this.tokenService = tokenService;
-        this.userRepository = userRepository;
+        this.userGateway = userGateway;
     }
 
     @Override
@@ -35,10 +35,10 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             try {
                 String subject = tokenService.validateToken(token);
-                User user = userRepository.findUserByEmail(subject).orElse(null);
+                User user = userGateway.findByEmail(subject).orElse(null);
                 if (user != null) {
                     UserDetails userDetails = new UserAdapter(user);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {

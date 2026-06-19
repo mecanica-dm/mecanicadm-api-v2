@@ -6,7 +6,7 @@ import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderBudget;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderBudgetStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.SendWorkOrderBudgetCommand;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,8 +55,8 @@ class SendWorkOrderBudgetServiceTest {
 
         SendWorkOrderBudgetCommand command = new SendWorkOrderBudgetCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 
@@ -78,8 +78,8 @@ class SendWorkOrderBudgetServiceTest {
 
         SendWorkOrderBudgetCommand command = new SendWorkOrderBudgetCommand(workOrderId);
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> service.handle(command)
         );
 

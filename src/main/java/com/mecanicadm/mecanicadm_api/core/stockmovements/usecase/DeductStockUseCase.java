@@ -1,7 +1,30 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.exception.StockMovementsExceptions;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.DeductStockCommand;
 
-public interface DeductStockUseCase {
-    void handle(DeductStockCommand cmd);
+public class DeductStockUseCase {
+
+    private final StockMovementsGateway gateway;
+
+    public DeductStockUseCase(StockMovementsGateway gateway) {
+        this.gateway = gateway;
+    }
+
+    public void execute(DeductStockCommand cmd) {
+        if (cmd.quantity() <= 0) {
+            throw new StockMovementsExceptions.InvalidQuantity();
+        }
+
+        int currentBalance = gateway.getCurrentBalanceByMaterialId(cmd.materialId());
+        if (currentBalance < cmd.quantity()) {
+            throw new StockMovementsExceptions.InsufficientStock();
+        }
+
+        StockMovements stockMovements = StockMovements.recordReduction(cmd.materialId(), cmd.workOrderId(), cmd.quantity());
+        gateway.create(stockMovements);
+    }
+
 }

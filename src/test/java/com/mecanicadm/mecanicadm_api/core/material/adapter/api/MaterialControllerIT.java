@@ -3,8 +3,8 @@ package com.mecanicadm.mecanicadm_api.core.material.adapter.api;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.UpdateMaterialCommand;
-import com.mecanicadm.mecanicadm_api.core.stockmovements.adapter.repository.StockMovementsRepository;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,10 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static com.mecanicadm.mecanicadm_api.testutils.AuthUtils.getAuthToken;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -36,7 +39,7 @@ class MaterialControllerIT {
     private MockMvc mockMvc;
 
     @Autowired
-    private StockMovementsRepository stockMovementsRepository;
+    private StockMovementsGateway gateway;
 
     private String authToken;
 
@@ -70,8 +73,8 @@ class MaterialControllerIT {
                 .extract().asString().replace("\"", "");
 
         UUID materialId = UUID.fromString(materialIdStr);
-        assertTrue(stockMovementsRepository.findByMaterialId(materialId).isPresent());
-        StockMovements stockMovements = stockMovementsRepository.findByMaterialId(materialId).get();
+        assertTrue(gateway.findByMaterialId(materialId).isPresent());
+        StockMovements stockMovements = gateway.findByMaterialId(materialId).get();
         assertEquals(10, stockMovements.getQuantity());
     }
 

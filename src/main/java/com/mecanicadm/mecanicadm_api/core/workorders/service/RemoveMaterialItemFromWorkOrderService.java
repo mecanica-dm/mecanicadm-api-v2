@@ -28,7 +28,7 @@ public class RemoveMaterialItemFromWorkOrderService implements RemoveMaterialIte
         WorkOrder workOrder = workOrderRepository.findById(cmd.workOrderId())
                 .orElseThrow(WorkOrderExceptions.NotFound::new);
 
-        softDeleteStockUseCase.handle(new SoftDeleteStockCommand(cmd.materialId(), cmd.workOrderId()));
+        softDeleteStockUseCase.execute(new SoftDeleteStockCommand(cmd.materialId(), cmd.workOrderId()));
 
         workOrder.removeMaterialItem(cmd.materialId());
         workOrderRepository.save(workOrder);

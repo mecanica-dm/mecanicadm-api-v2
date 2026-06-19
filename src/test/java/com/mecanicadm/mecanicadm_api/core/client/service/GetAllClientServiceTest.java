@@ -1,115 +1,77 @@
 package com.mecanicadm.mecanicadm_api.core.client.service;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.api.dto.ClientResponse;
-import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageQuery;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageResult;
+import com.mecanicadm.mecanicadm_api.core.client.usecase.GetAllClientUseCase;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.query.GetAllClientQuery;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GetAllClientServiceTest {
 
-    @Mock
-    private ClientRepository repository;
-
-    @InjectMocks
-    private GetAllClientService getAllClientService;
+    private ClientGateway repository;
 
     @Test
     @DisplayName("Deve listar os clientes com sucesso usando filtros e paginação")
     void shouldGetAllClientsSuccessfully() {
-        String name = "Test";
-        String document = "17871234053";
-        Pageable pageable = mock(Pageable.class);
-        GetAllClientQuery query = new GetAllClientQuery(name, document, pageable);
+        repository = mock(ClientGateway.class);
+        GetAllClientQuery query = new GetAllClientQuery(null, null, 0, 10, "name", "ASC");
+        ClientPageResult expectedPage = new ClientPageResult(List.of(mock(Client.class)), 1);
+        GetAllClientUseCase useCase = new GetAllClientUseCase(repository);
 
-        Client client = mock(Client.class);
-        when(client.getId()).thenReturn(UUID.randomUUID());
-        when(client.getName()).thenReturn("Test Name");
-        when(client.getEmail()).thenReturn("test@example.com");
-        when(client.getDocument()).thenReturn(document);
-        when(client.getPhone()).thenReturn("48999999999");
+        when(repository.findAll(argThat(q -> q.page() == 0 && q.size() == 10 && q.sortBy().equals("name") && q.direction().equals("ASC")))).thenReturn(expectedPage);
 
-        Page<Client> pageResult = new PageImpl<>(List.of(client));
-        when(repository.findAll(any(Specification.class), eq(pageable))).thenReturn(pageResult);
-
-        Page<ClientResponse> result = getAllClientService.handle(query);
+        ClientPageResult result = useCase.execute(query);
 
         assertNotNull(result);
-        assertEquals(1, result.getContent().size());
-        assertEquals("Test Name", result.getContent().get(0).name());
-        verify(repository).findAll(any(Specification.class), eq(pageable));
+        assertEquals(1, result.items().size());
+        verify(repository).findAll(any(ClientPageQuery.class));
     }
 
     @Test
-    @DisplayName("Deve listar clientes com sucesso quando Documento é nulo")
-    void shouldGetAllClientsSuccessfullyWhenDocumentIsNull() {
-        String name = "Test";
-        String document = null;
-        Pageable pageable = mock(Pageable.class);
-        GetAllClientQuery query = new GetAllClientQuery(name, document, pageable);
+    @DisplayName("Deve aplicar filtro de documento quando fornecido na query")
+    void shouldApplyDocumentFilter() {
+        repository = mock(ClientGateway.class);
+        GetAllClientQuery query = new GetAllClientQuery(null, "17871234053", 0, 10, "name", "ASC");
+        ClientPageResult expectedPage = new ClientPageResult(List.of(mock(Client.class)), 1);
+        GetAllClientUseCase useCase = new GetAllClientUseCase(repository);
 
-        Client client = mock(Client.class);
-        when(client.getId()).thenReturn(UUID.randomUUID());
-        when(client.getName()).thenReturn("Test Name");
-        when(client.getEmail()).thenReturn("test@example.com");
-        when(client.getDocument()).thenReturn("17871234053");
-        when(client.getPhone()).thenReturn("48999999999");
+        when(repository.findAll(any(ClientPageQuery.class))).thenReturn(expectedPage);
 
-        Page<Client> pageResult = new PageImpl<>(List.of(client));
-        when(repository.findAll(any(Specification.class), eq(pageable))).thenReturn(pageResult);
-
-        Page<ClientResponse> result = getAllClientService.handle(query);
+        ClientPageResult result = useCase.execute(query);
 
         assertNotNull(result);
-        assertEquals(1, result.getContent().size());
-        assertEquals("Test Name", result.getContent().get(0).name());
-
-        verify(repository).findAll(any(Specification.class), eq(pageable));
+        verify(repository).findAll(argThat(q -> "17871234053".equals(q.filter().document())));
     }
 
     @Test
-    @DisplayName("Deve listar clientes com sucesso quando Documento é vazio")
-    void shouldGetAllClientsSuccessfullyWhenDocumentIsEmpty() {
-        String name = "Test";
-        String document = "";
-        Pageable pageable = mock(Pageable.class);
-        GetAllClientQuery query = new GetAllClientQuery(name, document, pageable);
+    @DisplayName("Deve aplicar filtro de nome quando fornecido na query")
+    void shouldApplyNameFilter() {
+        repository = mock(ClientGateway.class);
+        GetAllClientQuery query = new GetAllClientQuery("João", null, 0, 10, "name", "ASC");
+        ClientPageResult expectedPage = new ClientPageResult(List.of(mock(Client.class)), 1);
+        GetAllClientUseCase useCase = new GetAllClientUseCase(repository);
 
-        Client client = mock(Client.class);
-        when(client.getId()).thenReturn(UUID.randomUUID());
-        when(client.getName()).thenReturn("Test Name");
-        when(client.getEmail()).thenReturn("test@example.com");
-        when(client.getDocument()).thenReturn("17871234053");
-        when(client.getPhone()).thenReturn("48999999999");
+        when(repository.findAll(any(ClientPageQuery.class))).thenReturn(expectedPage);
 
-        Page<Client> pageResult = new PageImpl<>(List.of(client));
-        when(repository.findAll(any(Specification.class), eq(pageable))).thenReturn(pageResult);
-
-        Page<ClientResponse> result = getAllClientService.handle(query);
+        ClientPageResult result = useCase.execute(query);
 
         assertNotNull(result);
-        assertEquals(1, result.getContent().size());
-        assertEquals("Test Name", result.getContent().get(0).name());
-
-        verify(repository).findAll(any(Specification.class), eq(pageable));
+        verify(repository).findAll(argThat(q -> "João".equals(q.filter().name())));
     }
 }

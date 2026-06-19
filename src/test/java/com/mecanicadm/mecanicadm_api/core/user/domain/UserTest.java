@@ -77,11 +77,11 @@ class UserTest {
         when(encoder.encode(anyString())).thenReturn("encoded");
         User user = User.create("test@email.com", "password123", "Name", encoder);
 
-        user.addRole(UserRole.USER);
-        assertTrue(user.getRoles().contains(UserRole.USER));
+        user.addRole(UserRole.ATTENDANT);
+        assertTrue(user.getRoles().contains(UserRole.ATTENDANT));
 
-        user.removeRole(UserRole.USER);
-        assertFalse(user.getRoles().contains(UserRole.USER));
+        user.removeRole(UserRole.ATTENDANT);
+        assertFalse(user.getRoles().contains(UserRole.ATTENDANT));
     }
 
     @Test

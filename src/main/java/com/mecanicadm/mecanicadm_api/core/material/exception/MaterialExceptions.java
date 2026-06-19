@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.material.exception;
 
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.springframework.http.HttpStatus;
 
 public class MaterialExceptions {
@@ -8,7 +8,7 @@ public class MaterialExceptions {
     private MaterialExceptions() {
     }
 
-    public static class MaterialNotFound extends DomainException {
+    public static class MaterialNotFound extends DomainExceptionCore {
         public MaterialNotFound() {
             super("material.not.found", HttpStatus.NOT_FOUND);
         }

@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.validation;
 
+import com.mecanicadm.mecanicadm_api.shared.validation.CpfCnpjValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

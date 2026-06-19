@@ -1,9 +1,22 @@
 package com.mecanicadm.mecanicadm_api.core.client.usecase;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.api.dto.ClientResponse;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientFilter;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageQuery;
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageResult;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.query.GetAllClientQuery;
-import org.springframework.data.domain.Page;
 
-public interface GetAllClientUseCase {
-    Page<ClientResponse> handle(GetAllClientQuery query);
+public class GetAllClientUseCase {
+
+    private final ClientGateway gateway;
+
+    public GetAllClientUseCase(ClientGateway gateway) {
+        this.gateway = gateway;
+    }
+
+    public ClientPageResult execute(GetAllClientQuery query) {
+        ClientFilter filter = new ClientFilter(query.name(), query.document());
+        ClientPageQuery pageQuery = new ClientPageQuery(filter, query.page(), query.size(), query.sortBy(), query.direction());
+        return gateway.findAll(pageQuery);
+    }
 }

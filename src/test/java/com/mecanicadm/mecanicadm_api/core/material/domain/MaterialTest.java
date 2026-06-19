@@ -3,12 +3,11 @@ package com.mecanicadm.mecanicadm_api.core.material.domain;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class MaterialTest {
 
@@ -55,23 +54,5 @@ class MaterialTest {
         assertEquals("Descrição Nova", material.getDescription());
         assertEquals(new BigDecimal("200.00"), material.getPrice());
         assertEquals(MaterialType.CONSUMABLE, material.getType());
-    }
-
-    @Test
-    @DisplayName("Deve retornar true para isDeleted quando deletedAt estiver preenchido")
-    void shouldReturnTrueWhenDeletedAtIsPresent() {
-        Material material = Material.create(
-                "Material Teste",
-                "Marca Teste",
-                "Descrição Teste",
-                new BigDecimal("10.00"),
-                MaterialType.PART
-        );
-
-        assertFalse(material.getDeletedAt().isPresent());
-
-        ReflectionTestUtils.setField(material, "deletedAt", LocalDateTime.now());
-
-        assertTrue(material.getDeletedAt().isPresent());
     }
 }

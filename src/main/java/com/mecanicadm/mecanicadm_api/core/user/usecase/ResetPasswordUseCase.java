@@ -1,7 +1,41 @@
 package com.mecanicadm.mecanicadm_api.core.user.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.user.domain.PasswordResetToken;
+import com.mecanicadm.mecanicadm_api.core.user.domain.User;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.PasswordResetTokenGateway;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
+import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.ResetPasswordCommand;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-public interface ResetPasswordUseCase {
-    void handle(ResetPasswordCommand cmd);
+import java.time.LocalDateTime;
+
+public class ResetPasswordUseCase {
+
+    private final UserGateway userGateway;
+    private final PasswordResetTokenGateway passwordResetTokenGateway;
+    private final PasswordEncoder passwordEncoder;
+
+    public ResetPasswordUseCase(UserGateway userGateway,
+                                PasswordResetTokenGateway passwordResetTokenGateway,
+                                PasswordEncoder passwordEncoder) {
+        this.userGateway = userGateway;
+        this.passwordResetTokenGateway = passwordResetTokenGateway;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public void execute(ResetPasswordCommand cmd) {
+        PasswordResetToken resetToken = passwordResetTokenGateway.findByToken(cmd.token())
+                .orElseThrow(UserExceptions.TokenInvalid::new);
+
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new UserExceptions.TokenExpired();
+        }
+
+        User user = resetToken.getUser();
+        user.changePassword(cmd.newPassword(), passwordEncoder);
+
+        userGateway.update(user);
+        passwordResetTokenGateway.delete(resetToken);
+    }
 }

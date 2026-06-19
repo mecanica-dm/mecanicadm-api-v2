@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.labor.adapter.repository.LaborRepository;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.exception.LaborExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CreateWorkOrderLaborItemCommand;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class CreateWorkOrderLaborItemServiceTest {
 
     @Mock
-    private LaborRepository laborRepository;
+    private LaborGateway laborGateway;
 
     @InjectMocks
     private CreateWorkOrderLaborItemService createWorkOrderLaborItemService;
@@ -38,21 +38,21 @@ class CreateWorkOrderLaborItemServiceTest {
     @Test
     @DisplayName("Deve criar um item de mão de obra da ordem de serviço com sucesso")
     void shouldCreateWorkOrderLaborItemSuccessfully() {
-        when(laborRepository.existsById(laborId)).thenReturn(true);
+        when(laborGateway.existsById(laborId)).thenReturn(true);
 
         WorkOrderLaborItem result = createWorkOrderLaborItemService.handle(command);
 
         assertNotNull(result);
         assertEquals(laborId, result.getLaborId());
-        verify(laborRepository).existsById(laborId);
+        verify(laborGateway).existsById(laborId);
     }
 
     @Test
     @DisplayName("Deve lançar exceção quando a mão de obra não for encontrada")
     void shouldThrowExceptionWhenLaborNotFound() {
-        when(laborRepository.existsById(laborId)).thenReturn(false);
+        when(laborGateway.existsById(laborId)).thenReturn(false);
 
         assertThrows(LaborExceptions.LaborNotFound.class, () -> createWorkOrderLaborItemService.handle(command));
-        verify(laborRepository).existsById(laborId);
+        verify(laborGateway).existsById(laborId);
     }
 }

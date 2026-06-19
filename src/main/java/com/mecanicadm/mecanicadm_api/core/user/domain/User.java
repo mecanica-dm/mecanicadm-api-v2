@@ -2,48 +2,38 @@ package com.mecanicadm.mecanicadm_api.core.user.domain;
 
 import com.mecanicadm.mecanicadm_api.core.user.domain.enums.UserRole;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
-import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+import com.mecanicadm.mecanicadm_api.shared.domain.AuditDomain;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?")
-@SQLRestriction("deleted_at IS NULL")
-public class User extends AuditEntity {
+public class User extends AuditDomain {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    protected UUID id;
-
-    @Column(name = "email", nullable = false, unique = true)
+    private final UUID id;
     private String email;
-
-    @Column(name = "password")
     private String password;
-
-    @Column(name = "name", nullable = false)
     private String name;
+    private List<UserRole> roles = new ArrayList<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private final Set<UserRole> roles = new HashSet<>();
-
-    protected User() {
+    private User(UUID id, String email, String password, String name, List<UserRole> roles, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.roles = roles;
+        this.deletedAt = deletedAt;
+        this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
+        validate();
     }
 
     protected User(String email, String encodedPassword, String name) {
+        super();
+        this.id = UUID.randomUUID();
         this.email = email;
         this.password = encodedPassword;
         this.name = name;
@@ -56,15 +46,21 @@ public class User extends AuditEntity {
         return new User(email, passwordEncoder.encode(rawPassword), name);
     }
 
+    public static User restore(UUID id, String email, String password, String name, List<UserRole> roles, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+        return new User(id, email, password, name, roles, deletedAt, dateCreated, dateUpdated);
+    }
+
     public void updateInfo(String name, String email) {
         this.name = name;
         this.email = email;
+        this.dateUpdated = LocalDateTime.now();
         validate();
     }
 
     public void changePassword(String rawPassword, PasswordEncoder passwordEncoder) {
         validatePassword(rawPassword);
         this.password = passwordEncoder.encode(rawPassword);
+        this.dateUpdated = LocalDateTime.now();
     }
 
     private static void validatePassword(String rawPassword) {
@@ -95,16 +91,18 @@ public class User extends AuditEntity {
         return name;
     }
 
-    public Set<UserRole> getRoles() {
-        return Collections.unmodifiableSet(roles);
+    public List<UserRole> getRoles() {
+        return roles;
     }
 
     public void addRole(UserRole role) {
         this.roles.add(role);
+        this.dateUpdated = LocalDateTime.now();
     }
 
     public void removeRole(UserRole role) {
         this.roles.remove(role);
+        this.dateUpdated = LocalDateTime.now();
     }
 
     private void validate() {
@@ -113,7 +111,4 @@ public class User extends AuditEntity {
         }
     }
 
-    public boolean isDeleted() {
-        return super.deletedAt != null;
-    }
 }

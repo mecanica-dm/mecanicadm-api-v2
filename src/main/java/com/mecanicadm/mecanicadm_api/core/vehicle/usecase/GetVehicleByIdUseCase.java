@@ -1,8 +1,23 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.usecase;
 
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
+import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetVehicleByIdQuery;
 
-public interface GetVehicleByIdUseCase {
-    Vehicle handle(GetVehicleByIdQuery query);
+import java.util.Optional;
+
+public class GetVehicleByIdUseCase {
+
+    private final VehicleGateway gateway;
+
+    public GetVehicleByIdUseCase(VehicleGateway gateway) {
+        this.gateway = gateway;
+    }
+
+    public Vehicle execute(GetVehicleByIdQuery query) {
+        Optional<Vehicle> opt = gateway.findByLicensePlate(query.licensePlate());
+        return opt.orElseThrow(VehicleExceptions.NotFound::new);
+    }
 }
+

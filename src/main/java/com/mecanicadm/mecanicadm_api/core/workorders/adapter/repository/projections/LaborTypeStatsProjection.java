@@ -1,7 +1,9 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections;
 
+import java.util.UUID;
+
 public interface LaborTypeStatsProjection {
-    Object getLaborId();
+    UUID getLaborId();
     String getLaborName();
     Long getTotalExecutions();
     Double getAverageExecutionMinutes();

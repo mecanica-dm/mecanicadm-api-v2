@@ -55,14 +55,14 @@ class RemoveMaterialItemFromWorkOrderServiceTest {
     @DisplayName("Deve remover um item de material da ordem de serviço com sucesso")
     void shouldRemoveMaterialItemFromWorkOrderSuccessfully() {
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.of(mockWorkOrder));
-        doNothing().when(softDeleteStockUseCase).handle(any(SoftDeleteStockCommand.class));
+        doNothing().when(softDeleteStockUseCase).execute(any(SoftDeleteStockCommand.class));
         doNothing().when(mockWorkOrder).removeMaterialItem(materialId);
         when(workOrderRepository.save(mockWorkOrder)).thenReturn(mockWorkOrder);
 
         removeMaterialItemFromWorkOrderService.handle(command);
 
         verify(workOrderRepository).findById(workOrderId);
-        verify(softDeleteStockUseCase).handle(new SoftDeleteStockCommand(materialId, workOrderId));
+        verify(softDeleteStockUseCase).execute(new SoftDeleteStockCommand(materialId, workOrderId));
         verify(mockWorkOrder).removeMaterialItem(materialId);
         verify(workOrderRepository).save(mockWorkOrder);
     }
@@ -76,7 +76,7 @@ class RemoveMaterialItemFromWorkOrderServiceTest {
                 removeMaterialItemFromWorkOrderService.handle(command));
 
         verify(workOrderRepository).findById(workOrderId);
-        verify(softDeleteStockUseCase, never()).handle(any(SoftDeleteStockCommand.class));
+        verify(softDeleteStockUseCase, never()).execute(any(SoftDeleteStockCommand.class));
         verify(mockWorkOrder, never()).removeMaterialItem(materialId);
         verify(workOrderRepository, never()).save(any(WorkOrder.class));
     }
@@ -85,14 +85,14 @@ class RemoveMaterialItemFromWorkOrderServiceTest {
     @DisplayName("Deve lançar exceção quando o item de material não é encontrado na ordem de serviço")
     void shouldThrowExceptionWhenMaterialItemNotFoundInWorkOrder() {
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.of(mockWorkOrder));
-        doNothing().when(softDeleteStockUseCase).handle(any(SoftDeleteStockCommand.class));
+        doNothing().when(softDeleteStockUseCase).execute(any(SoftDeleteStockCommand.class));
         doThrow(new WorkOrderExceptions.NotFound()).when(mockWorkOrder).removeMaterialItem(materialId);
 
         assertThrows(WorkOrderExceptions.NotFound.class, () ->
                 removeMaterialItemFromWorkOrderService.handle(command));
 
         verify(workOrderRepository).findById(workOrderId);
-        verify(softDeleteStockUseCase).handle(new SoftDeleteStockCommand(materialId, workOrderId));
+        verify(softDeleteStockUseCase).execute(new SoftDeleteStockCommand(materialId, workOrderId));
         verify(mockWorkOrder).removeMaterialItem(materialId);
         verify(workOrderRepository, never()).save(any(WorkOrder.class));
     }

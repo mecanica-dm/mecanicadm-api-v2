@@ -1,48 +1,26 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.domain;
 
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.enums.MovementType;
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
-@Entity
-@Table(name = "stock_movements")
-@SQLDelete(sql = "UPDATE stock_movements SET deleted_at = now() WHERE id = ?")
-@SQLRestriction("deleted_at IS NULL")
-public class StockMovements extends AuditEntity {
+public class StockMovements {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "work_order_id")
     private UUID workOrderId;
 
-    @Column(name = "material_id", nullable = false)
     private UUID materialId;
 
-    @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
     private MovementType type;
 
-    protected StockMovements() {
+    public StockMovements() {
     }
 
-    private StockMovements(UUID materialId, UUID workOrderId, Integer quantity, MovementType type) {
+    public StockMovements(UUID id, UUID materialId, UUID workOrderId, Integer quantity, MovementType type) {
+        this.id = id;
         this.materialId = materialId;
         this.workOrderId = workOrderId;
         this.quantity = quantity;
@@ -50,17 +28,17 @@ public class StockMovements extends AuditEntity {
     }
 
     public static StockMovements recordAddition(UUID materialId, Integer amount) {
-        return new StockMovements(materialId, null, amount, MovementType.ADDITION);
+        return new StockMovements(null, materialId, null, amount, MovementType.ADDITION);
     }
 
     public static StockMovements recordReduction(UUID materialId, UUID workOrderId, Integer amount) {
-        return new StockMovements(materialId, workOrderId, amount, MovementType.REDUCTION);
+        return new StockMovements(null, materialId, workOrderId, amount, MovementType.REDUCTION);
     }
-    
+
     public UUID getId() {
         return id;
     }
-    
+
     public UUID getWorkOrderId() {
         return workOrderId;
     }

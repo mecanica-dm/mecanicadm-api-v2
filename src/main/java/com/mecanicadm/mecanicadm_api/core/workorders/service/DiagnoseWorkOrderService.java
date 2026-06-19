@@ -1,8 +1,8 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.client.adapter.repository.ClientRepository;
+import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.ClientJpaRepository;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
-import com.mecanicadm.mecanicadm_api.core.vehicle.adapter.repository.VehicleRepository;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
@@ -21,13 +21,13 @@ import java.util.UUID;
 public class DiagnoseWorkOrderService implements DiagnoseWorkOrderUseCase {
 
     private final WorkOrderRepository workOrderRepository;
-    private final ClientRepository clientRepository;
-    private final VehicleRepository vehicleRepository;
+    private final ClientJpaRepository clientRepository;
+    private final VehicleGateway vehicleRepository;
     private final CalculateWorkOrderBudgetUseCase calculateWorkOrderBudgetUseCase;
 
     public DiagnoseWorkOrderService(WorkOrderRepository workOrderRepository,
-                                    ClientRepository clientRepository,
-                                    VehicleRepository vehicleRepository,
+                                    ClientJpaRepository clientRepository,
+                                    VehicleGateway vehicleRepository,
                                     CalculateWorkOrderBudgetUseCase calculateWorkOrderBudgetUseCase) {
         this.workOrderRepository = workOrderRepository;
         this.clientRepository = clientRepository;
@@ -66,7 +66,7 @@ public class DiagnoseWorkOrderService implements DiagnoseWorkOrderUseCase {
             throw new ClientExceptions.NotFound();
         }
 
-        if (!vehicleRepository.existsById(workOrder.getVehicleId())) {
+        if (!vehicleRepository.existsByLicensePlate(workOrder.getVehicleId())) {
             throw new VehicleExceptions.NotFound();
         }
     }
