@@ -43,6 +43,6 @@ public class WorkOrderAnalyticsController implements WorkOrderAnalyticsOpenApi {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate initialDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate finalDate) {
         var report = getAllLaborExecutionTimeReportUseCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
-        return ResponseEntity.ok(report);
+        return ResponseEntity.ok(LaborExecutionReportResponse.from(report));
     }
 }

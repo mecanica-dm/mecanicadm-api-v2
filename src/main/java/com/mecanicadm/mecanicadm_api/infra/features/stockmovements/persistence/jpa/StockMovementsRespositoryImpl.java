@@ -4,11 +4,14 @@ import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsFilter;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.entity.StockMovementsJpaEntity;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class StockMovementsRespositoryImpl implements StockMovementsGateway {
@@ -21,15 +24,22 @@ public class StockMovementsRespositoryImpl implements StockMovementsGateway {
 
     @Override
     public StockMovements create(StockMovements stockMovements) {
+        if (isNull(stockMovements)) {
+            throw new TechnicalException("error.technical.entity.null", "StockMovements", "criação");
+        }
         StockMovementsJpaEntity entity = StockMovementsJpaMapper.toEntity(stockMovements);
         StockMovementsJpaEntity saved = jpaRepository.save(entity);
         return StockMovementsJpaMapper.toDomain(saved);
     }
 
     @Override
-    public void delete(StockMovements stockMovements) {
+    public StockMovements update(StockMovements stockMovements) {
+        if (isNull(stockMovements)) {
+            throw new TechnicalException("error.technical.entity.null", "StockMovements", "atualização");
+        }
         StockMovementsJpaEntity entity = StockMovementsJpaMapper.toEntity(stockMovements);
-        jpaRepository.delete(entity);
+        StockMovementsJpaEntity saved = jpaRepository.save(entity);
+        return StockMovementsJpaMapper.toDomain(saved);
     }
 
     @Override

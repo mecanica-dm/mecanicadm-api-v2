@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.core.workorders.exception;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,23 +24,23 @@ class WorkOrderExceptionsTest {
     @Test
     @DisplayName("Deve instanciar todas as exceções de WorkOrder para garantir cobertura")
     void shouldInstantiateAllExceptions() {
-        assertException(new WorkOrderExceptions.NotFound(), HttpStatus.NOT_FOUND, "work.order.not.found");
-        assertException(new WorkOrderExceptions.InvalidMaterialQuantity(), HttpStatus.BAD_REQUEST, "work.order.material.quantity.invalid");
-        assertException(new WorkOrderExceptions.InvalidStatusTransition("FROM", "TO"), HttpStatus.BAD_REQUEST, "work.order.status.transition.invalid");
-        assertException(new WorkOrderExceptions.LaborItemsRequired(), HttpStatus.BAD_REQUEST, "work.order.labor.required");
-        assertException(new WorkOrderExceptions.LaborItemNotFound(), HttpStatus.NOT_FOUND, "work.order.labor.item.not.found");
-        assertException(new WorkOrderExceptions.ClientRequired(), HttpStatus.BAD_REQUEST, "work.order.client.required");
-        assertException(new WorkOrderExceptions.VehicleRequired(), HttpStatus.BAD_REQUEST, "work.order.vehicle.required");
-        assertException(new WorkOrderExceptions.BudgetNotFound(), HttpStatus.NOT_FOUND, "work.order.budget.not.found");
-        assertException(new WorkOrderExceptions.BudgetDecisionInvalid("INVALID_DECISION"), HttpStatus.BAD_REQUEST, "work.order.budget.decision.invalid");
-        assertException(new WorkOrderExceptions.BudgetRejectionReasonRequired(), HttpStatus.BAD_REQUEST, "work.order.budget.rejection.reason.required");
-        assertException(new WorkOrderExceptions.BudgetNotWaitingDecision(), HttpStatus.BAD_REQUEST, "work.order.budget.not.waiting.decision");
-        assertException(new WorkOrderExceptions.InvalidLaborStatusTransition("FROM", "TO"), HttpStatus.BAD_REQUEST, "work.order.labor.status.transition.invalid");
-        assertException(new WorkOrderExceptions.LaborCannotStartIfNotInExecution(), HttpStatus.BAD_REQUEST, "work.order.labor.start.not.in.execution");
-        assertException(new WorkOrderExceptions.InvalidReportPeriod(), HttpStatus.BAD_REQUEST, "work.order.report.period.invalid");
+        assertException(new WorkOrderExceptions.NotFound(), 404, "work.order.not.found");
+        assertException(new WorkOrderExceptions.InvalidMaterialQuantity(), 400, "work.order.material.quantity.invalid");
+        assertException(new WorkOrderExceptions.InvalidStatusTransition("FROM", "TO"), 400, "work.order.status.transition.invalid");
+        assertException(new WorkOrderExceptions.LaborItemsRequired(), 400, "work.order.labor.required");
+        assertException(new WorkOrderExceptions.LaborItemNotFound(), 404, "work.order.labor.item.not.found");
+        assertException(new WorkOrderExceptions.ClientRequired(), 400, "work.order.client.required");
+        assertException(new WorkOrderExceptions.VehicleRequired(), 400, "work.order.vehicle.required");
+        assertException(new WorkOrderExceptions.BudgetNotFound(), 404, "work.order.budget.not.found");
+        assertException(new WorkOrderExceptions.BudgetDecisionInvalid("INVALID_DECISION"), 400, "work.order.budget.decision.invalid");
+        assertException(new WorkOrderExceptions.BudgetRejectionReasonRequired(), 400, "work.order.budget.rejection.reason.required");
+        assertException(new WorkOrderExceptions.BudgetNotWaitingDecision(), 400, "work.order.budget.not.waiting.decision");
+        assertException(new WorkOrderExceptions.InvalidLaborStatusTransition("FROM", "TO"), 400, "work.order.labor.status.transition.invalid");
+        assertException(new WorkOrderExceptions.LaborCannotStartIfNotInExecution(), 400, "work.order.labor.start.not.in.execution");
+        assertException(new WorkOrderExceptions.InvalidReportPeriod(), 400, "work.order.report.period.invalid");
     }
 
-    private void assertException(DomainExceptionCore ex, HttpStatus status, String messageKey) {
+    private void assertException(DomainExceptionCore ex, int status, String messageKey) {
         assertEquals(status, ex.getStatus());
         assertEquals(messageKey, ex.getMessageKey());
     }

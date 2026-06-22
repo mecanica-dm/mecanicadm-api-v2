@@ -3,27 +3,30 @@ package com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa;
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.entity.ClientJpaEntity;
 
-import static java.util.Objects.isNull;
-
 public class ClientJpaMapper {
 
     public static Client toDomain(ClientJpaEntity entity) {
-        if (isNull(entity)) return null;
-        return new Client(entity.getId(),
+        return Client.restore(entity.getId(),
                 entity.getName(),
                 entity.getEmail(),
                 entity.getDocument(),
-                entity.getPhone()
+                entity.getPhone(),
+                entity.getDateCreated(),
+                entity.getDateUpdated(),
+                entity.getDeletedAt()
         );
     }
 
     public static ClientJpaEntity toEntity(Client domain) {
-        if (isNull(domain)) return null;
-        return new ClientJpaEntity(domain.getId(),
+        ClientJpaEntity entity = new ClientJpaEntity(domain.getId(),
                 domain.getName(),
                 domain.getEmail(),
                 domain.getDocument(),
                 domain.getPhone()
         );
+        entity.setDateCreated(domain.getDateCreated());
+        entity.setDateUpdated(domain.getDateUpdated());
+        entity.setDeletedAt(domain.getDeletedAt());
+        return entity;
     }
 }

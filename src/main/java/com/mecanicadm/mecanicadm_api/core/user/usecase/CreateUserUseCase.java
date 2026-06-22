@@ -4,11 +4,12 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.CreateUserCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.UUID;
 
-public class CreateUserUseCase {
+public class CreateUserUseCase implements UseCase<CreateUserCommand, UUID> {
 
     private final UserGateway userGateway;
     private final PasswordEncoder passwordEncoder;
@@ -18,16 +19,18 @@ public class CreateUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
     public UUID execute(CreateUserCommand command) {
-        userGateway.findByEmail(command.email()).ifPresent(user -> {
+        if (userGateway.findByEmail(command.email()).isPresent()) {
             throw new UserExceptions.UserAlreadyExists();
-        });
+        }
+
+        User.validatePassword(command.password());
 
         User user = User.create(
                 command.email(),
-                command.password(),
-                command.name(),
-                passwordEncoder
+                passwordEncoder.encode(command.password()),
+                command.name()
         );
 
         User created = userGateway.create(user);

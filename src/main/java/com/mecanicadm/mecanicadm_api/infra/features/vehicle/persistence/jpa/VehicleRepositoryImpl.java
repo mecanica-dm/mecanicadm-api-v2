@@ -6,6 +6,7 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageQuery;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.persistence.entity.VehicleJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.persistence.jpa.specification.VehicleSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,6 +14,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class VehicleRepositoryImpl implements VehicleGateway {
@@ -25,6 +28,9 @@ public class VehicleRepositoryImpl implements VehicleGateway {
 
     @Override
     public Vehicle create(Vehicle vehicle) {
+        if (isNull(vehicle)) {
+            throw new TechnicalException("error.technical.entity.null", "Vehicle", "criação");
+        }
         VehicleJpaEntity entity = VehicleJpaMapper.toEntity(vehicle);
         VehicleJpaEntity saved = jpaRepository.save(entity);
         return VehicleJpaMapper.toDomain(saved);
@@ -32,14 +38,12 @@ public class VehicleRepositoryImpl implements VehicleGateway {
 
     @Override
     public Vehicle update(Vehicle vehicle) {
+        if (isNull(vehicle)) {
+            throw new TechnicalException("error.technical.entity.null", "Vehicle", "atualização");
+        }
         VehicleJpaEntity entity = VehicleJpaMapper.toEntity(vehicle);
         VehicleJpaEntity saved = jpaRepository.save(entity);
         return VehicleJpaMapper.toDomain(saved);
-    }
-
-    @Override
-    public void deleteByLicensePlate(String licensePlate) {
-        jpaRepository.deleteById(licensePlate);
     }
 
     @Override

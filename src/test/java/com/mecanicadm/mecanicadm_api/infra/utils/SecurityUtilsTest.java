@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +38,7 @@ class SecurityUtilsTest {
     @Test
     @DisplayName("Deve retornar o usuário autenticado")
     void shouldReturnAuthenticatedUser() {
-        User user = User.create("test@test.com", "password123", "Test User", mock(PasswordEncoder.class));
+        User user = User.create("test@test.com", "password123", "Test User");
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(auth);
 

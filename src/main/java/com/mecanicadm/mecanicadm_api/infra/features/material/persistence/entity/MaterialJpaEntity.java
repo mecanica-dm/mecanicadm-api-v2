@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
@@ -20,7 +19,6 @@ import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "materials")
-@SQLDelete(sql = "UPDATE materials SET deleted_at = now() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class MaterialJpaEntity extends AuditEntity {
 

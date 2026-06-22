@@ -1,7 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.stockmovements.exception;
 
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
-import org.springframework.http.HttpStatus;
 
 public class StockMovementsExceptions {
 
@@ -10,19 +9,19 @@ public class StockMovementsExceptions {
 
     public static class NotFound extends DomainExceptionCore {
         public NotFound() {
-            super("stock.not.found", HttpStatus.NOT_FOUND);
+            super("stock.not.found", 404);
         }
     }
 
     public static class InvalidQuantity extends DomainExceptionCore {
         public InvalidQuantity() {
-            super("stock.quantity.invalid", HttpStatus.BAD_REQUEST);
+            super("stock.quantity.invalid", 400);
         }
     }
 
     public static class InsufficientStock extends DomainExceptionCore {
         public InsufficientStock() {
-            super("stock.quantity.insufficient", HttpStatus.BAD_REQUEST);
+            super("stock.quantity.insufficient", 400);
         }
     }
 }

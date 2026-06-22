@@ -4,8 +4,9 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.exception.LaborExceptions;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetLaborByIdQuery;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
-public class GetLaborByIdUseCase {
+public class GetLaborByIdUseCase implements UseCase<GetLaborByIdQuery, Labor> {
 
     private final LaborGateway gateway;
 

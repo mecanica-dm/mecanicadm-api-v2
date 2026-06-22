@@ -1,37 +1,36 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.exception;
 
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
-import org.springframework.http.HttpStatus;
 
 public final class VehicleExceptions {
 
     public static class LicensePlateNotEmpty extends DomainExceptionCore {
-        public LicensePlateNotEmpty() { super("validation.vehicle.licensePlate.not.blank", HttpStatus.BAD_REQUEST); }
+        public LicensePlateNotEmpty() { super("validation.vehicle.licensePlate.not.blank", 400); }
     }
 
     public static class InvalidLicensePlate extends DomainExceptionCore {
-        public InvalidLicensePlate() { super("validation.vehicle.licensePlate.invalid", HttpStatus.BAD_REQUEST); }
+        public InvalidLicensePlate() { super("validation.vehicle.licensePlate.invalid", 400); }
     }
 
     public static class ModelNotEmpty extends DomainExceptionCore {
-        public ModelNotEmpty() { super("validation.vehicle.model.not.blank", HttpStatus.BAD_REQUEST); }
+        public ModelNotEmpty() { super("validation.vehicle.model.not.blank", 400); }
     }
 
     public static class BrandNotEmpty extends DomainExceptionCore {
-        public BrandNotEmpty() { super("validation.vehicle.brand.not.blank", HttpStatus.BAD_REQUEST); }
+        public BrandNotEmpty() { super("validation.vehicle.brand.not.blank", 400); }
     }
 
     public static class InvalidModelYear extends DomainExceptionCore {
-        public InvalidModelYear() { super("validation.vehicle.modelYear.invalid", HttpStatus.BAD_REQUEST); }
+        public InvalidModelYear() { super("validation.vehicle.modelYear.invalid", 400); }
     }
 
     public static class NotFound extends DomainExceptionCore {
-        public NotFound() { super("vehicle.not.found", HttpStatus.NOT_FOUND); }
+        public NotFound() { super("vehicle.not.found", 404); }
     }
 
     public static class VehicleExists extends DomainExceptionCore {
-        public VehicleExists(String licensePlate) { super("vehicle.exists", HttpStatus.BAD_REQUEST, licensePlate); }
-        public VehicleExists() { super("vehicle.licensePlate.exists", HttpStatus.BAD_REQUEST); }
+        public VehicleExists(String licensePlate) { super("vehicle.exists", 400, licensePlate); }
+        public VehicleExists() { super("vehicle.licensePlate.exists", 400); }
     }
 }
 

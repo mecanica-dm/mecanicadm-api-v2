@@ -15,7 +15,7 @@ public class UserJpaMapper {
 
         entity.setDateCreated(user.getDateCreated());
         entity.setDateUpdated(user.getDateUpdated());
-        entity.setDeletedAt(user.getDeletedAt().orElse(null));
+        entity.setDeletedAt(user.getDeletedAt());
         
         return entity;
     }
@@ -35,7 +35,7 @@ public class UserJpaMapper {
                 entity.getPassword(),
                 entity.getName(),
                 entity.getRoles(),
-                entity.getDeletedAt().orElse(null),
+                entity.getDeletedAt(),
                 entity.getDateCreated(),
                 entity.getDateUpdated()
         );

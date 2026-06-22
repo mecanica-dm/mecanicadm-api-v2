@@ -1,10 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.labor.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.exception.LaborExceptions;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.command.DeleteLaborCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
-public class DeleteLaborUseCase {
+public class DeleteLaborUseCase implements VoidUseCase<DeleteLaborCommand> {
 
     private final LaborGateway gateway;
 
@@ -13,9 +15,9 @@ public class DeleteLaborUseCase {
     }
 
     public void execute(DeleteLaborCommand command) {
-        if (!gateway.existsById(command.id())) {
-            throw new LaborExceptions.LaborNotFound();
-        }
-        gateway.deleteById(command.id());
+        Labor labor = gateway.findById(command.id())
+                .orElseThrow(LaborExceptions.LaborNotFound::new);
+        labor.softDelete();
+        gateway.update(labor);
     }
 }

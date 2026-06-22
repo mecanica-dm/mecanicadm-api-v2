@@ -4,7 +4,6 @@ import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptio
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
@@ -46,7 +45,7 @@ class WorkOrderMaterialItemTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.InvalidMaterialQuantity.class, exception),
                 () -> assertEquals("work.order.material.quantity.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -63,7 +62,7 @@ class WorkOrderMaterialItemTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.InvalidMaterialQuantity.class, exception),
                 () -> assertEquals("work.order.material.quantity.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 }

@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.infra.features.user.persistence.entity;
 import com.mecanicadm.mecanicadm_api.core.user.domain.enums.UserRole;
 import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted_at = now() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class UserJpaEntity extends AuditEntity {
 

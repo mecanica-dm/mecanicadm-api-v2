@@ -5,6 +5,7 @@ import com.mecanicadm.mecanicadm_api.core.client.usecase.command.UpdateClientCom
 import com.mecanicadm.mecanicadm_api.shared.validation.annotation.CpfCnpj;
 import com.mecanicadm.mecanicadm_api.shared.validation.annotation.Phone;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.UUID;
 
@@ -12,11 +13,14 @@ public record UpdateClientRequest(
         @JsonIgnore
         UUID id,
 
+        @NotBlank(message = "{validation.client.name.not.blank}")
         String name,
 
+        @NotBlank(message = "{validation.client.email.not.blank}")
         @Email(message = "{validation.client.email.invalid}")
         String email,
 
+        @NotBlank(message = "{validation.client.document.not.blank}")
         @CpfCnpj
         String document,
 

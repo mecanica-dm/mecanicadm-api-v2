@@ -7,23 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class UserTest {
 
     @Test
     @DisplayName("Deve criar um usuário com sucesso")
     void shouldCreateUser() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode("password123")).thenReturn("encodedPassword");
-
-        User user = User.create("test@example.com", "password123", "Test Name", encoder);
+        User user = User.create("test@example.com", "encodedPassword", "Test Name");
 
         assertEquals("test@example.com", user.getEmail());
         assertEquals("encodedPassword", user.getPassword());
@@ -34,35 +29,30 @@ class UserTest {
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"  ", "\t", "\n"})
-    @DisplayName("Deve lançar exceção ao criar usuário com senha nula, vazia ou apenas espaços")
+    @DisplayName("Deve lançar exceção para senha nula, vazia ou apenas espaços")
     void shouldThrowExceptionForInvalidPasswordText(String invalidPassword) {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        assertThrows(UserExceptions.PasswordMinLength.class, () -> 
-            User.create("test@example.com", invalidPassword, "Test Name", encoder));
+        assertThrows(UserExceptions.PasswordMinLength.class, () ->
+                User.validatePassword(invalidPassword));
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao criar usuário com senha curta")
+    @DisplayName("Deve lançar exceção para senha curta")
     void shouldThrowExceptionForShortPassword() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        assertThrows(UserExceptions.PasswordMinLength.class, () -> 
-            User.create("test@example.com", "12345", "Test Name", encoder));
+        assertThrows(UserExceptions.PasswordMinLength.class, () ->
+                User.validatePassword("12345"));
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao criar usuário com e-mail vazio")
     void shouldThrowExceptionForEmptyEmail() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        assertThrows(UserExceptions.EmailNotEmpty.class, () -> 
-            User.create("", "password123", "Test Name", encoder));
+        assertThrows(UserExceptions.EmailNotEmpty.class, () ->
+                User.create("", "encodedPassword", "Test Name"));
     }
 
     @Test
     @DisplayName("Deve atualizar informações do usuário")
     void shouldUpdateUserInfo() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode(anyString())).thenReturn("encoded");
-        User user = User.create("old@email.com", "password123", "Old Name", encoder);
+        User user = User.create("old@email.com", "encoded", "Old Name");
 
         user.updateInfo("New Name", "new@email.com");
 
@@ -73,9 +63,7 @@ class UserTest {
     @Test
     @DisplayName("Deve gerenciar roles do usuário")
     void shouldManageRoles() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode(anyString())).thenReturn("encoded");
-        User user = User.create("test@email.com", "password123", "Name", encoder);
+        User user = User.create("test@email.com", "encoded", "Name");
 
         user.addRole(UserRole.ATTENDANT);
         assertTrue(user.getRoles().contains(UserRole.ATTENDANT));
@@ -87,9 +75,7 @@ class UserTest {
     @Test
     @DisplayName("Deve retornar true para isDeleted quando deletedAt estiver preenchido")
     void shouldReturnTrueWhenDeletedAtIsPresent() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode(anyString())).thenReturn("encoded");
-        User user = User.create("test@email.com", "password123", "Name", encoder);
+        User user = User.create("test@email.com", "encoded", "Name");
 
         assertFalse(user.isDeleted());
 

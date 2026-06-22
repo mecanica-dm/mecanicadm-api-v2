@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface StockMovementsGateway {
     StockMovements create(StockMovements stockMovements);
 
-    void delete(StockMovements stockMovements);
+    StockMovements update(StockMovements stockMovements);
 
     List<StockMovements> findAllByMaterialIdOrderByDateCreatedDesc(StockMovementsFilter query);
 

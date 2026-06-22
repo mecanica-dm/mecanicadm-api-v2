@@ -10,14 +10,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "stock_movements")
-@SQLDelete(sql = "UPDATE stock_movements SET deleted_at = now() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class StockMovementsJpaEntity extends AuditEntity {
 

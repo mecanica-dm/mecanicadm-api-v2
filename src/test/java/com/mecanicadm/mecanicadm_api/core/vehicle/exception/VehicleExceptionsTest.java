@@ -2,7 +2,6 @@ package com.mecanicadm.mecanicadm_api.core.vehicle.exception;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,11 +24,11 @@ class VehicleExceptionsTest {
     @DisplayName("Deve instanciar todas as exceções de Vehicle para garantir cobertura")
     void shouldInstantiateAllExceptions() {
         var notFound = new VehicleExceptions.NotFound();
-        assertEquals(HttpStatus.NOT_FOUND, notFound.getStatus());
+        assertEquals(404, notFound.getStatus());
         assertEquals("vehicle.not.found", notFound.getMessageKey());
 
         var vehicleExists = new VehicleExceptions.VehicleExists();
-        assertEquals(HttpStatus.BAD_REQUEST, vehicleExists.getStatus());
+        assertEquals(400, vehicleExists.getStatus());
         assertEquals("vehicle.licensePlate.exists", vehicleExists.getMessageKey());
     }
 }

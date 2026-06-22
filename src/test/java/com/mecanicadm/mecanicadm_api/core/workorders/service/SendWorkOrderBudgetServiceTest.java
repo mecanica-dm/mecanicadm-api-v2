@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -63,7 +62,7 @@ class SendWorkOrderBudgetServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.NotFound.class, exception),
                 () -> assertEquals("work.order.not.found", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus())
+                () -> assertEquals(404, exception.getStatus())
         );
         verify(workOrderRepository, never()).save(any());
     }
@@ -86,7 +85,7 @@ class SendWorkOrderBudgetServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.BudgetNotFound.class, exception),
                 () -> assertEquals("work.order.budget.not.found", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus())
+                () -> assertEquals(404, exception.getStatus())
         );
         verify(workOrderRepository, never()).save(any());
     }

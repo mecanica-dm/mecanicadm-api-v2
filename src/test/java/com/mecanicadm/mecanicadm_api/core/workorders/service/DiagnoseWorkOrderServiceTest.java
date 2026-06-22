@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
@@ -93,7 +92,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.LaborItemsRequired.class, exception),
                 () -> assertEquals("work.order.labor.required", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
         verifyNoInteractions(clientRepository, vehicleRepository, calculateWorkOrderBudgetUseCase);
     }
@@ -116,7 +115,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.ClientRequired.class, exception),
                 () -> assertEquals("work.order.client.required", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
         verifyNoInteractions(clientRepository, vehicleRepository, calculateWorkOrderBudgetUseCase);
     }
@@ -139,7 +138,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.VehicleRequired.class, exception),
                 () -> assertEquals("work.order.vehicle.required", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
         verifyNoInteractions(clientRepository, vehicleRepository, calculateWorkOrderBudgetUseCase);
     }
@@ -162,7 +161,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.VehicleRequired.class, exception),
                 () -> assertEquals("work.order.vehicle.required", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
         verifyNoInteractions(clientRepository, vehicleRepository, calculateWorkOrderBudgetUseCase);
     }
@@ -185,7 +184,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(ClientExceptions.NotFound.class, exception),
                 () -> assertEquals("client.not.found", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus())
+                () -> assertEquals(404, exception.getStatus())
         );
         verify(vehicleRepository, never()).existsByLicensePlate(any());
         verifyNoInteractions(calculateWorkOrderBudgetUseCase);
@@ -210,7 +209,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(VehicleExceptions.NotFound.class, exception),
                 () -> assertEquals("vehicle.not.found", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus())
+                () -> assertEquals(404, exception.getStatus())
         );
         verifyNoInteractions(calculateWorkOrderBudgetUseCase);
     }
@@ -231,7 +230,7 @@ class DiagnoseWorkOrderServiceTest {
         assertAll(
                 () -> assertInstanceOf(WorkOrderExceptions.NotFound.class, exception),
                 () -> assertEquals("work.order.not.found", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.NOT_FOUND, exception.getStatus())
+                () -> assertEquals(404, exception.getStatus())
         );
         verifyNoInteractions(clientRepository, vehicleRepository, calculateWorkOrderBudgetUseCase);
     }

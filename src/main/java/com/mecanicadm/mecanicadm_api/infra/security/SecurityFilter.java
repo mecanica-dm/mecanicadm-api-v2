@@ -1,8 +1,8 @@
 package com.mecanicadm.mecanicadm_api.infra.security;
 
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.TokenService;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
-import com.mecanicadm.mecanicadm_api.infra.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

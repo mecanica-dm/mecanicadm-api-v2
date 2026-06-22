@@ -4,7 +4,6 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.query.FindUserByIdQuery;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,16 +36,13 @@ class GetUserByIdUseCaseTest {
         UUID id = UUID.randomUUID();
         FindUserByIdQuery query = new FindUserByIdQuery(id);
         User user = mock(User.class);
-        
-        when(gateway.findById(id)).thenReturn(Optional.of(user));
-        when(user.getName()).thenReturn("Test User");
-        when(user.getEmail()).thenReturn("test@example.com");
 
-        UserResponse result = useCase.execute(query);
+        when(gateway.findById(id)).thenReturn(Optional.of(user));
+
+        User result = useCase.execute(query);
 
         assertNotNull(result);
-        assertEquals("Test User", result.name());
-        assertEquals("test@example.com", result.email());
+        assertEquals(user, result);
         verify(gateway).findById(id);
     }
 
@@ -55,7 +51,7 @@ class GetUserByIdUseCaseTest {
     void shouldThrowExceptionWhenUserNotFound() {
         UUID id = UUID.randomUUID();
         FindUserByIdQuery query = new FindUserByIdQuery(id);
-        
+
         when(gateway.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(UserExceptions.NotFound.class, () -> useCase.execute(query));

@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -21,7 +20,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
     public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        User user = User.create("mockuser@example.com", "dummy-password", "Mock User", new DummyPasswordEncoder());
+        User user = User.create("mockuser@example.com", "dummy-password", "Mock User");
         ReflectionTestUtils.setField(user, "id", UUID.fromString(MOCK_USER_ID));
         
         if (!customUser.role().equals("USER")) {
@@ -32,17 +31,5 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
         Authentication auth = new UsernamePasswordAuthenticationToken(user, null, userAdapter.getAuthorities());
         context.setAuthentication(auth);
         return context;
-    }
-
-    private static class DummyPasswordEncoder implements PasswordEncoder {
-        @Override
-        public String encode(CharSequence rawPassword) {
-            return rawPassword.toString();
-        }
-
-        @Override
-        public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            return true;
-        }
     }
 }

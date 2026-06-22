@@ -6,6 +6,7 @@ import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageQuery;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.entity.ClientJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.specification.ClientSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class ClientRepositoryImpl implements ClientGateway {
@@ -26,6 +29,9 @@ public class ClientRepositoryImpl implements ClientGateway {
 
     @Override
     public Client create(Client client) {
+        if (isNull(client)) {
+            throw new TechnicalException("error.technical.entity.null", "Client", "criação");
+        }
         ClientJpaEntity entity = ClientJpaMapper.toEntity(client);
         ClientJpaEntity saved = jpaRepository.save(entity);
         return ClientJpaMapper.toDomain(saved);
@@ -33,15 +39,12 @@ public class ClientRepositoryImpl implements ClientGateway {
 
     @Override
     public Client update(Client client) {
+        if (isNull(client)) {
+            throw new TechnicalException("error.technical.entity.null", "Client", "atualização");
+        }
         ClientJpaEntity entity = ClientJpaMapper.toEntity(client);
         ClientJpaEntity saved = jpaRepository.save(entity);
         return ClientJpaMapper.toDomain(saved);
-    }
-
-    @Override
-    public void delete(Client client) {
-        ClientJpaEntity entity = ClientJpaMapper.toEntity(client);
-        jpaRepository.delete(entity);
     }
 
     @Override
@@ -50,13 +53,23 @@ public class ClientRepositoryImpl implements ClientGateway {
     }
 
     @Override
-    public Optional<Client> findClientByDocument(String document) {
-        return jpaRepository.findClientByDocument(document).map(ClientJpaMapper::toDomain);
+    public boolean existsClientByDocument(String document) {
+        return jpaRepository.existsByDocument(document);
     }
 
     @Override
-    public Optional<Client> findClientByEmail(String email) {
-        return jpaRepository.findClientByEmail(email).map(ClientJpaMapper::toDomain);
+    public boolean existsClientByEmail(String email) {
+        return jpaRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsClientByDocumentAndIdNot(String document, UUID id) {
+        return jpaRepository.existsByDocumentAndIdNot(document, id);
+    }
+
+    @Override
+    public boolean existsClientByEmailAndIdNot(String email, UUID id) {
+        return jpaRepository.existsByEmailAndIdNot(email, id);
     }
 
     @Override

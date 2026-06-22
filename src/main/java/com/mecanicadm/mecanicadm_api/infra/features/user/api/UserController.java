@@ -4,14 +4,10 @@ import com.mecanicadm.mecanicadm_api.core.user.usecase.*;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.*;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.query.AuthenticateUserQuery;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.query.FindUserByIdQuery;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.AuthenticationResponse;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ForgotPasswordRequest;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ResetPasswordRequest;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.UserResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.*;
 import com.mecanicadm.mecanicadm_api.infra.features.user.api.openapi.UserOpenApi;
 import com.mecanicadm.mecanicadm_api.infra.security.UserAdapter;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +28,6 @@ public class UserController implements UserOpenApi {
     private final RequestPasswordResetUseCase requestPasswordResetUseCase;
     private final ResetPasswordUseCase resetPasswordUseCase;
 
-    @Autowired
     public UserController(CreateUserUseCase createUserUseCase,
                           UpdateUserUseCase updateUserUseCase,
                           AuthenticateUserUseCase authenticateUserUseCase,
@@ -51,8 +46,9 @@ public class UserController implements UserOpenApi {
 
     @Override
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticateUserQuery query) {
-        AuthenticationResponse response = authenticateUserUseCase.execute(query);
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid LoginRequest request) {
+        var query = new AuthenticateUserQuery(request.email(), request.password());
+        var response = AuthenticationResponse.from(authenticateUserUseCase.execute(query));
         return ResponseEntity.ok(response);
     }
 
@@ -73,14 +69,15 @@ public class UserController implements UserOpenApi {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findUser(@PathVariable UUID id) {
-        UserResponse response = getUserByIdUseCase.execute(new FindUserByIdQuery(id));
-        return ResponseEntity.ok(response);
+        var user = getUserByIdUseCase.execute(new FindUserByIdQuery(id));
+        return ResponseEntity.ok(UserResponse.fromEntity(user));
     }
 
     @Override
     @PostMapping
-    public ResponseEntity<UUID> create(@RequestBody @Valid CreateUserCommand cmd) {
-        UUID userId = createUserUseCase.execute(cmd);
+    public ResponseEntity<UUID> create(@RequestBody @Valid CreateUserRequest request) {
+        var command = new CreateUserCommand(request.email(), request.password(), request.name());
+        UUID userId = createUserUseCase.execute(command);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(userId).toUri();
         return ResponseEntity.created(uri).body(userId);
@@ -88,8 +85,9 @@ public class UserController implements UserOpenApi {
 
     @Override
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody @Valid UpdateUserCommand cmd, @AuthenticationPrincipal UserAdapter userAdapter) {
-        updateUserUseCase.execute(cmd.withId(userAdapter.user().getId()));
+    public ResponseEntity<Void> update(@RequestBody @Valid UpdateUserRequest request, @AuthenticationPrincipal UserAdapter userAdapter) {
+        var command = new UpdateUserCommand(userAdapter.user().getId(), request.name(), request.password(), request.currentPassword());
+        updateUserUseCase.execute(command);
         return ResponseEntity.ok().build();
     }
 

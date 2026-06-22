@@ -6,6 +6,8 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageQuery;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity.LaborJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.jpa.specification.LaborSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,30 +19,38 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
+
 @Repository
 public class LaborRepositoryImpl implements LaborGateway {
 
     private final LaborJpaRepository jpaRepository;
+    private final EntityManager entityManager;
 
-    public LaborRepositoryImpl(LaborJpaRepository jpaRepository) {
+    public LaborRepositoryImpl(LaborJpaRepository jpaRepository, EntityManager entityManager) {
         this.jpaRepository = jpaRepository;
+        this.entityManager = entityManager;
     }
 
     @Override
     public Labor create(Labor labor) {
+        if (isNull(labor)) {
+            throw new TechnicalException("error.technical.entity.null", "Labor", "criação");
+        }
         LaborJpaEntity saved = jpaRepository.save(LaborJpaMapper.toEntity(labor));
         return LaborJpaMapper.toDomain(saved);
     }
 
     @Override
     public Labor update(Labor labor) {
-        LaborJpaEntity saved = jpaRepository.save(LaborJpaMapper.toEntity(labor));
+        if (isNull(labor)) {
+            throw new TechnicalException("error.technical.entity.null", "Labor", "atualização");
+        }
+        LaborJpaEntity entity = LaborJpaMapper.toEntity(labor);
+        LaborJpaEntity saved = jpaRepository.save(entity);
+        entityManager.flush();
+        entityManager.detach(saved);
         return LaborJpaMapper.toDomain(saved);
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        jpaRepository.deleteById(id);
     }
 
     @Override

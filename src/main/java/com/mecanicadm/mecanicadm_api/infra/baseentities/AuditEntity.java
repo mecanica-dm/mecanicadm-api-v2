@@ -2,21 +2,16 @@ package com.mecanicadm.mecanicadm_api.infra.baseentities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @MappedSuperclass
 public abstract class AuditEntity {
 
     @Column(name = "date_created", updatable = false)
-    @CreationTimestamp
     protected LocalDateTime dateCreated;
 
     @Column(name = "date_updated")
-    @UpdateTimestamp
     protected LocalDateTime dateUpdated;
 
     @Column(name = "deleted_at")
@@ -38,8 +33,8 @@ public abstract class AuditEntity {
         this.dateUpdated = dateUpdated;
     }
 
-    public Optional<LocalDateTime> getDeletedAt() {
-        return Optional.ofNullable(deletedAt);
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 
     public void setDeletedAt(LocalDateTime deletedAt) {

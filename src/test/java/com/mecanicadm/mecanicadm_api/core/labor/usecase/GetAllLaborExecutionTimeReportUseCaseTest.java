@@ -1,11 +1,11 @@
 package com.mecanicadm.mecanicadm_api.core.labor.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.labor.domain.LaborExecutionReport;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetAllLaborExecutionTimeReportQuery;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderLaborItemRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborTypeStatsProjection;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ class GetAllLaborExecutionTimeReportUseCaseTest {
         when(workOrderLaborItemRepository.getExecutionTimeSummary(any(), any())).thenReturn(summaryProjection);
         when(workOrderLaborItemRepository.getStatsByLaborType(any(), any())).thenReturn(List.of(laborTypeStatsProjection));
 
-        LaborExecutionReportResponse response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
+        LaborExecutionReport response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
 
         assertNotNull(response);
         assertEquals(10L, response.totalProcessedLabors());
@@ -88,7 +88,7 @@ class GetAllLaborExecutionTimeReportUseCaseTest {
         when(workOrderLaborItemRepository.getExecutionTimeSummary(any(), any())).thenReturn(null);
         when(workOrderLaborItemRepository.getStatsByLaborType(any(), any())).thenReturn(Collections.emptyList());
 
-        LaborExecutionReportResponse response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(null, null));
+        LaborExecutionReport response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(null, null));
 
         assertNotNull(response);
         assertEquals(0L, response.totalProcessedLabors());
@@ -108,7 +108,7 @@ class GetAllLaborExecutionTimeReportUseCaseTest {
         when(workOrderLaborItemRepository.getExecutionTimeSummary(any(), any())).thenReturn(summaryProjection);
         when(workOrderLaborItemRepository.getStatsByLaborType(any(), any())).thenReturn(Collections.emptyList());
 
-        LaborExecutionReportResponse response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
+        LaborExecutionReport response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
 
         assertNotNull(response);
         assertEquals(5L, response.totalProcessedLabors());
@@ -128,7 +128,7 @@ class GetAllLaborExecutionTimeReportUseCaseTest {
         when(workOrderLaborItemRepository.getExecutionTimeSummary(any(), any())).thenReturn(summaryProjection);
         when(workOrderLaborItemRepository.getStatsByLaborType(any(), any())).thenReturn(Collections.emptyList());
 
-        LaborExecutionReportResponse response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
+        LaborExecutionReport response = useCase.execute(new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate));
 
         assertNotNull(response);
         assertEquals(0L, response.totalProcessedLabors());

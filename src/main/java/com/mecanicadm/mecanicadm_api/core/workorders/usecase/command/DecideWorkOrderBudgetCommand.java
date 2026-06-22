@@ -10,7 +10,7 @@ public record DecideWorkOrderBudgetCommand(
         @JsonIgnore
         UUID workOrderId,
 
-        @NotNull(message = "{validation.work.order.budget.decision.required}")
+        @NotNull(message = "{validation.workorder.budget.decision.required}")
         WorkOrderBudgetStatus decision,
 
         String rejectionReason

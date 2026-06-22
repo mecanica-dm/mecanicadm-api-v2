@@ -1,36 +1,41 @@
 package com.mecanicadm.mecanicadm_api.core.client.domain;
 
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
-import org.springframework.util.StringUtils;
+import com.mecanicadm.mecanicadm_api.shared.domain.AuditDomain;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-public class Client {
+public class Client extends AuditDomain {
 
     private UUID id;
-
     private String name;
-
     private String email;
-
     private String document;
-
     private String phone;
 
-    protected Client() {
-    }
-
-    public Client(UUID id, String name, String email, String document, String phone) {
+    private Client(UUID id, String name, String email, String document, String phone,
+                   LocalDateTime dateCreated, LocalDateTime dateUpdated, LocalDateTime deletedAt) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.document = document;
         this.phone = phone;
-        validate();
+        this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
+        this.deletedAt = deletedAt;
     }
 
     public static Client create(String name, String email, String document, String phone) {
-        return new Client(null, name, email, document, phone);
+        Client client = new Client(UUID.randomUUID(), name, email, document, phone, null, null, null);
+        client.create();
+        client.validate();
+        return client;
+    }
+
+    public static Client restore(UUID id, String name, String email, String document, String phone,
+                              LocalDateTime dateCreated, LocalDateTime dateUpdated, LocalDateTime deletedAt) {
+        return new Client(id, name, email, document, phone, dateCreated, dateUpdated, deletedAt);
     }
 
     public void update(String name, String email, String document, String phone) {
@@ -38,17 +43,18 @@ public class Client {
         this.email = email;
         this.document = document;
         this.phone = phone;
-        validate();
+        update();
+        this.validate();
     }
 
     private void validate() {
-        if (!StringUtils.hasText(this.name)) {
+        if (this.name == null || this.name.isBlank()) {
             throw new ClientExceptions.NameNotEmpty();
         }
-        if (!StringUtils.hasText(this.email)) {
+        if (this.email == null || this.email.isBlank()) {
             throw new ClientExceptions.EmailNotEmpty();
         }
-        if (!StringUtils.hasText(this.document)) {
+        if (this.document == null || this.document.isBlank()) {
             throw new ClientExceptions.DocumentNotEmpty();
         }
     }

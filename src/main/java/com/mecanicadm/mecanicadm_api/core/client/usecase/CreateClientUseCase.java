@@ -4,11 +4,11 @@ import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.command.CreateClientCommand;
-import org.springframework.util.StringUtils;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
 import java.util.UUID;
 
-public class CreateClientUseCase {
+public class CreateClientUseCase implements UseCase<CreateClientCommand, UUID> {
 
     private final ClientGateway gateway;
 
@@ -16,16 +16,15 @@ public class CreateClientUseCase {
         this.gateway = gateway;
     }
 
+    @Override
     public UUID execute(CreateClientCommand cmd) {
-        validate(cmd);
-
-        gateway.findClientByEmail(cmd.email()).ifPresent(c -> {
+        if (gateway.existsClientByEmail(cmd.email())) {
             throw new ClientExceptions.EmailExists();
-        });
+        }
 
-        gateway.findClientByDocument(cmd.document()).ifPresent(c -> {
+        if (gateway.existsClientByDocument(cmd.document())) {
             throw new ClientExceptions.DocumentExists();
-        });
+        }
 
         Client client = Client.create(
                 cmd.name(),
@@ -37,17 +36,5 @@ public class CreateClientUseCase {
         client = gateway.create(client);
 
         return client.getId();
-    }
-
-    private void validate(CreateClientCommand cmd) {
-        if (!StringUtils.hasText(cmd.name())) {
-            throw new ClientExceptions.NameNotEmpty();
-        }
-        if (!StringUtils.hasText(cmd.email())) {
-            throw new ClientExceptions.EmailNotEmpty();
-        }
-        if (!StringUtils.hasText(cmd.document())) {
-            throw new ClientExceptions.DocumentNotEmpty();
-        }
     }
 }

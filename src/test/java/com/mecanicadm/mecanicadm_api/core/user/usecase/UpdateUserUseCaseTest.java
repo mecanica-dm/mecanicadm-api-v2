@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,8 +38,7 @@ class UpdateUserUseCaseTest {
 
         userId = UUID.randomUUID();
 
-        when(passwordEncoder.encode("123456")).thenReturn("encoded");
-        existingUser = User.create("teste@email.com", "123456", "Nome Antigo", passwordEncoder);
+        existingUser = User.create("teste@email.com", "encoded", "Nome Antigo");
         existingUser = User.restore(userId, existingUser.getEmail(), existingUser.getPassword(), existingUser.getName(), existingUser.getRoles(), null, LocalDateTime.now(), LocalDateTime.now());
     }
 

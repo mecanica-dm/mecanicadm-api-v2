@@ -1,11 +1,11 @@
 package com.mecanicadm.mecanicadm_api.core.user.usecase;
 
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.AuthenticationResponse;
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
+import com.mecanicadm.mecanicadm_api.core.user.domain.UserAuthentication;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.TokenService;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.query.AuthenticateUserQuery;
-import com.mecanicadm.mecanicadm_api.infra.services.TokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,22 +48,23 @@ class AuthenticateUserUseCaseTest {
         String token = "jwt-token";
 
         when(userGateway.findByEmail(query.email())).thenReturn(Optional.of(user));
-        doNothing().when(user).verifyPassword(query.password(), passwordEncoder);
+        when(user.getPassword()).thenReturn("encodedPassword");
+        when(passwordEncoder.matches(query.password(), "encodedPassword")).thenReturn(true);
         when(user.getEmail()).thenReturn(query.email());
         when(user.getId()).thenReturn(userId);
         when(user.getName()).thenReturn("Test User");
         when(tokenService.generateToken(query.email())).thenReturn(token);
 
-        AuthenticationResponse response = authenticateUserUseCase.execute(query);
+        UserAuthentication response = authenticateUserUseCase.execute(query);
 
         assertNotNull(response);
-        assertEquals(token, response.access_token());
-        assertEquals(userId.toString(), response.userId());
+        assertEquals(token, response.token());
+        assertEquals(userId, response.userId());
         assertEquals("Test User", response.name());
         assertEquals(query.email(), response.email());
 
         verify(userGateway).findByEmail(query.email());
-        verify(user).verifyPassword(query.password(), passwordEncoder);
+        verify(passwordEncoder).matches(query.password(), "encodedPassword");
         verify(tokenService).generateToken(query.email());
     }
 
@@ -86,12 +87,13 @@ class AuthenticateUserUseCaseTest {
         User user = mock(User.class);
 
         when(userGateway.findByEmail(query.email())).thenReturn(Optional.of(user));
-        doThrow(new UserExceptions.BadCredentials()).when(user).verifyPassword(query.password(), passwordEncoder);
+        when(user.getPassword()).thenReturn("encodedPassword");
+        when(passwordEncoder.matches(query.password(), "encodedPassword")).thenReturn(false);
 
         assertThrows(UserExceptions.BadCredentials.class, () -> authenticateUserUseCase.execute(query));
 
         verify(userGateway).findByEmail(query.email());
-        verify(user).verifyPassword(query.password(), passwordEncoder);
+        verify(passwordEncoder).matches(query.password(), "encodedPassword");
         verifyNoInteractions(tokenService);
     }
 }

@@ -10,13 +10,15 @@ public interface ClientGateway {
 
     Client update(Client client);
 
-    void delete(Client client);
-
     Optional<Client> findById(UUID id);
 
-    Optional<Client> findClientByDocument(String document);
+    boolean existsClientByDocument(String document);
 
-    Optional<Client> findClientByEmail(String email);
+    boolean existsClientByEmail(String email);
+
+    boolean existsClientByDocumentAndIdNot(String document, UUID id);
+
+    boolean existsClientByEmailAndIdNot(String email, UUID id);
 
     ClientPageResult findAll(ClientPageQuery pageQuery);
 }

@@ -2,7 +2,6 @@ package com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity;
 
 import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
@@ -10,7 +9,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "labors")
-@SQLDelete(sql = "UPDATE labors SET deleted_at = now() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class LaborJpaEntity extends AuditEntity {
 

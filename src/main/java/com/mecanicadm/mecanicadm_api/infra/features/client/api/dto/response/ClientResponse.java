@@ -11,7 +11,7 @@ public record ClientResponse(
         String document,
         String phone
 ) {
-    public static ClientResponse fromEntity(Client client) {
+    public static ClientResponse from(Client client) {
         return new ClientResponse(client.getId(), client.getName(), client.getEmail(), client.getDocument(), client.getPhone());
     }
 }

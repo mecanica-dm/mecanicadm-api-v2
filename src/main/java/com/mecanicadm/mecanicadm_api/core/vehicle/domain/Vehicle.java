@@ -1,30 +1,46 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.domain;
 
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
-import io.micrometer.common.util.StringUtils;
+import com.mecanicadm.mecanicadm_api.shared.domain.AuditDomain;
+
+import java.time.LocalDateTime;
 
 import static java.util.Objects.isNull;
 
-public class Vehicle {
+public class Vehicle extends AuditDomain {
     private final String licensePlate;
     private final String model;
     private final String brand;
     private final Short modelYear;
 
-    public Vehicle(String model, String licensePlate, String brand, Short modelYear) {
+    private Vehicle(String model, String licensePlate, String brand, Short modelYear,
+                    LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
         this.model = model;
         this.licensePlate = licensePlate;
         this.brand = brand;
         this.modelYear = modelYear;
+        this.deletedAt = deletedAt;
+        this.dateCreated = dateCreated;
+        this.dateUpdated = dateUpdated;
         validate();
     }
 
     public static Vehicle create(String model, String licensePlate, String brand, Short modelYear) {
-        return new Vehicle(model, licensePlate, brand, modelYear);
+        var vehicle = new Vehicle(model, licensePlate, brand, modelYear, null, null, null);
+        vehicle.create();
+        return vehicle;
+    }
+
+    public static Vehicle restore(String model, String licensePlate, String brand, Short modelYear,
+                                   LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+        return new Vehicle(model, licensePlate, brand, modelYear, deletedAt, dateCreated, dateUpdated);
     }
 
     public Vehicle updateInfo(String model, String brand, Short modelYear) {
-        return new Vehicle(model, this.getLicensePlate(), brand, modelYear);
+        var vehicle = new Vehicle(model, this.getLicensePlate(), brand, modelYear,
+                this.deletedAt, this.dateCreated, this.dateUpdated);
+        vehicle.update();
+        return vehicle;
     }
 
     public Vehicle update(String model, String brand, Short modelYear) {
@@ -59,7 +75,7 @@ public class Vehicle {
     }
 
     private boolean isBlank(String value) {
-        return StringUtils.isBlank(value);
+        return value == null || value.isBlank();
     }
 
     public String getLicensePlate() { return licensePlate; }

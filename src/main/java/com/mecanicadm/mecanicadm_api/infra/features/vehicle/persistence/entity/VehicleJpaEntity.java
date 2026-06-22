@@ -5,12 +5,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "vehicle")
-@SQLDelete(sql = "UPDATE vehicle SET deleted_at = now() WHERE license_plate = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class VehicleJpaEntity extends AuditEntity {
 

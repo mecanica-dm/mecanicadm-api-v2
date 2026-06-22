@@ -5,10 +5,11 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.AddStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.AddStockCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
 import java.util.UUID;
 
-public class CreateMaterialUseCase {
+public class CreateMaterialUseCase implements UseCase<CreateMaterialCommand, UUID> {
 
     private final MaterialGateway gateway;
     private final AddStockUseCase addStockUseCase;

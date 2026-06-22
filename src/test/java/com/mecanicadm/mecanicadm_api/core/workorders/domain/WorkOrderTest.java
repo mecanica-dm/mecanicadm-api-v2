@@ -5,7 +5,6 @@ import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptio
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.util.Set;
 import java.util.UUID;
@@ -30,7 +29,7 @@ class WorkOrderTest {
         assertTrue(workOrder.getExecutionEndAt().isEmpty());
         assertTrue(workOrder.getLaborItems().isEmpty());
         assertTrue(workOrder.getMaterialItems().isEmpty());
-        assertTrue(workOrder.getDeletedAt().isEmpty());
+        assertNull(workOrder.getDeletedAt());
     }
 
     @Test
@@ -128,7 +127,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
                 () -> assertEquals("work.order.status.transition.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -156,7 +155,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
                 () -> assertEquals("work.order.status.transition.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -175,7 +174,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.PendingLaborItems.class, exception.getClass()),
                 () -> assertEquals("work.order.labor.pending.items", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -216,7 +215,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
                 () -> assertEquals("work.order.status.transition.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -230,7 +229,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
                 () -> assertEquals("work.order.status.transition.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -261,7 +260,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatusTransition.class, exception.getClass()),
                 () -> assertEquals("work.order.status.transition.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 
@@ -315,7 +314,7 @@ class WorkOrderTest {
         assertAll(
                 () -> assertEquals(WorkOrderExceptions.InvalidStatus.class, exception.getClass()),
                 () -> assertEquals("work.order.status.invalid", exception.getMessageKey()),
-                () -> assertEquals(HttpStatus.BAD_REQUEST, exception.getStatus())
+                () -> assertEquals(400, exception.getStatus())
         );
     }
 }

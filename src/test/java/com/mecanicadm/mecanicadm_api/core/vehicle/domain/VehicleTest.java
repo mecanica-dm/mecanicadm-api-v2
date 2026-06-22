@@ -15,7 +15,7 @@ class VehicleTest {
         String brand = "Honda";
         Short modelYear = 2022;
 
-        Vehicle vehicle = new Vehicle(model, licensePlate, brand, modelYear);
+        Vehicle vehicle = Vehicle.create(model, licensePlate, brand, modelYear);
 
         assertEquals(licensePlate, vehicle.getLicensePlate());
         assertEquals(model, vehicle.getModel());
@@ -26,7 +26,7 @@ class VehicleTest {
     @Test
     @DisplayName("Deve atualizar o modelo do veículo com sucesso")
     void shouldUpdateVehicleModel() {
-        Vehicle vehicle = new Vehicle("Fox", "ABC1234", "VW", Short.valueOf("2015"));
+        Vehicle vehicle = Vehicle.create("Fox", "ABC1234", "VW", Short.valueOf("2015"));
         String newModel = "Corolla";
         String newBrand = "Toyota";
         Short newYear = Short.valueOf("2015");

@@ -5,8 +5,9 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageQuery;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.SearchLaborsQuery;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
-public class GetAllLaborsUseCase {
+public class GetAllLaborsUseCase implements UseCase<SearchLaborsQuery, LaborPageResult> {
 
     private final LaborGateway gateway;
 

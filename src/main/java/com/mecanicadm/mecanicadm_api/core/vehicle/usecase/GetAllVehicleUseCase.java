@@ -5,8 +5,9 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageQuery;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetAllVehiclesQuery;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
-public class GetAllVehicleUseCase {
+public class GetAllVehicleUseCase implements UseCase<GetAllVehiclesQuery, VehiclePageResult> {
 
     private final VehicleGateway gateway;
 

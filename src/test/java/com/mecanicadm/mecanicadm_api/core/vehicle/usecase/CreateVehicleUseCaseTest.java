@@ -42,7 +42,7 @@ class CreateVehicleUseCaseTest {
     void shouldCreateVehicleSuccessfully() {
         when(repository.findByLicensePlate(command.licensePlate())).thenReturn(Optional.empty());
 
-        Vehicle savedVehicle = new Vehicle(command.model(), command.licensePlate(), command.brand(), command.modelYear());
+        Vehicle savedVehicle = Vehicle.create(command.model(), command.licensePlate(), command.brand(), command.modelYear());
         when(repository.create(any(Vehicle.class))).thenReturn(savedVehicle);
 
         String resultLicensePlate = createVehicleUseCase.execute(command);

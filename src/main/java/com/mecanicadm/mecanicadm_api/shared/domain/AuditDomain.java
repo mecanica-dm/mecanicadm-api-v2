@@ -1,7 +1,6 @@
 package com.mecanicadm.mecanicadm_api.shared.domain;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public abstract class AuditDomain {
 
@@ -9,9 +8,7 @@ public abstract class AuditDomain {
     protected LocalDateTime dateUpdated;
     protected LocalDateTime deletedAt;
 
-    public AuditDomain() {
-        this.dateCreated = LocalDateTime.now();
-        this.dateUpdated = LocalDateTime.now();
+    protected AuditDomain() {
     }
 
     public LocalDateTime getDateCreated() {
@@ -22,21 +19,27 @@ public abstract class AuditDomain {
         return dateUpdated;
     }
 
-    public Optional<LocalDateTime> getDeletedAt() {
-        return Optional.ofNullable(deletedAt);
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 
     public boolean isDeleted() {
         return this.deletedAt != null;
     }
 
-    public void delete() {
-        this.deletedAt = LocalDateTime.now();
+    public void create() {
+        LocalDateTime now = LocalDateTime.now();
+        this.dateCreated = now;
+        this.dateUpdated = now;
+    }
+
+    public void update() {
         this.dateUpdated = LocalDateTime.now();
     }
 
-    public void restore() {
-        this.deletedAt = null;
-        this.dateUpdated = LocalDateTime.now();
+    public void delete() {
+        LocalDateTime now = LocalDateTime.now();
+        this.deletedAt = now;
+        this.dateUpdated = now;
     }
 }

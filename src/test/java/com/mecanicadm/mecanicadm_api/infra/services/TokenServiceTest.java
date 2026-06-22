@@ -15,11 +15,11 @@ import static org.mockito.Mockito.mockStatic;
 
 class TokenServiceTest {
 
-    private TokenService tokenService;
+    private TokenServiceImpl tokenService;
 
     @BeforeEach
     void setUp() {
-        tokenService = new TokenService();
+        tokenService = new TokenServiceImpl();
         ReflectionTestUtils.setField(tokenService, "secret", "test-secret");
     }
 
