@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.config;
 
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -9,7 +10,6 @@ import org.springdoc.core.customizers.OperationCustomizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.LocaleResolver;
@@ -23,8 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-@ActiveProfiles("test")
-class ConfigTest {
+class ConfigTest extends AbstractIntegrationTest {
 
     @Autowired
     private ApplicationContext context;

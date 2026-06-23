@@ -1,19 +1,18 @@
 package com.mecanicadm.mecanicadm_api.infra.config;
 
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@ActiveProfiles("test")
-class WebConfigTest {
+class WebConfigTest extends AbstractIntegrationTest {
 
     @Autowired
     private ApplicationContext context;

@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.user.api;
 
 import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.CreateUserRequest;
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ForgotPasswordRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.LoginRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ResetPasswordRequest;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +26,8 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @Transactional
-class UserControllerIT {
+class UserControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

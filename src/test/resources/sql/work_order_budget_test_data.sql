@@ -19,13 +19,13 @@ VALUES ('550e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-4466554
         'Troca de óleo e alinhamento', NOW(), NOW());
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity)
-VALUES (RANDOM_UUID(), '550e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440001', 2);
+VALUES (gen_random_uuid(), '550e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440001', 2);
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity)
-VALUES (RANDOM_UUID(), '550e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440002', 1);
+VALUES (gen_random_uuid(), '550e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440002', 1);
 
 INSERT INTO work_order_labor_items (id, work_order_id, status, labor_id)
-VALUES (RANDOM_UUID(), '550e8400-e29b-41d4-a716-446655440005', 'AWAITING_EXECUTION',
+VALUES (gen_random_uuid(), '550e8400-e29b-41d4-a716-446655440005', 'AWAITING_EXECUTION',
         '550e8400-e29b-41d4-a716-446655440003');
 INSERT INTO work_order_labor_items (id, work_order_id, status, labor_id)
-VALUES (RANDOM_UUID(), '550e8400-e29b-41d4-a716-446655440005', 'AWAITING_EXECUTION',
+VALUES (gen_random_uuid(), '550e8400-e29b-41d4-a716-446655440005', 'AWAITING_EXECUTION',
         '550e8400-e29b-41d4-a716-446655440004');

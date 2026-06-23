@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.vehicle.api;
 
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.*;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.DeleteVehicleCommand;
@@ -16,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -29,8 +29,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-class VehicleControllerTest {
+class VehicleControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

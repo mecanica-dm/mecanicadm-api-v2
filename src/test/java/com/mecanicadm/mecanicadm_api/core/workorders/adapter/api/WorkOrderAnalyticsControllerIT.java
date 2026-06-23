@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.adapter.api;
 
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +20,8 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @Transactional
-class WorkOrderAnalyticsControllerIT {
+class WorkOrderAnalyticsControllerIT extends AbstractIntegrationTest {
 
     private static final UUID REPORT_SLOWEST_WORK_ORDER_ID = UUID.fromString("960e8400-e29b-41d4-a716-446655440102");
     private static final UUID REPORT_FASTEST_WORK_ORDER_ID = UUID.fromString("960e8400-e29b-41d4-a716-446655440101");

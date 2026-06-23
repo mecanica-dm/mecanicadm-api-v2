@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.material.api;
 
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.UpdateMaterialCommand;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @Transactional
-class MaterialControllerIT {
+class MaterialControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

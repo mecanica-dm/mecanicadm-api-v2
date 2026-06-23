@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.client.api;
 
 import com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.request.CreateClientRequest;
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import com.mecanicadm.mecanicadm_api.infra.features.client.api.dto.request.UpdateClientRequest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +23,8 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @Transactional
-class ClientControllerIT {
+class ClientControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

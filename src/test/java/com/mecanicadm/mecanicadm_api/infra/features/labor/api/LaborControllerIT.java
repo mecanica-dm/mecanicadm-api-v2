@@ -2,6 +2,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.labor.api;
 
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.command.CreateLaborCommand;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.command.UpdateLaborCommand;
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +24,8 @@ import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 @Transactional
-class LaborControllerIT {
+class LaborControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
