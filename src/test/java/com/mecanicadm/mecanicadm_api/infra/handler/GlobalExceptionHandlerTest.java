@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.handler;
 
-import com.mecanicadm.mecanicadm_api.infra.exception.SecurityException;
+import com.mecanicadm.mecanicadm_api.infra.security.exception.SecurityException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;

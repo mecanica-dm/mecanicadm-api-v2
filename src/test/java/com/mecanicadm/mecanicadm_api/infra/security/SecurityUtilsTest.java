@@ -1,4 +1,4 @@
-package com.mecanicadm.mecanicadm_api.infra.utils;
+package com.mecanicadm.mecanicadm_api.infra.security;
 
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import org.junit.jupiter.api.AfterEach;

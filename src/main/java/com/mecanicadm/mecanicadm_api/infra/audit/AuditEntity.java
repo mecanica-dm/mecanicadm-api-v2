@@ -1,4 +1,4 @@
-package com.mecanicadm.mecanicadm_api.infra.baseentities;
+package com.mecanicadm.mecanicadm_api.infra.audit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

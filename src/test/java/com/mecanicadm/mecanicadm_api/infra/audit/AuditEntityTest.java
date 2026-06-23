@@ -1,11 +1,12 @@
-package com.mecanicadm.mecanicadm_api.infra.baseentities;
+package com.mecanicadm.mecanicadm_api.infra.audit;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class AuditEntityTest {
 

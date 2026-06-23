@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.user.persistence.entity;
 
 import com.mecanicadm.mecanicadm_api.core.user.domain.enums.UserRole;
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
+import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 

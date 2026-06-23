@@ -1,4 +1,4 @@
-package com.mecanicadm.mecanicadm_api.infra.services;
+package com.mecanicadm.mecanicadm_api.infra.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

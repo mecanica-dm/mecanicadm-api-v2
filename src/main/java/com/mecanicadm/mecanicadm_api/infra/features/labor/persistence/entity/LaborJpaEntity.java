@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
+import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 

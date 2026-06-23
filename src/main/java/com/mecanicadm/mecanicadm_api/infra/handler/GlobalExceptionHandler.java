@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.handler;
 
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
-import com.mecanicadm.mecanicadm_api.infra.exception.SecurityException;
+import com.mecanicadm.mecanicadm_api.infra.security.exception.SecurityException;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import jakarta.validation.ConstraintViolationException;

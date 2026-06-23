@@ -1,4 +1,4 @@
-package com.mecanicadm.mecanicadm_api.infra.exception;
+package com.mecanicadm.mecanicadm_api.infra.security.exception;
 
 public abstract class SecurityException extends RuntimeException {
 

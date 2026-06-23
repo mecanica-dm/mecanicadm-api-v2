@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.vehicle.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
+import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
