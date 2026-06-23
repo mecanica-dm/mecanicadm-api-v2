@@ -14,7 +14,7 @@ Adotamos a seguinte organização como padrão para novas features:
 - **`core` é o centro da aplicação**:
   - contém entidades de domínio, value objects, regras de negócio e comportamentos;
   - entidades que necessitam de auditoria estendem `AuditDomain` e controlam timestamps explicitamente via `create()`, `update()` e `delete()`;
-  - contém use cases que implementam a interface `UseCase<I, O>` e apenas orquestram fluxo;
+  - contém use cases que implementam `UseCase<I, O>` (com retorno) ou `VoidUseCase<I>` (sem retorno) e apenas orquestram fluxo;
   - contém portas (`ports`) para acesso a persistência com contratos descritivos baseados em intenção (ex.: `exists*` booleanos);
   - não depende de Spring Web, JPA, validação HTTP ou qualquer detalhe de infraestrutura.
 
@@ -23,12 +23,11 @@ Adotamos a seguinte organização como padrão para novas features:
   - converte entrada HTTP em comandos/queries do core;
   - converte exceções de domínio em respostas HTTP;
   - concentra validações específicas de transporte (ex.: `@NotBlank`, `@LicensePlate`, `@Valid`);
-  - contém a configuração dos beans de use case, aplicando o `ValidationDecorator` via decorator pattern.
+  - contém a configuração dos beans de use case.
 
 - **Use cases recebem apenas tipos do core**:
   - comandos e queries vivem no pacote do core e podem conter anotações `jakarta.validation` para validação declarativa;
-  - controllers fazem a tradução entre DTOs da API e comandos/queries do core;
-  - a validação dos commands é aplicada automaticamente pelo `ValidationDecorator` na camada de configuração.
+  - controllers fazem a tradução entre DTOs da API e comandos/queries do core.
 
 - **Exceções seguem contrato de domínio**:
   - exceções de negócio devem estender `DomainExceptionCore`;
@@ -70,37 +69,42 @@ Ao criar uma nova feature, seguir este fluxo:
 
 ### 3.4. Casos de uso
 - Criar use cases no core para cada operação relevante.
-- **Todos os use cases devem implementar a interface `UseCase<I, O>`**:
+- **Use cases com retorno devem implementar a interface `UseCase<I, O>`**:
   ```java
   public interface UseCase<I, O> {
       O execute(I input);
   }
   ```
   - `I` é o tipo do comando/query de entrada.
-  - `O` é o tipo do retorno (pode ser `Void` quando não há retorno).
+  - `O` é o tipo do retorno.
+
+- **Use cases sem retorno (void) devem implementar a interface `VoidUseCase<I>`**:
+  ```java
+  public interface VoidUseCase<I> {
+      void execute(I input);
+  }
+  ```
+  - `I` é o tipo do comando/query de entrada.
+  - Indicado para operações como delete, soft delete, update, ou comandos que não produzem valor de retorno.
 - O use case deve:
   - validar fluxo de negócio (regras de consistência, unicidade via gateway, etc.);
   - chamar entidades e portas;
-  - **não realizar validação de formato** (ex.: campos obrigatórios, formato de e-mail) — essa validação fica declarativamente no command via anotações `jakarta.validation` e é aplicada pelo `ValidationDecorator`;
+  - **não realizar validação de formato** (ex.: campos obrigatórios, formato de e-mail) — essa validação fica declarativamente no command via anotações `jakarta.validation`;
   - não conhecer controller, request, response, JPA ou HTTP.
 - **Commands e Queries**:
   - São records anotados com `jakarta.validation` para validação declarativa de campos (ex.: `@NotBlank`, `@Email`, `@NotNull`).
   - Vivem no pacote do core, mas podem conter anotações `jakarta.validation` — isso é aceito pois são regras de contrato de entrada, não de infraestrutura.
-- **Decorator de validação**:
-  - O `ValidationDecorator` (em `shared/usecase`) envolve o use case real e aplica `jakarta.validation.Validator.validate()` no input antes de delegar.
-  - A configuração dos beans é feita na infraestrutura:
+- **Configuração dos use cases**:
+  - Os beans são registrados diretamente na configuração da infraestrutura, sem decoradores:
     ```java
-    @Bean("meuUseCase.real")
-    public UseCase<MeuCommand, UUID> meuUseCaseReal(MeuGateway gateway) {
-        return new MeuUseCase(gateway);
+    @Bean
+    public CreateClientUseCase createClientUseCase(ClientGateway gateway) {
+        return new CreateClientUseCase(gateway);
     }
 
     @Bean
-    @Primary
-    public UseCase<MeuCommand, UUID> meuUseCase(
-            @Qualifier("meuUseCase.real") UseCase<MeuCommand, UUID> real,
-            Validator validator) {
-        return new ValidationDecorator<>(real, validator);
+    public SoftDeleteClientUseCase softDeleteClientUseCase(ClientGateway gateway) {
+        return new SoftDeleteClientUseCase(gateway);
     }
     ```
 
@@ -128,7 +132,7 @@ Ao criar uma nova feature, seguir este fluxo:
   - Resulta em `500 Internal Server Error` no `GlobalExceptionHandler`.
   - Carrega um `code` (message key) e `args` para internacionalização.
 - Garantir que `500` fique reservado a falhas inesperadas/técnicas.
-- **`ConstraintViolationException`** (do `ValidationDecorator`) deve ser tratada no `GlobalExceptionHandler` com `400 Bad Request`, extraindo as mensagens de violação.
+- **`ConstraintViolationException`** (da validação `jakarta.validation`) deve ser tratada no `GlobalExceptionHandler` com `400 Bad Request`, extraindo as mensagens de violação.
 
 ### 3.9. Auditoria e soft delete
 - Entidades de domínio que necessitam de auditoria devem estender `AuditDomain` (em `shared/domain`).
@@ -166,7 +170,7 @@ Ao iniciar uma feature nova, seguir este checklist:
 6. Criar DTOs de request/response na infra.
 7. Criar controller e fazer o mapeamento DTO ↔ command/query.
 8. Criar entidade JPA, mapper (sincronizando timestamps) e implementação da porta.
-9. Registrar os beans da feature — criar use case real + `ValidationDecorator` com `@Primary`.
+9. Registrar os beans da feature na configuração da infraestrutura.
 10. Adicionar tratamento de exceções (`DomainExceptionCore`, `TechnicalException`, `ConstraintViolationException`) e chaves de i18n necessárias.
 11. Escrever testes unitários e de integração por camada.
 12. Garantir que o core não importe nada de `infra`, `springframework.web` ou `jakarta.persistence` (anotações `jakarta.validation` são permitidas em commands).
@@ -179,7 +183,6 @@ Ao iniciar uma feature nova, seguir este checklist:
 - Mudanças de API ou persistência impactam menos o domínio.
 - Estrutura mais previsível para novas features.
 - Validação declarativa em commands reduz código boilerplate manual nos use cases.
-- `ValidationDecorator` reutilizável elimina duplicação de validação entre controller e use case.
 - Auditoria controlada pelo domínio garante consistência independente da tecnologia de persistência.
 - Gateways com contratos descritivos (`exists*`) reduzem o acoplamento e deixam a intenção mais clara.
 - Melhor alinhamento com as ADRs de lógica no domínio, exceções e i18n.
@@ -200,11 +203,11 @@ Esta ADR complementa e reforça:
 - [ADR 006 - Contrato de Exceções de Domínio e i18n](docs/adr/006-contrato_excecoes_dominio_i18n.md)
 - [ADR 010 - Estratégia de i18n e Múltiplos Idiomas](docs/adr/010-estrategia_i18n_multi_idioma.md)
 
-Com a refatoração da feature `client`, os padrões de `UseCase<I,O>`, `ValidationDecorator`, `TechnicalException`, `AuditDomain` e gateways descritivos tornam-se o novo padrão de referência. O `vehicle` deve ser atualizado para seguir estes mesmos padrões.
+Com a refatoração da feature `client`, os padrões de `UseCase<I,O>`, `VoidUseCase<I>`, `TechnicalException`, `AuditDomain` e gateways descritivos tornam-se o novo padrão de referência. O `vehicle` deve ser atualizado para seguir estes mesmos padrões.
 
 Migrações futuras:
-- `vehicle` → adotar `UseCase<I,O>`, `ValidationDecorator` e `AuditDomain`.
-- `workorder` → adotar `UseCase<I,O>`, `ValidationDecorator` e gateway descritivo.
-- `user` → adotar `UseCase<I,O>`, `ValidationDecorator` e `AuditDomain`.
-- `labor` / `material` / `stock` → adotar `UseCase<I,O>`, `ValidationDecorator` e `AuditDomain`.
+- `vehicle` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e `AuditDomain`.
+- `workorder` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e gateway descritivo.
+- `user` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e `AuditDomain`.
+- `labor` / `material` / `stock` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e `AuditDomain`.
 

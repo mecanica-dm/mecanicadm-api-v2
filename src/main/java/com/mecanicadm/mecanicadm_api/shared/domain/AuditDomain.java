@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.shared.domain;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 public abstract class AuditDomain {
@@ -28,17 +29,17 @@ public abstract class AuditDomain {
     }
 
     public void create() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         this.dateCreated = now;
         this.dateUpdated = now;
     }
 
     public void update() {
-        this.dateUpdated = LocalDateTime.now();
+        this.dateUpdated = LocalDateTime.now(Clock.systemDefaultZone());
     }
 
     public void delete() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(Clock.systemDefaultZone());
         this.deletedAt = now;
         this.dateUpdated = now;
     }

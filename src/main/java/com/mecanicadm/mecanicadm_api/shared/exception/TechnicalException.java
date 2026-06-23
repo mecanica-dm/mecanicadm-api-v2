@@ -3,7 +3,7 @@ package com.mecanicadm.mecanicadm_api.shared.exception;
 public class TechnicalException extends RuntimeException {
 
     private final String code;
-    private final Object[] args;
+    private final transient Object[] args;
 
     public TechnicalException(String code, Object... args) {
         super(code);
