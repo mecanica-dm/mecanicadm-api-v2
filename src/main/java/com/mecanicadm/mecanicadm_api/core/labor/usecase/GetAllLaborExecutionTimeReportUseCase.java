@@ -1,12 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.labor.usecase;
 
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetAllLaborExecutionTimeReportQuery;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderLaborItemRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborTypeStatsProjection;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborTypeExecutionStatsResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderLaborItemJpaRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,9 +17,9 @@ public class GetAllLaborExecutionTimeReportUseCase {
 
     private static final String DURATION_UNIT = "minutes";
 
-    private final WorkOrderLaborItemRepository workOrderLaborItemRepository;
+    private final WorkOrderLaborItemJpaRepository workOrderLaborItemRepository;
 
-    public GetAllLaborExecutionTimeReportUseCase(WorkOrderLaborItemRepository workOrderLaborItemRepository) {
+    public GetAllLaborExecutionTimeReportUseCase(WorkOrderLaborItemJpaRepository workOrderLaborItemRepository) {
         this.workOrderLaborItemRepository = workOrderLaborItemRepository;
     }
 

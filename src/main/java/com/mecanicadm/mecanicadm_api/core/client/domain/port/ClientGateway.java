@@ -19,4 +19,6 @@ public interface ClientGateway {
     Optional<Client> findClientByEmail(String email);
 
     ClientPageResult findAll(ClientPageQuery pageQuery);
+
+    boolean existsById(UUID id);
 }

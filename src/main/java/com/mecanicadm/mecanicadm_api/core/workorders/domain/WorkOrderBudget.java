@@ -1,37 +1,32 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.domain;
 
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderBudgetStatus;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
-@Entity
-@Table(name = "work_order_budgets")
 public class WorkOrderBudget {
 
-    @Id
-    @Column(name = "work_order_id", nullable = false, updatable = false)
     private UUID workOrderId;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_order_id", nullable = false, updatable = false)
     private WorkOrder workOrder;
 
-    @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
     private WorkOrderBudgetStatus status;
 
-    @Column(name = "rejection_reason")
     private String rejectionReason;
 
     protected WorkOrderBudget() {
+    }
+
+    public WorkOrderBudget(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String rejectionReason) {
+        this.workOrderId = workOrderId;
+        this.totalPrice = totalPrice;
+        this.status = status;
+        this.rejectionReason = rejectionReason;
     }
 
     private WorkOrderBudget(WorkOrder workOrder, BigDecimal totalPrice) {
@@ -72,6 +67,10 @@ public class WorkOrderBudget {
             this.status = WorkOrderBudgetStatus.REJECTED;
             this.workOrder.cancel();
         }
+    }
+
+    public UUID getWorkOrderId() {
+        return workOrderId;
     }
 
     public BigDecimal getTotalPrice() {

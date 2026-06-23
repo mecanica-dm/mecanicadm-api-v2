@@ -1,11 +1,11 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderBudget;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderBudgetStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CalculateWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,15 +20,22 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CalculateWorkOrderBudgetServiceTest {
 
     @Mock
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
 
     @InjectMocks
     private CalculateWorkOrderBudgetService service;
@@ -46,7 +53,7 @@ class CalculateWorkOrderBudgetServiceTest {
     @DisplayName("Deve calcular um novo orçamento para uma ordem de serviço sem orçamento anterior")
     void shouldCalculateNewBudgetWhenNoneExists() {
         CalculateWorkOrderBudgetCommand cmd = new CalculateWorkOrderBudgetCommand(workOrderId);
-        
+
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.of(workOrder));
         when(workOrderRepository.sumMaterialsTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("150.00"));
         when(workOrderRepository.sumLaborTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("200.00"));
@@ -67,14 +74,14 @@ class CalculateWorkOrderBudgetServiceTest {
     @DisplayName("Deve recalcular o orçamento existente quando já houver um atribuído")
     void shouldRecalculateExistingBudget() {
         CalculateWorkOrderBudgetCommand cmd = new CalculateWorkOrderBudgetCommand(workOrderId);
-        
+
         when(workOrderRepository.findById(workOrderId)).thenReturn(Optional.of(workOrder));
         when(workOrderRepository.sumMaterialsTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("50.00"));
         when(workOrderRepository.sumLaborTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("50.00"));
         when(workOrderRepository.save(any(WorkOrder.class))).thenReturn(workOrder);
 
-        service.handle(cmd); 
-        
+        service.handle(cmd);
+
         when(workOrderRepository.sumMaterialsTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("100.00"));
         when(workOrderRepository.sumLaborTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("100.00"));
 

@@ -1,28 +1,26 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.domain;
 
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import jakarta.persistence.*;
 
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
-@Entity
-@Table(name = "work_order_material_items")
 public class WorkOrderMaterialItem {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "material_id", nullable = false)
     private UUID materialId;
 
-    @Column(name = "quantity", nullable = false)
     private int quantity;
 
     protected WorkOrderMaterialItem() {
+    }
+
+    public WorkOrderMaterialItem(UUID id, UUID materialId, int quantity) {
+        this.id = id;
+        this.materialId = materialId;
+        this.quantity = quantity;
     }
 
     private WorkOrderMaterialItem(UUID materialId, int quantity) {
@@ -35,6 +33,10 @@ public class WorkOrderMaterialItem {
 
     public static WorkOrderMaterialItem create(UUID materialId, int quantity) {
         return new WorkOrderMaterialItem(materialId, quantity);
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public UUID getMaterialId() {
