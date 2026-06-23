@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.core.stockmovements.usecase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.exception.StockMovementsExceptions;
-import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.DeductStockCommand;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
@@ -12,16 +11,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeductStockServiceTest {

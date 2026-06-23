@@ -4,7 +4,6 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
-import com.mecanicadm.mecanicadm_api.core.material.usecase.UpdateMaterialUseCase;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.UpdateMaterialCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,9 +20,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateMaterialServiceTest {

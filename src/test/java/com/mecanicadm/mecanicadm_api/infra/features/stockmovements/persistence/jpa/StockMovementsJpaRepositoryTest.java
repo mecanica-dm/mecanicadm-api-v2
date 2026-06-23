@@ -2,7 +2,6 @@ package com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.
 
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.enums.MovementType;
 import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.entity.StockMovementsJpaEntity;
-import com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.jpa.StockMovementsJpaRepository;
 import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

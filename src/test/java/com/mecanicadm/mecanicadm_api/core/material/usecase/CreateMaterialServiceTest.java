@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.core.material.usecase;
 import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
-import com.mecanicadm.mecanicadm_api.core.material.usecase.CreateMaterialUseCase;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.CreateMaterialCommand;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.AddStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.AddStockCommand;
@@ -21,9 +20,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateMaterialServiceTest {

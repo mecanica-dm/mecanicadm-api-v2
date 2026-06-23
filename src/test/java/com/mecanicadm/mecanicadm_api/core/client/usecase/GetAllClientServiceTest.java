@@ -4,7 +4,6 @@ import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageQuery;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientPageResult;
-import com.mecanicadm.mecanicadm_api.core.client.usecase.GetAllClientUseCase;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.query.GetAllClientQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GetAllClientServiceTest {
