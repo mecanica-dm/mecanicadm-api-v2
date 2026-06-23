@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.user.usecase;
 
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
-import com.mecanicadm.mecanicadm_api.core.user.domain.UserAuthentication;
+import com.mecanicadm.mecanicadm_api.core.user.usecase.dto.AuthenticateUserResponse;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.TokenService;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
@@ -55,7 +55,7 @@ class AuthenticateUserUseCaseTest {
         when(user.getName()).thenReturn("Test User");
         when(tokenService.generateToken(query.email())).thenReturn(token);
 
-        UserAuthentication response = authenticateUserUseCase.execute(query);
+        AuthenticateUserResponse response = authenticateUserUseCase.execute(query);
 
         assertNotNull(response);
         assertEquals(token, response.token());
