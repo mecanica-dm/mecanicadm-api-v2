@@ -10,6 +10,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -82,5 +84,42 @@ class UserTest {
         ReflectionTestUtils.setField(user, "deletedAt", LocalDateTime.now());
 
         assertTrue(user.isDeleted());
+    }
+
+    @Test
+    @DisplayName("Deve realizar soft delete do usuário")
+    void shouldSoftDeleteUser() {
+        User user = User.create("test@email.com", "encoded", "Name");
+
+        user.softDelete();
+
+        assertTrue(user.isDeleted());
+    }
+
+    @Test
+    @DisplayName("Deve atualizar a senha do usuário")
+    void shouldUpdatePassword() {
+        User user = User.create("test@email.com", "oldPassword", "Name");
+
+        user.updatePassword("newEncodedPassword");
+
+        assertEquals("newEncodedPassword", user.getPassword());
+    }
+
+    @Test
+    @DisplayName("Deve restaurar um usuário a partir de dados existentes")
+    void shouldRestoreUser() {
+        var id = UUID.randomUUID();
+        var now = LocalDateTime.now();
+        User user = User.restore(id, "test@email.com", "encoded", "Name",
+                List.of(UserRole.USER, UserRole.ATTENDANT), null, now, now);
+
+        assertEquals(id, user.getId());
+        assertEquals("test@email.com", user.getEmail());
+        assertEquals("encoded", user.getPassword());
+        assertEquals("Name", user.getName());
+        assertEquals(2, user.getRoles().size());
+        assertEquals(now, user.getDateCreated());
+        assertEquals(now, user.getDateUpdated());
     }
 }

@@ -1,9 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.domain;
 
+import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class VehicleTest {
 
@@ -35,5 +38,48 @@ class VehicleTest {
 
         assertEquals(newModel, updatedVehicle.getModel());
         assertEquals("Fox", vehicle.getModel());
+    }
+
+    @Test
+    @DisplayName("Deve restaurar um veículo a partir de dados existentes")
+    void shouldRestoreVehicle() {
+        var now = LocalDateTime.now();
+
+        var vehicle = Vehicle.restore("Civic", "ABC1234", "Honda", (short) 2023, null, now, now);
+
+        assertEquals("ABC1234", vehicle.getLicensePlate());
+        assertEquals("Civic", vehicle.getModel());
+        assertEquals("Honda", vehicle.getBrand());
+        assertEquals(Short.valueOf((short) 2023), vehicle.getModelYear());
+        assertEquals(now, vehicle.getDateCreated());
+        assertEquals(now, vehicle.getDateUpdated());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção para modelo nulo")
+    void shouldThrowExceptionForNullModel() {
+        assertThrows(VehicleExceptions.ModelNotEmpty.class, () ->
+                Vehicle.create(null, "ABC1234", "Honda", (short) 2023));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção para marca nula")
+    void shouldThrowExceptionForNullBrand() {
+        assertThrows(VehicleExceptions.BrandNotEmpty.class, () ->
+                Vehicle.create("Civic", "ABC1234", null, (short) 2023));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção para ano do modelo nulo")
+    void shouldThrowExceptionForNullModelYear() {
+        assertThrows(VehicleExceptions.InvalidModelYear.class, () ->
+                Vehicle.create("Civic", "ABC1234", "Honda", null));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção para ano do modelo inválido")
+    void shouldThrowExceptionForInvalidModelYear() {
+        assertThrows(VehicleExceptions.InvalidModelYear.class, () ->
+                Vehicle.create("Civic", "ABC1234", "Honda", (short) 1800));
     }
 }

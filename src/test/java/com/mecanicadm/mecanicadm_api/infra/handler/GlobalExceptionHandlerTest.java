@@ -1,17 +1,25 @@
 package com.mecanicadm.mecanicadm_api.infra.handler;
 
+import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.infra.security.exception.SecurityException;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Locale;
@@ -22,6 +30,7 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,6 +90,49 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.error").value("Ocorreu um erro interno no servidor"));
     }
 
+    @Test
+    @DisplayName("Deve retornar 500 ao capturar TechnicalException")
+    void shouldReturn500WhenTechnicalExceptionOccurs() throws Exception {
+        when(messageSource.getMessage(eq("error.technical.entity.null"), any(), eq("Ocorreu um erro técnico inesperado."), any(Locale.class)))
+                .thenReturn("Entidade nula para criação");
+
+        mockMvc.perform(get("/test/technical-exception"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("Entidade nula para criação"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar status do DomainExceptionCore")
+    void shouldReturnDomainExceptionStatus() throws Exception {
+        when(messageSource.getMessage(eq("vehicle.not.found"), any(), eq("vehicle.not.found"), any(Locale.class)))
+                .thenReturn("Veículo não encontrado");
+
+        mockMvc.perform(get("/test/domain-exception"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("Veículo não encontrado"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar 401 ao capturar UserExceptions.BadCredentials")
+    void shouldReturn401WhenUserBadCredentialsOccurs() throws Exception {
+        when(messageSource.getMessage(eq("error.bad.credentials"), any(), eq("error.bad.credentials"), any(Locale.class)))
+                .thenReturn("Credenciais inválidas");
+
+        mockMvc.perform(get("/test/user-bad-credentials"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("Credenciais inválidas"));
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 ao capturar MethodArgumentNotValidException")
+    void shouldReturn400WhenMethodArgumentNotValidExceptionOccurs() throws Exception {
+        mockMvc.perform(post("/test/validation-error")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.name").exists());
+    }
+
     @RestController
     static class TestController {
         @GetMapping("/test/security-exception")
@@ -114,5 +166,32 @@ class GlobalExceptionHandlerTest {
 
             throw new ConstraintViolationException("Validation failed", java.util.Set.<ConstraintViolation<?>>of(nameViolation, emailViolation));
         }
+
+        @GetMapping("/test/technical-exception")
+        public void throwTechnicalException() {
+            throw new TechnicalException("error.technical.entity.null", "Entity", "criação");
+        }
+
+        @GetMapping("/test/domain-exception")
+        public void throwDomainException() {
+            throw new DomainExceptionCore("vehicle.not.found", 404) {};
+        }
+
+        @GetMapping("/test/user-bad-credentials")
+        public void throwUserBadCredentials() {
+            throw new UserExceptions.BadCredentials();
+        }
+
+        @PostMapping("/test/validation-error")
+        public void throwValidationError(@Valid @RequestBody ValidatedRequest request) {
+        }
+    }
+
+    static class ValidatedRequest {
+        @NotBlank
+        private String name;
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
     }
 }

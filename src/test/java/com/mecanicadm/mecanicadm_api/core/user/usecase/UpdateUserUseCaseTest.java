@@ -113,4 +113,37 @@ class UpdateUserUseCaseTest {
         verify(passwordEncoder).matches("senhaIncorreta", "encoded");
         verify(gateway, never()).update(any(User.class));
     }
+
+    @Test
+    @DisplayName("Deve atualizar nome e senha simultaneamente")
+    void shouldUpdateNameAndPasswordSimultaneously() {
+        UpdateUserCommand command = new UpdateUserCommand(userId, "Novo Nome", "novaSenha", "currentPassword");
+
+        when(gateway.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("currentPassword", "encoded")).thenReturn(true);
+        when(passwordEncoder.encode("novaSenha")).thenReturn("novaEncoded");
+
+        useCase.execute(command);
+
+        verify(gateway).findById(userId);
+        verify(passwordEncoder).matches("currentPassword", "encoded");
+        verify(passwordEncoder).encode("novaSenha");
+        verify(gateway).update(existingUser);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar usuario com nome vazio (apenas senha)")
+    void shouldUpdatePasswordOnlyWhenNameIsBlank() {
+        UpdateUserCommand command = new UpdateUserCommand(userId, "", "novaSenha", "currentPassword");
+
+        when(gateway.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("currentPassword", "encoded")).thenReturn(true);
+        when(passwordEncoder.encode("novaSenha")).thenReturn("novaEncoded");
+
+        useCase.execute(command);
+
+        verify(gateway).findById(userId);
+        verify(passwordEncoder).matches("currentPassword", "encoded");
+        verify(gateway).update(existingUser);
+    }
 }

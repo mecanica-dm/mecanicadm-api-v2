@@ -4,10 +4,10 @@ import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.enums.MovementTy
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class StockMovementsTest {
 
@@ -39,16 +39,22 @@ class StockMovementsTest {
         assertEquals(MovementType.REDUCTION, movement.getType());
     }
 
-    // TODO: Tirar comentario quando fazer refatoração do AuditEntity
-//    @Test
-//    @DisplayName("Deve retornar true para deletedAt quando presente")
-//    void shouldReturnTrueWhenDeletedAtIsPresent() {
-//        StockMovements movement = StockMovements.recordAddition(UUID.randomUUID(), 10);
-//
-//        assertFalse(movement.getDeletedAt().isPresent());
-//
-//        ReflectionTestUtils.setField(movement, "deletedAt", LocalDateTime.now());
-//
-//        assertTrue(movement.getDeletedAt().isPresent());
-//    }
+    @Test
+    @DisplayName("Deve restaurar uma movimentação a partir de dados existentes")
+    void shouldRestoreMovement() {
+        var id = UUID.randomUUID();
+        var materialId = UUID.randomUUID();
+        var workOrderId = UUID.randomUUID();
+        var now = LocalDateTime.now();
+
+        var movement = StockMovements.restore(id, materialId, workOrderId, 5, MovementType.REDUCTION, null, now, now);
+
+        assertEquals(id, movement.getId());
+        assertEquals(materialId, movement.getMaterialId());
+        assertEquals(workOrderId, movement.getWorkOrderId());
+        assertEquals(5, movement.getQuantity());
+        assertEquals(MovementType.REDUCTION, movement.getType());
+        assertEquals(now, movement.getDateCreated());
+        assertEquals(now, movement.getDateUpdated());
+    }
 }
