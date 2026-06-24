@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/labor")
-public class LaborController extends LaborOpenApi {
+public class LaborController implements LaborOpenApi {
 
     private final CreateLaborUseCase createLaborUseCase;
     private final UpdateLaborUseCase updateLaborUseCase;
@@ -46,30 +46,35 @@ public class LaborController extends LaborOpenApi {
     }
 
     @Override
+    @PostMapping
     public ResponseEntity<UUID> create(@Valid @RequestBody CreateLaborRequest request) {
         UUID id = createLaborUseCase.execute(new CreateLaborCommand(request.name(), request.price()));
         return ResponseEntity.created(URI.create(String.format("/labor/%s", id))).body(id);
     }
 
     @Override
-    public ResponseEntity<Void> update(@PathVariable("id") UUID id, @Valid @RequestBody UpdateLaborRequest request) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable UUID id, @Valid @RequestBody UpdateLaborRequest request) {
         updateLaborUseCase.execute(new UpdateLaborCommand(id, request.name(), request.price()));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         deleteLaborUseCase.execute(new DeleteLaborCommand(id));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<LaborResponse> findById(@PathVariable("id") UUID id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<LaborResponse> findById(@PathVariable UUID id) {
         var labor = getLaborByIdUseCase.execute(new GetLaborByIdQuery(id));
         return ResponseEntity.ok(LaborResponse.from(labor));
     }
 
     @Override
+    @GetMapping
     public ResponseEntity<Page<LaborResponse>> getAll(@RequestParam(required = false) String name,
                                                        @PageableDefault(size = 20) Pageable pageable) {
         var query = LaborQueryMapper.toQuery(name, pageable);
@@ -77,4 +82,3 @@ public class LaborController extends LaborOpenApi {
         return ResponseEntity.ok(LaborQueryMapper.toPage(result, pageable));
     }
 }
-
