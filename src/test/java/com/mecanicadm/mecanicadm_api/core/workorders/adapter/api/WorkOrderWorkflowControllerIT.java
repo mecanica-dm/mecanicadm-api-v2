@@ -1,9 +1,8 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.adapter.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderStatus;
-import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @Transactional
-class WorkOrderWorkflowControllerIT extends AbstractIntegrationTest {
+class WorkOrderWorkflowControllerIT {
 
     private static final UUID DIAGNOSE_WORK_ORDER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440020");
 
@@ -39,7 +40,7 @@ class WorkOrderWorkflowControllerIT extends AbstractIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
 
     private String authToken;
 

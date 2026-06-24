@@ -3,11 +3,11 @@ package com.mecanicadm.mecanicadm_api.infra.features.labor.config;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.CreateLaborUseCase;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.DeleteLaborUseCase;
-import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetAllLaborsUseCase;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetAllLaborExecutionTimeReportUseCase;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetAllLaborsUseCase;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetLaborByIdUseCase;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.UpdateLaborUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderLaborItemRepository;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderLaborItemJpaRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,7 +40,7 @@ public class LaborConfiguration {
     }
 
     @Bean
-    public GetAllLaborExecutionTimeReportUseCase getAllLaborExecutionTimeReportUseCase(WorkOrderLaborItemRepository workOrderLaborItemRepository) {
+    public GetAllLaborExecutionTimeReportUseCase getAllLaborExecutionTimeReportUseCase(WorkOrderLaborItemJpaRepository workOrderLaborItemRepository) {
         return new GetAllLaborExecutionTimeReportUseCase(workOrderLaborItemRepository);
     }
 }

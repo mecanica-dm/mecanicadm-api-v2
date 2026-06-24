@@ -21,4 +21,6 @@ public interface ClientGateway {
     boolean existsClientByEmailAndIdNot(String email, UUID id);
 
     ClientPageResult findAll(ClientPageQuery pageQuery);
+
+    boolean existsById(UUID id);
 }

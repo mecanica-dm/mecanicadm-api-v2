@@ -1,30 +1,29 @@
 package com.mecanicadm.mecanicadm_api.core.labor.usecase;
 
-import com.mecanicadm.mecanicadm_api.core.labor.domain.LaborExecutionReport;
-import com.mecanicadm.mecanicadm_api.core.labor.domain.LaborTypeExecutionStats;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetAllLaborExecutionTimeReportQuery;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderLaborItemRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborTypeStatsProjection;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
+import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborTypeExecutionStatsResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderLaborItemJpaRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public class GetAllLaborExecutionTimeReportUseCase implements UseCase<GetAllLaborExecutionTimeReportQuery, LaborExecutionReport> {
+public class GetAllLaborExecutionTimeReportUseCase {
 
     private static final String DURATION_UNIT = "minutes";
 
-    private final WorkOrderLaborItemRepository workOrderLaborItemRepository;
+    private final WorkOrderLaborItemJpaRepository workOrderLaborItemRepository;
 
-    public GetAllLaborExecutionTimeReportUseCase(WorkOrderLaborItemRepository workOrderLaborItemRepository) {
+    public GetAllLaborExecutionTimeReportUseCase(WorkOrderLaborItemJpaRepository workOrderLaborItemRepository) {
         this.workOrderLaborItemRepository = workOrderLaborItemRepository;
     }
 
-    public LaborExecutionReport execute(GetAllLaborExecutionTimeReportQuery query) {
+    public LaborExecutionReportResponse execute(GetAllLaborExecutionTimeReportQuery query) {
         validatePeriod(query.initialDate(), query.finalDate());
 
         LocalDateTime initialDateTime = toInitialDateTime(query.initialDate());
@@ -33,16 +32,16 @@ public class GetAllLaborExecutionTimeReportUseCase implements UseCase<GetAllLabo
         LaborExecutionSummaryProjection summary =
                 workOrderLaborItemRepository.getExecutionTimeSummary(initialDateTime, finalDateTimeExclusive);
 
-        List<LaborTypeExecutionStats> statsByLaborType = workOrderLaborItemRepository
+        List<LaborTypeExecutionStatsResponse> statsByLaborType = workOrderLaborItemRepository
                 .getStatsByLaborType(initialDateTime, finalDateTimeExclusive)
                 .stream()
-                .map(this::toLaborTypeStats)
+                .map(this::toLaborTypeStatsResponse)
                 .toList();
 
         long total = summary != null && summary.getTotalProcessedLabors() != null ? summary.getTotalProcessedLabors() : 0L;
         double average = summary != null && summary.getAverageExecutionMinutes() != null ? summary.getAverageExecutionMinutes() : 0D;
 
-        return new LaborExecutionReport(DURATION_UNIT, total, average, statsByLaborType);
+        return new LaborExecutionReportResponse(DURATION_UNIT, total, average, statsByLaborType);
     }
 
     private void validatePeriod(LocalDate initialDate, LocalDate finalDate) {
@@ -59,9 +58,9 @@ public class GetAllLaborExecutionTimeReportUseCase implements UseCase<GetAllLabo
         return finalDate != null ? finalDate.plusDays(1).atStartOfDay() : null;
     }
 
-    private LaborTypeExecutionStats toLaborTypeStats(LaborTypeStatsProjection projection) {
+    private LaborTypeExecutionStatsResponse toLaborTypeStatsResponse(LaborTypeStatsProjection projection) {
         UUID laborId = UUID.fromString(projection.getLaborId().toString());
-        return new LaborTypeExecutionStats(
+        return new LaborTypeExecutionStatsResponse(
                 laborId,
                 projection.getLaborName(),
                 projection.getTotalExecutions(),

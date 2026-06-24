@@ -22,7 +22,7 @@ class WorkOrderExceptionsTest {
     }
 
     @Test
-    @DisplayName("Deve instanciar todas as exceções de WorkOrder para garantir cobertura")
+    @DisplayName("Deve instanciar todas as exceções de WorkOrderJpaEntity para garantir cobertura")
     void shouldInstantiateAllExceptions() {
         assertException(new WorkOrderExceptions.NotFound(), 404, "work.order.not.found");
         assertException(new WorkOrderExceptions.InvalidMaterialQuantity(), 400, "work.order.material.quantity.invalid");

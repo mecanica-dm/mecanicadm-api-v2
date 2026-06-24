@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.core.workorders.service;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderMaterialItem;
@@ -13,6 +12,7 @@ import com.mecanicadm.mecanicadm_api.core.workorders.usecase.CalculateWorkOrderB
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CalculateWorkOrderBudgetCommand;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DiagnoseWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.infra.features.client.persistence.jpa.ClientJpaRepository;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,14 +26,21 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DiagnoseWorkOrderServiceTest {
 
     @Mock
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
 
     @Mock
     private ClientJpaRepository clientRepository;

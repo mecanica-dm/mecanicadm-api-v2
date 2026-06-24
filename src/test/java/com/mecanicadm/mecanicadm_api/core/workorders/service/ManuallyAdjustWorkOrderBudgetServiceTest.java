@@ -1,10 +1,10 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderBudget;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.ManuallyAdjustWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,11 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +30,7 @@ import static org.mockito.Mockito.when;
 class ManuallyAdjustWorkOrderBudgetServiceTest {
 
     @Mock
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
 
     @InjectMocks
     private ManuallyAdjustWorkOrderBudgetService service;

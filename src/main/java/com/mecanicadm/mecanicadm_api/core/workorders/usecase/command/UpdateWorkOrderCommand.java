@@ -7,11 +7,8 @@ import java.util.UUID;
 public record UpdateWorkOrderCommand(
         @JsonIgnore
         UUID id,
-
         String vehicleId,
-
         UUID clientId,
-
         String description
 ) {
     public UpdateWorkOrderCommand withId(UUID id) {

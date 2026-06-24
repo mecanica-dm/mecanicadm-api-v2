@@ -3,56 +3,38 @@ package com.mecanicadm.mecanicadm_api.core.workorders.domain;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.LaborExecutionStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
-import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.springframework.util.StringUtils.hasText;
 
-@Entity
-@Table(name = "work_orders")
-@SQLDelete(sql = "UPDATE work_orders SET deleted_at = now() WHERE id = ?")
-@SQLRestriction("deleted_at IS NULL")
-public class WorkOrder extends AuditEntity {
+public class WorkOrder {
 
-    @Id
-    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "client_id", nullable = false)
     private UUID clientId;
 
-    @Column(name = "vehicle_id", nullable = false)
     private String vehicleId;
 
-    @Column(name = "description")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
     private WorkOrderStatus status;
 
-    @Column(name = "execution_start_at")
     private LocalDateTime executionStartAt;
 
-    @Column(name = "execution_end_at")
     private LocalDateTime executionEndAt;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_order_id", nullable = false)
     private Set<WorkOrderLaborItem> laborItems = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_order_id", nullable = false)
     private Set<WorkOrderMaterialItem> materialItems = new HashSet<>();
 
-    @OneToOne(mappedBy = "workOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private WorkOrderBudget budget;
 
     protected WorkOrder() {
@@ -64,6 +46,19 @@ public class WorkOrder extends AuditEntity {
         this.vehicleId = requireNonNull(vehicleId, "vehicleId cannot be null");
         this.description = description;
         this.status = WorkOrderStatus.RECEIVED;
+    }
+
+    public WorkOrder(UUID id, UUID clientId, String vehicleId, String description, WorkOrderStatus status, LocalDateTime executionStartAt, LocalDateTime executionEndAt, Set<WorkOrderLaborItem> laborItems, Set<WorkOrderMaterialItem> materialItems, WorkOrderBudget budget) {
+        this.id = id;
+        this.clientId = clientId;
+        this.vehicleId = vehicleId;
+        this.description = description;
+        this.status = status;
+        this.executionStartAt = executionStartAt;
+        this.executionEndAt = executionEndAt;
+        this.laborItems = laborItems;
+        this.materialItems = materialItems;
+        this.budget = budget;
     }
 
     public static WorkOrder create(UUID clientId, String vehicleId, String description) {

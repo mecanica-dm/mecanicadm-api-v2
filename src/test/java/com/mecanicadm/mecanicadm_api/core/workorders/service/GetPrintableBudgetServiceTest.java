@@ -8,7 +8,6 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderMaterialItem;
@@ -16,6 +15,7 @@ import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptio
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableBudgetDTO;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableBudgetResponse;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetPrintableBudgetQuery;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,16 +24,26 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class GetPrintableBudgetServiceTest {
 
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
     private ClientGateway clientRepository;
     private VehicleGateway vehicleRepository;
     private LaborGateway laborGateway;
@@ -44,7 +54,7 @@ class GetPrintableBudgetServiceTest {
 
     @BeforeEach
     void setUp() {
-        workOrderRepository = mock(WorkOrderRepository.class);
+        workOrderRepository = mock(WorkOrderJpaRepository.class);
         clientRepository = mock(ClientGateway.class);
         vehicleRepository = mock(VehicleGateway.class);
         laborGateway = mock(LaborGateway.class);

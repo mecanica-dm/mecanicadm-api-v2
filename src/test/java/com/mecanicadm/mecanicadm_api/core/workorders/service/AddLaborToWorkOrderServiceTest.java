@@ -1,12 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.service;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.CreateWorkOrderLaborItemUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.AddLaborToWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CreateWorkOrderLaborItemCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 class AddLaborToWorkOrderServiceTest {
 
     @Mock
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
 
     @Mock
     private CreateWorkOrderLaborItemUseCase createWorkOrderLaborItemUseCase;

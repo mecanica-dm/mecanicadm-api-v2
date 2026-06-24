@@ -1,13 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.adapter.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.WorkOrderRepository;
-import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderBudget;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderBudgetStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderStatus;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DecideWorkOrderBudgetCommand;
 import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.ManuallyAdjustWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaRepository;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @Transactional
-class WorkOrderBudgetControllerIT extends AbstractIntegrationTest {
+class WorkOrderBudgetControllerIT {
 
     private static final UUID WORK_ORDER_WITH_BUDGET_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440050");
     private static final UUID RECALCULATE_WORK_ORDER_ID = UUID.fromString("660e8400-e29b-41d4-a716-446655440060");
@@ -42,7 +43,7 @@ class WorkOrderBudgetControllerIT extends AbstractIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private WorkOrderRepository workOrderRepository;
+    private WorkOrderJpaRepository workOrderRepository;
 
     private String authToken;
 
