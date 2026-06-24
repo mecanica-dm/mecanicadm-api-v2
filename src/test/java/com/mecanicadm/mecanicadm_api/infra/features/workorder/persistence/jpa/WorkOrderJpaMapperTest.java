@@ -29,19 +29,17 @@ class WorkOrderJpaMapperTest {
         var id = UUID.randomUUID();
         var clientId = UUID.randomUUID();
         var now = LocalDateTime.now();
-        var laborItemId = UUID.randomUUID();
-        var materialItemId = UUID.randomUUID();
 
-        var laborEntity = new WorkOrderLaborItemJpaEntity(laborItemId, UUID.randomUUID(), now, now.plusHours(1), LaborExecutionStatus.EXECUTION_COMPLETED);
-        var materialEntity = new WorkOrderMaterialItemJpaEntity(materialItemId, UUID.randomUUID(), 5);
-        var budgetEntity = new WorkOrderBudgetJpaEntity(id, new BigDecimal("500.00"), WorkOrderBudgetStatus.APPROVED, null);
+        var laborItem = WorkOrderLaborItem.restore(UUID.randomUUID(), UUID.randomUUID(), now, now.plusHours(1), LaborExecutionStatus.EXECUTION_COMPLETED);
+        var materialItem = WorkOrderMaterialItem.restore(UUID.randomUUID(), UUID.randomUUID(), 5);
+        var budget = WorkOrderBudget.restore(id, new BigDecimal("500.00"), WorkOrderBudgetStatus.APPROVED, null);
 
-        var entity = new WorkOrderJpaEntity(id, clientId, "ABC-1234", "Troca de óleo", WorkOrderStatus.IN_EXECUTION, now, null, Set.of(laborEntity), Set.of(materialEntity), budgetEntity);
+        var entity = new WorkOrderJpaEntity(id, clientId, "ABC-1234", "Troca de óleo", WorkOrderStatus.IN_EXECUTION, now, null);
         entity.setDateCreated(now);
         entity.setDateUpdated(now);
         entity.setDeletedAt(null);
 
-        var domain = WorkOrderJpaMapper.toDomain(entity);
+        var domain = WorkOrderJpaMapper.toDomain(entity, Set.of(laborItem), Set.of(materialItem), budget);
 
         assertEquals(id, domain.getId());
         assertEquals(clientId, domain.getClientId());
@@ -60,16 +58,13 @@ class WorkOrderJpaMapperTest {
     }
 
     @Test
-    @DisplayName("Deve mapear domínio para JpaEntity com todos os relacionamentos")
-    void shouldMapToEntityWithAllRelations() {
+    @DisplayName("Deve mapear domínio para JpaEntity sem os relacionamentos")
+    void shouldMapToEntityWithoutRelations() {
         var id = UUID.randomUUID();
         var clientId = UUID.randomUUID();
         var now = LocalDateTime.now();
 
-        var laborItem = WorkOrderLaborItem.restore(UUID.randomUUID(), UUID.randomUUID(), now, now.plusHours(2), LaborExecutionStatus.EXECUTION_COMPLETED);
-        var materialItem = WorkOrderMaterialItem.restore(UUID.randomUUID(), UUID.randomUUID(), 3);
-        var budget = WorkOrderBudget.restore(id, new BigDecimal("750.00"), WorkOrderBudgetStatus.PENDING, null);
-        var domain = WorkOrder.restore(id, clientId, "XYZ-9876", "Revisão completa", WorkOrderStatus.RECEIVED, null, null, Set.of(laborItem), Set.of(materialItem), budget, now, now, null);
+        var domain = WorkOrder.restore(id, clientId, "XYZ-9876", "Revisão completa", WorkOrderStatus.RECEIVED, null, null, Set.of(), Set.of(), null, now, now, null);
 
         var entity = WorkOrderJpaMapper.toEntity(domain);
 
@@ -80,10 +75,6 @@ class WorkOrderJpaMapperTest {
         assertEquals(WorkOrderStatus.RECEIVED, entity.getStatus());
         assertTrue(entity.getExecutionStartAt().isEmpty());
         assertTrue(entity.getExecutionEndAt().isEmpty());
-        assertEquals(1, entity.getLaborItems().size());
-        assertEquals(1, entity.getMaterialItems().size());
-        assertTrue(entity.getBudget().isPresent());
-        assertEquals(new BigDecimal("750.00"), entity.getBudget().get().getTotalPrice());
         assertEquals(now, entity.getDateCreated());
         assertEquals(now, entity.getDateUpdated());
         assertNull(entity.getDeletedAt());
@@ -92,12 +83,37 @@ class WorkOrderJpaMapperTest {
     @Test
     @DisplayName("Deve retornar null quando entidade for nula no toDomain")
     void shouldReturnNullWhenEntityIsNullForToDomain() {
-        assertNull(WorkOrderJpaMapper.toDomain(null));
+        assertNull(WorkOrderJpaMapper.toDomain(null, Set.of(), Set.of(), null));
     }
 
     @Test
     @DisplayName("Deve retornar null quando domínio for nulo no toEntity")
     void shouldReturnNullWhenDomainIsNullForToEntity() {
         assertNull(WorkOrderJpaMapper.toEntity(null));
+    }
+
+    @Test
+    @DisplayName("Deve mapear JpaEntity para domínio sem relacionamentos no toDomainLight")
+    void shouldMapToDomainLight() {
+        var id = UUID.randomUUID();
+        var clientId = UUID.randomUUID();
+        var now = LocalDateTime.now();
+
+        var entity = new WorkOrderJpaEntity(id, clientId, "ABC-1234", "Troca de óleo", WorkOrderStatus.RECEIVED, null, null);
+        entity.setDateCreated(now);
+
+        var domain = WorkOrderJpaMapper.toDomainLight(entity);
+
+        assertEquals(id, domain.getId());
+        assertEquals(clientId, domain.getClientId());
+        assertTrue(domain.getLaborItems().isEmpty());
+        assertTrue(domain.getMaterialItems().isEmpty());
+        assertTrue(domain.getBudget().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Deve retornar null quando entidade for nula no toDomainLight")
+    void shouldReturnNullWhenEntityIsNullForToDomainLight() {
+        assertNull(WorkOrderJpaMapper.toDomainLight(null));
     }
 }

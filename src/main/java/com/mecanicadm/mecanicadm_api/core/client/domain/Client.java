@@ -14,28 +14,29 @@ public class Client extends AuditDomain {
     private String document;
     private String phone;
 
-    private Client(UUID id, String name, String email, String document, String phone,
-                   LocalDateTime dateCreated, LocalDateTime dateUpdated, LocalDateTime deletedAt) {
+    private Client(UUID id, String name, String email, String document, String phone) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.document = document;
         this.phone = phone;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
-        this.deletedAt = deletedAt;
         validate();
     }
 
     public static Client create(String name, String email, String document, String phone) {
-        Client client = new Client(UUID.randomUUID(), name, email, document, phone, null, null, null);
+        Client client = new Client(UUID.randomUUID(), name, email, document, phone);
         client.create();
         return client;
     }
 
+    @SuppressWarnings("java:S107")
     public static Client restore(UUID id, String name, String email, String document, String phone,
                               LocalDateTime dateCreated, LocalDateTime dateUpdated, LocalDateTime deletedAt) {
-        return new Client(id, name, email, document, phone, dateCreated, dateUpdated, deletedAt);
+        Client client = new Client(id, name, email, document, phone);
+        client.dateCreated = dateCreated;
+        client.dateUpdated = dateUpdated;
+        client.deletedAt = deletedAt;
+        return client;
     }
 
     public void update(String name, String email, String document, String phone) {

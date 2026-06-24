@@ -13,24 +13,26 @@ public class Labor extends AuditDomain {
     private String name;
     private BigDecimal price;
 
-    private Labor(UUID id, String name, BigDecimal price, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+    private Labor(UUID id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
-        this.deletedAt = deletedAt;
         validate();
     }
 
     public static Labor create(String name, BigDecimal price) {
-        var labor = new Labor(UUID.randomUUID(), name, price, null, null, null);
+        var labor = new Labor(UUID.randomUUID(), name, price);
         labor.create();
         return labor;
     }
 
+    @SuppressWarnings("java:S107")
     public static Labor restore(UUID id, String name, BigDecimal price, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
-        return new Labor(id, name, price, deletedAt, dateCreated, dateUpdated);
+        Labor labor = new Labor(id, name, price);
+        labor.deletedAt = deletedAt;
+        labor.dateCreated = dateCreated;
+        labor.dateUpdated = dateUpdated;
+        return labor;
     }
 
     public void update(String name, BigDecimal price) {

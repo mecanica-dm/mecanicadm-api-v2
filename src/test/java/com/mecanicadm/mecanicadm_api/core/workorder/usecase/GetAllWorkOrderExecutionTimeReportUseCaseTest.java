@@ -6,7 +6,6 @@ import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetAllWorkOrderExecutionTimeReportQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderExecutionReportResponse;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderExecutionTimeInfoResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,8 +32,8 @@ class GetAllWorkOrderExecutionTimeReportUseCaseTest {
     @Test
     @DisplayName("Deve gerar relatório com dados completos")
     void shouldGenerateReportWithFullData() {
-        LocalDate initialDate = LocalDate.of(2024, 1, 1);
-        LocalDate finalDate = LocalDate.of(2024, 12, 31);
+        LocalDate initialDate = LocalDate.of(2024, Month.JANUARY, 1);
+        LocalDate finalDate = LocalDate.of(2024, Month.DECEMBER, 31);
         GetAllWorkOrderExecutionTimeReportQuery query =
                 new GetAllWorkOrderExecutionTimeReportQuery(initialDate, finalDate);
 
@@ -74,8 +74,8 @@ class GetAllWorkOrderExecutionTimeReportUseCaseTest {
     @Test
     @DisplayName("Deve gerar relatório com projeções nulas")
     void shouldGenerateReportWithNullProjections() {
-        LocalDate initialDate = LocalDate.of(2024, 1, 1);
-        LocalDate finalDate = LocalDate.of(2024, 12, 31);
+        LocalDate initialDate = LocalDate.of(2024, Month.JANUARY, 1);
+        LocalDate finalDate = LocalDate.of(2024, Month.DECEMBER, 31);
         GetAllWorkOrderExecutionTimeReportQuery query =
                 new GetAllWorkOrderExecutionTimeReportQuery(initialDate, finalDate);
 
@@ -97,8 +97,8 @@ class GetAllWorkOrderExecutionTimeReportUseCaseTest {
     @Test
     @DisplayName("Deve lançar exceção quando período for inválido")
     void shouldThrowExceptionWhenPeriodIsInvalid() {
-        LocalDate initialDate = LocalDate.of(2024, 12, 31);
-        LocalDate finalDate = LocalDate.of(2024, 1, 1);
+        LocalDate initialDate = LocalDate.of(2024, Month.DECEMBER, 31);
+        LocalDate finalDate = LocalDate.of(2024, Month.JANUARY, 1);
         GetAllWorkOrderExecutionTimeReportQuery query =
                 new GetAllWorkOrderExecutionTimeReportQuery(initialDate, finalDate);
 

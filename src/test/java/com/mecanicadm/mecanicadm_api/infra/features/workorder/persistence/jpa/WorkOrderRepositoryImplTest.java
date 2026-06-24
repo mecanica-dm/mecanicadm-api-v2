@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,6 +37,12 @@ class WorkOrderRepositoryImplTest {
 
     @Mock
     private WorkOrderJpaRepository jpaRepository;
+    @Mock
+    private WorkOrderLaborItemJpaRepository laborItemJpaRepository;
+    @Mock
+    private WorkOrderMaterialItemJpaRepository materialItemJpaRepository;
+    @Mock
+    private WorkOrderBudgetJpaRepository budgetJpaRepository;
 
     private WorkOrderRepositoryImpl repository;
     private UUID id;
@@ -44,22 +51,31 @@ class WorkOrderRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        repository = new WorkOrderRepositoryImpl(jpaRepository);
+        repository = new WorkOrderRepositoryImpl(jpaRepository, laborItemJpaRepository, materialItemJpaRepository, budgetJpaRepository);
 
         id = UUID.randomUUID();
         domain = mock(WorkOrder.class);
         lenient().when(domain.getId()).thenReturn(id);
+        lenient().when(domain.getLaborItems()).thenReturn(Set.of());
+        lenient().when(domain.getMaterialItems()).thenReturn(Set.of());
+        lenient().when(domain.getBudget()).thenReturn(Optional.empty());
 
         entity = mock(WorkOrderJpaEntity.class);
+        lenient().when(entity.getId()).thenReturn(id);
     }
 
     @Test
     @DisplayName("Deve criar work order com sucesso")
     void shouldCreateWorkOrderSuccessfully() {
-        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
+        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class);
+             MockedStatic<WorkOrderLaborItemJpaMapper> laborMapper = mockStatic(WorkOrderLaborItemJpaMapper.class);
+             MockedStatic<WorkOrderMaterialItemJpaMapper> materialMapper = mockStatic(WorkOrderMaterialItemJpaMapper.class);
+             MockedStatic<WorkOrderBudgetJpaMapper> budgetMapper = mockStatic(WorkOrderBudgetJpaMapper.class)) {
+
             mapper.when(() -> WorkOrderJpaMapper.toEntity(domain)).thenReturn(entity);
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(entity)).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomain(eq(entity), anySet(), anySet(), any())).thenReturn(domain);
             when(jpaRepository.save(entity)).thenReturn(entity);
+            when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
 
             WorkOrder result = repository.create(domain);
 
@@ -78,10 +94,15 @@ class WorkOrderRepositoryImplTest {
     @Test
     @DisplayName("Deve atualizar work order com sucesso")
     void shouldUpdateWorkOrderSuccessfully() {
-        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
+        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class);
+             MockedStatic<WorkOrderLaborItemJpaMapper> laborMapper = mockStatic(WorkOrderLaborItemJpaMapper.class);
+             MockedStatic<WorkOrderMaterialItemJpaMapper> materialMapper = mockStatic(WorkOrderMaterialItemJpaMapper.class);
+             MockedStatic<WorkOrderBudgetJpaMapper> budgetMapper = mockStatic(WorkOrderBudgetJpaMapper.class)) {
+
             mapper.when(() -> WorkOrderJpaMapper.toEntity(domain)).thenReturn(entity);
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(entity)).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomain(eq(entity), anySet(), anySet(), any())).thenReturn(domain);
             when(jpaRepository.save(entity)).thenReturn(entity);
+            when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
 
             WorkOrder result = repository.update(domain);
 
@@ -101,9 +122,12 @@ class WorkOrderRepositoryImplTest {
     @DisplayName("Deve buscar work order por ID com sucesso")
     void shouldFindWorkOrderById() {
         when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(laborItemJpaRepository.findByWorkOrderId(id)).thenReturn(List.of());
+        when(materialItemJpaRepository.findByWorkOrderId(id)).thenReturn(List.of());
+        when(budgetJpaRepository.findById(id)).thenReturn(Optional.empty());
 
         try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(entity)).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomain(eq(entity), anySet(), anySet(), any())).thenReturn(domain);
 
             Optional<WorkOrder> result = repository.findById(id);
 
@@ -127,28 +151,31 @@ class WorkOrderRepositoryImplTest {
     @Test
     @DisplayName("Deve buscar work order com items por ID com sucesso")
     void shouldFindWorkOrderByIdWithItems() {
-        when(jpaRepository.findByIdWithItems(id)).thenReturn(Optional.of(entity));
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(laborItemJpaRepository.findByWorkOrderId(id)).thenReturn(List.of());
+        when(materialItemJpaRepository.findByWorkOrderId(id)).thenReturn(List.of());
+        when(budgetJpaRepository.findById(id)).thenReturn(Optional.empty());
 
         try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(entity)).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomain(eq(entity), anySet(), anySet(), any())).thenReturn(domain);
 
             Optional<WorkOrder> result = repository.findByIdWithItems(id);
 
             assertTrue(result.isPresent());
             assertSame(domain, result.get());
-            verify(jpaRepository).findByIdWithItems(id);
+            verify(jpaRepository).findById(id);
         }
     }
 
     @Test
     @DisplayName("Deve retornar vazio ao buscar work order com items por ID inexistente")
     void shouldReturnEmptyWhenWorkOrderWithItemsNotFoundById() {
-        when(jpaRepository.findByIdWithItems(id)).thenReturn(Optional.empty());
+        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
 
         Optional<WorkOrder> result = repository.findByIdWithItems(id);
 
         assertTrue(result.isEmpty());
-        verify(jpaRepository).findByIdWithItems(id);
+        verify(jpaRepository).findById(id);
     }
 
     @Test
@@ -170,7 +197,7 @@ class WorkOrderRepositoryImplTest {
             Specification<WorkOrderJpaEntity> spec = mock(Specification.class);
             specBuilder.when(() -> WorkOrderSpecificationBuilder.buildFilterSpecification(filter)).thenReturn(spec);
             when(jpaRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(entity)).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomainLight(entity)).thenReturn(domain);
 
             WorkOrderPageResult result = repository.findAll(query);
 

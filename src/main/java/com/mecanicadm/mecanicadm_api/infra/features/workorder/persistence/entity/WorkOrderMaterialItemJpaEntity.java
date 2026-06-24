@@ -13,6 +13,9 @@ public class WorkOrderMaterialItemJpaEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
+    @Column(name = "work_order_id", nullable = false)
+    private UUID workOrderId;
+
     @Column(name = "material_id", nullable = false)
     private UUID materialId;
 
@@ -30,6 +33,14 @@ public class WorkOrderMaterialItemJpaEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public UUID getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public void setWorkOrderId(UUID workOrderId) {
+        this.workOrderId = workOrderId;
     }
 
     public UUID getMaterialId() {

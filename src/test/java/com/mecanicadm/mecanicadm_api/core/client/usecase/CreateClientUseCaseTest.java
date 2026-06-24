@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.core.client.usecase;
 import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
-import com.mecanicadm.mecanicadm_api.core.client.usecase.CreateClientUseCase;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.command.CreateClientCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

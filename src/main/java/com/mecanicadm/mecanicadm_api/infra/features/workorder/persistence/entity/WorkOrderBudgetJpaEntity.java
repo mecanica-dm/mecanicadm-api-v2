@@ -14,11 +14,6 @@ public class WorkOrderBudgetJpaEntity {
     @Column(name = "work_order_id", nullable = false, updatable = false)
     private UUID workOrderId;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_order_id", nullable = false, updatable = false)
-    private WorkOrderJpaEntity workOrder;
-
     @Column(name = "total_price", nullable = false)
     private BigDecimal totalPrice;
 
@@ -37,6 +32,10 @@ public class WorkOrderBudgetJpaEntity {
         this.totalPrice = totalPrice;
         this.status = status;
         this.rejectionReason = rejectionReason;
+    }
+
+    public void setWorkOrderId(UUID workOrderId) {
+        this.workOrderId = workOrderId;
     }
 
     public UUID getWorkOrderId() {

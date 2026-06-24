@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,8 +38,8 @@ class GetAllLaborExecutionTimeReportUseCaseTest {
     @Test
     @DisplayName("Deve gerar relatório de execução com sucesso")
     void shouldGenerateExecutionReportSuccessfully() {
-        var initialDate = LocalDate.of(2026, 1, 1);
-        var finalDate = LocalDate.of(2026, 12, 31);
+        var initialDate = LocalDate.of(2026, Month.JANUARY, 1);
+        var finalDate = LocalDate.of(2026, Month.DECEMBER, 31);
         var query = new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate);
 
         var summary = mock(LaborExecutionSummaryProjection.class);
@@ -93,8 +94,8 @@ class GetAllLaborExecutionTimeReportUseCaseTest {
     @Test
     @DisplayName("Deve lançar exceção quando período for inválido")
     void shouldThrowExceptionWhenPeriodIsInvalid() {
-        var initialDate = LocalDate.of(2026, 12, 31);
-        var finalDate = LocalDate.of(2026, 1, 1);
+        var initialDate = LocalDate.of(2026, Month.DECEMBER, 31);
+        var finalDate = LocalDate.of(2026, Month.JANUARY, 1);
         var query = new GetAllLaborExecutionTimeReportQuery(initialDate, finalDate);
 
         assertThrows(WorkOrderExceptions.InvalidReportPeriod.class, () -> useCase.execute(query));

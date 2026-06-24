@@ -12,7 +12,6 @@ import org.springframework.data.jpa.domain.Specification;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

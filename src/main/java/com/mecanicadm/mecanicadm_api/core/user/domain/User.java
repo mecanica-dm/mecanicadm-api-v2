@@ -17,15 +17,12 @@ public class User extends AuditDomain {
     private String name;
     private List<UserRole> roles = new ArrayList<>();
 
-    private User(UUID id, String email, String password, String name, List<UserRole> roles, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+    private User(UUID id, String email, String password, String name, List<UserRole> roles) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.roles = roles;
-        this.deletedAt = deletedAt;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
         validate();
     }
 
@@ -45,8 +42,13 @@ public class User extends AuditDomain {
         return user;
     }
 
+    @SuppressWarnings("java:S107")
     public static User restore(UUID id, String email, String password, String name, List<UserRole> roles, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
-        return new User(id, email, password, name, roles, deletedAt, dateCreated, dateUpdated);
+        User user = new User(id, email, password, name, roles);
+        user.deletedAt = deletedAt;
+        user.dateCreated = dateCreated;
+        user.dateUpdated = dateUpdated;
+        return user;
     }
 
     public void updateInfo(String name, String email) {

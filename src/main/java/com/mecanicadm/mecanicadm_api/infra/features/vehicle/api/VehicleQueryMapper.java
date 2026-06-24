@@ -10,6 +10,9 @@ import org.springframework.data.domain.Sort;
 
 public class VehicleQueryMapper {
 
+    private VehicleQueryMapper() {
+    }
+
     public static GetAllVehiclesQuery toQuery(String licensePlate, String model, String brand, Short modelYear, Pageable pageable) {
         var sort = pageable.getSort().get().findFirst();
         var sortBy = sort.map(Sort.Order::getProperty).orElse("licensePlate");

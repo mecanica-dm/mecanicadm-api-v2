@@ -3,7 +3,6 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -12,15 +11,10 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface WorkOrderJpaRepository extends JpaRepository<WorkOrderJpaEntity, UUID>, JpaSpecificationExecutor<WorkOrderJpaEntity> {
-
-    @EntityGraph(attributePaths = {"laborItems", "materialItems", "budget"})
-    @Query("SELECT w FROM WorkOrderJpaEntity w WHERE w.id = :id")
-    Optional<WorkOrderJpaEntity> findByIdWithItems(@Param("id") UUID id);
 
     @Query(value = "SELECT COALESCE(SUM(m.price * wmi.quantity), 0) " +
             "FROM work_order_material_items wmi " +

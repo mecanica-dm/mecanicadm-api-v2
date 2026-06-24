@@ -18,31 +18,32 @@ public class StockMovements extends AuditDomain {
 
     private final MovementType type;
 
-    private StockMovements(UUID id, UUID materialId, UUID workOrderId, Integer quantity, MovementType type,
-                           LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+    private StockMovements(UUID id, UUID materialId, UUID workOrderId, Integer quantity, MovementType type) {
         this.id = id;
         this.materialId = materialId;
         this.workOrderId = workOrderId;
         this.quantity = quantity;
         this.type = type;
-        this.deletedAt = deletedAt;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
     }
 
     public static StockMovements recordAddition(UUID materialId, Integer amount) {
-        var movement = new StockMovements(null, materialId, null, amount, MovementType.ADDITION, null, null, null);
+        var movement = new StockMovements(null, materialId, null, amount, MovementType.ADDITION);
         movement.create();
         return movement;
     }
 
+    @SuppressWarnings("java:S107")
     public static StockMovements restore(UUID id, UUID materialId, UUID workOrderId, Integer quantity, MovementType type,
                                           LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
-        return new StockMovements(id, materialId, workOrderId, quantity, type, deletedAt, dateCreated, dateUpdated);
+        StockMovements movement = new StockMovements(id, materialId, workOrderId, quantity, type);
+        movement.deletedAt = deletedAt;
+        movement.dateCreated = dateCreated;
+        movement.dateUpdated = dateUpdated;
+        return movement;
     }
 
     public static StockMovements recordReduction(UUID materialId, UUID workOrderId, Integer amount) {
-        var movement = new StockMovements(null, materialId, workOrderId, amount, MovementType.REDUCTION, null, null, null);
+        var movement = new StockMovements(null, materialId, workOrderId, amount, MovementType.REDUCTION);
         movement.create();
         return movement;
     }

@@ -3,12 +3,17 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderLaborItemJpaEntity;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
 public class WorkOrderLaborItemJpaMapper {
+
+    private WorkOrderLaborItemJpaMapper() {
+    }
 
     public static WorkOrderLaborItem toDomain(WorkOrderLaborItemJpaEntity entity) {
         if (isNull(entity)) return null;
@@ -32,13 +37,13 @@ public class WorkOrderLaborItemJpaMapper {
         );
     }
 
-    public static Set<WorkOrderLaborItem> toDomainSet(Set<WorkOrderLaborItemJpaEntity> entities) {
-        if (isNull(entities)) return null;
+    public static Set<WorkOrderLaborItem> toDomainSet(Collection<WorkOrderLaborItemJpaEntity> entities) {
+        if (isNull(entities)) return Collections.emptySet();
         return entities.stream().map(WorkOrderLaborItemJpaMapper::toDomain).collect(Collectors.toSet());
     }
 
     public static Set<WorkOrderLaborItemJpaEntity> toEntitySet(Set<WorkOrderLaborItem> domains) {
-        if (isNull(domains)) return null;
+        if (isNull(domains)) return Collections.emptySet();
         return domains.stream().map(WorkOrderLaborItemJpaMapper::toEntity).collect(Collectors.toSet());
     }
 }

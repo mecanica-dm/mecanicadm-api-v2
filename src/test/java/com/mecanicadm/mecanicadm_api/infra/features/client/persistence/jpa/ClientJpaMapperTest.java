@@ -37,7 +37,6 @@ class ClientJpaMapperTest {
     @Test
     @DisplayName("Deve mapear domínio para JpaEntity")
     void shouldMapToEntity() {
-        var now = LocalDateTime.now();
         var client = Client.create("Test", "test@test.com", "12345678901", "48999999999");
 
         var entity = ClientJpaMapper.toEntity(client);

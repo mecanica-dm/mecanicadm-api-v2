@@ -26,6 +26,7 @@ public class WorkOrderLaborItem {
     private WorkOrderLaborItem(UUID laborId) {
         this.laborId = requireNonNull(laborId);
         this.status = LaborExecutionStatus.AWAITING_EXECUTION;
+        validate();
     }
 
     private WorkOrderLaborItem(UUID id, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
@@ -34,6 +35,7 @@ public class WorkOrderLaborItem {
         this.executionStartAt = executionStartAt;
         this.executionEndAt = executionEndAt;
         this.status = status;
+        validate();
     }
 
     public static WorkOrderLaborItem create(UUID laborId) {
@@ -58,6 +60,12 @@ public class WorkOrderLaborItem {
         }
         this.status = LaborExecutionStatus.EXECUTION_COMPLETED;
         this.executionEndAt = LocalDateTime.now();
+    }
+
+    private void validate() {
+        if (laborId == null) {
+            throw new WorkOrderExceptions.LaborIdRequired();
+        }
     }
 
     public UUID getId() {

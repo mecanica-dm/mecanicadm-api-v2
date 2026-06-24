@@ -87,14 +87,14 @@ class WorkOrderLaborItemJpaMapperTest {
     }
 
     @Test
-    @DisplayName("Deve retornar null quando conjunto de entidades for nulo")
-    void shouldReturnNullWhenEntitiesSetIsNull() {
-        assertNull(WorkOrderLaborItemJpaMapper.toDomainSet(null));
+    @DisplayName("Deve retornar vazio quando conjunto de entidades for nulo")
+    void shouldReturnEmptyWhenEntitiesSetIsNull() {
+        assertTrue(WorkOrderLaborItemJpaMapper.toDomainSet(null).isEmpty());
     }
 
     @Test
-    @DisplayName("Deve retornar null quando conjunto de domínios for nulo")
-    void shouldReturnNullWhenDomainsSetIsNull() {
-        assertNull(WorkOrderLaborItemJpaMapper.toEntitySet(null));
+    @DisplayName("Deve retornar vazio quando conjunto de domínios for nulo")
+    void shouldReturnEmptyWhenDomainsSetIsNull() {
+        assertTrue(WorkOrderLaborItemJpaMapper.toEntitySet(null).isEmpty());
     }
 }

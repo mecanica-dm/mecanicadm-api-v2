@@ -5,7 +5,6 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;

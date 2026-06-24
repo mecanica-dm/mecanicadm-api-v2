@@ -19,16 +19,15 @@ public class WorkOrderMaterialItem {
 
     private WorkOrderMaterialItem(UUID materialId, int quantity) {
         this.materialId = requireNonNull(materialId);
-        if (quantity <= 0) {
-            throw new WorkOrderExceptions.InvalidMaterialQuantity();
-        }
         this.quantity = quantity;
+        validate();
     }
 
     private WorkOrderMaterialItem(UUID id, UUID materialId, int quantity) {
         this.id = id;
         this.materialId = materialId;
         this.quantity = quantity;
+        validate();
     }
 
     public static WorkOrderMaterialItem create(UUID materialId, int quantity) {
@@ -37,6 +36,15 @@ public class WorkOrderMaterialItem {
 
     public static WorkOrderMaterialItem restore(UUID id, UUID materialId, int quantity) {
         return new WorkOrderMaterialItem(id, materialId, quantity);
+    }
+
+    private void validate() {
+        if (materialId == null) {
+            throw new WorkOrderExceptions.MaterialIdRequired();
+        }
+        if (quantity <= 0) {
+            throw new WorkOrderExceptions.InvalidMaterialQuantity();
+        }
     }
 
     public UUID getId() {

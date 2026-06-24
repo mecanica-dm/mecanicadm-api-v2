@@ -1,7 +1,5 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.domain.port;
 
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 
 import java.math.BigDecimal;

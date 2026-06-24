@@ -7,6 +7,9 @@ import static java.util.Objects.isNull;
 
 public class WorkOrderBudgetJpaMapper {
 
+    private WorkOrderBudgetJpaMapper() {
+    }
+
     public static WorkOrderBudget toDomain(WorkOrderBudgetJpaEntity entity) {
         if (isNull(entity)) return null;
         return WorkOrderBudget.restore(

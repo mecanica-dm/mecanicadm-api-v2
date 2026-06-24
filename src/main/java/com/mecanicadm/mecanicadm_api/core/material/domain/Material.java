@@ -22,22 +22,18 @@ public class Material extends AuditDomain {
 
     private MaterialType type;
 
-    private Material(UUID id, String name, String brand, String description, BigDecimal price, MaterialType type,
-                     LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+    private Material(UUID id, String name, String brand, String description, BigDecimal price, MaterialType type) {
         this.id = id;
         this.name = name;
         this.brand = brand;
         this.description = description;
         this.price = price;
         this.type = type;
-        this.deletedAt = deletedAt;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
         validate();
     }
 
     public static Material create(String name, String brand, String description, BigDecimal price, MaterialType type) {
-        var material = new Material(UUID.randomUUID(), name, brand, description, price, type, null, null, null);
+        var material = new Material(UUID.randomUUID(), name, brand, description, price, type);
         material.create();
         return material;
     }
@@ -52,9 +48,14 @@ public class Material extends AuditDomain {
         validate();
     }
 
+    @SuppressWarnings("java:S107")
     public static Material restore(UUID id, String name, String brand, String description, BigDecimal price, MaterialType type,
                                     LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
-        return new Material(id, name, brand, description, price, type, deletedAt, dateCreated, dateUpdated);
+        Material material = new Material(id, name, brand, description, price, type);
+        material.deletedAt = deletedAt;
+        material.dateCreated = dateCreated;
+        material.dateUpdated = dateUpdated;
+        return material;
     }
 
     private void validate() {

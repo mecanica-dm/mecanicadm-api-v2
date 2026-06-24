@@ -7,7 +7,6 @@ import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageQuery;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaMapper;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification.WorkOrderSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
@@ -27,9 +26,18 @@ import static java.util.Objects.isNull;
 public class WorkOrderRepositoryImpl implements WorkOrderGateway {
 
     private final WorkOrderJpaRepository jpaRepository;
+    private final WorkOrderLaborItemJpaRepository laborItemJpaRepository;
+    private final WorkOrderMaterialItemJpaRepository materialItemJpaRepository;
+    private final WorkOrderBudgetJpaRepository budgetJpaRepository;
 
-    public WorkOrderRepositoryImpl(WorkOrderJpaRepository jpaRepository) {
+    public WorkOrderRepositoryImpl(WorkOrderJpaRepository jpaRepository,
+                                   WorkOrderLaborItemJpaRepository laborItemJpaRepository,
+                                   WorkOrderMaterialItemJpaRepository materialItemJpaRepository,
+                                   WorkOrderBudgetJpaRepository budgetJpaRepository) {
         this.jpaRepository = jpaRepository;
+        this.laborItemJpaRepository = laborItemJpaRepository;
+        this.materialItemJpaRepository = materialItemJpaRepository;
+        this.budgetJpaRepository = budgetJpaRepository;
     }
 
     @Override
@@ -38,8 +46,11 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
             throw new TechnicalException("error.technical.entity.null", "WorkOrder", "criação");
         }
         WorkOrderJpaEntity entity = WorkOrderJpaMapper.toEntity(workOrder);
-        WorkOrderJpaEntity saved = jpaRepository.save(entity);
-        return WorkOrderJpaMapper.toDomain(saved);
+        entity = jpaRepository.save(entity);
+
+        saveChildren(workOrder, entity.getId());
+
+        return findByIdWithItems(entity.getId()).orElse(null);
     }
 
     @Override
@@ -47,19 +58,52 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
         if (isNull(workOrder)) {
             throw new TechnicalException("error.technical.entity.null", "WorkOrder", "atualização");
         }
+        laborItemJpaRepository.deleteByWorkOrderId(workOrder.getId());
+        materialItemJpaRepository.deleteByWorkOrderId(workOrder.getId());
+        budgetJpaRepository.deleteById(workOrder.getId());
+
         WorkOrderJpaEntity entity = WorkOrderJpaMapper.toEntity(workOrder);
-        WorkOrderJpaEntity saved = jpaRepository.save(entity);
-        return WorkOrderJpaMapper.toDomain(saved);
+        entity = jpaRepository.save(entity);
+
+        saveChildren(workOrder, entity.getId());
+
+        return findByIdWithItems(entity.getId()).orElse(null);
+    }
+
+    private void saveChildren(WorkOrder workOrder, UUID workOrderId) {
+        var laborItemEntities = WorkOrderLaborItemJpaMapper.toEntitySet(workOrder.getLaborItems());
+        laborItemEntities.forEach(item -> item.setWorkOrderId(workOrderId));
+        laborItemJpaRepository.saveAll(laborItemEntities);
+
+        var materialItemEntities = WorkOrderMaterialItemJpaMapper.toEntitySet(workOrder.getMaterialItems());
+        materialItemEntities.forEach(item -> item.setWorkOrderId(workOrderId));
+        materialItemJpaRepository.saveAll(materialItemEntities);
+
+        workOrder.getBudget().ifPresent(budget -> {
+            var budgetEntity = WorkOrderBudgetJpaMapper.toEntity(budget);
+            budgetEntity.setWorkOrderId(workOrderId);
+            budgetJpaRepository.save(budgetEntity);
+        });
     }
 
     @Override
     public Optional<WorkOrder> findById(UUID id) {
-        return jpaRepository.findById(id).map(WorkOrderJpaMapper::toDomain);
+        return jpaRepository.findById(id).map(this::toDomainWithItems);
     }
 
     @Override
     public Optional<WorkOrder> findByIdWithItems(UUID id) {
-        return jpaRepository.findByIdWithItems(id).map(WorkOrderJpaMapper::toDomain);
+        return jpaRepository.findById(id).map(this::toDomainWithItems);
+    }
+
+    private WorkOrder toDomainWithItems(WorkOrderJpaEntity entity) {
+        var laborItems = WorkOrderLaborItemJpaMapper.toDomainSet(
+                laborItemJpaRepository.findByWorkOrderId(entity.getId()));
+        var materialItems = WorkOrderMaterialItemJpaMapper.toDomainSet(
+                materialItemJpaRepository.findByWorkOrderId(entity.getId()));
+        var budget = budgetJpaRepository.findById(entity.getId())
+                .map(WorkOrderBudgetJpaMapper::toDomain).orElse(null);
+        return WorkOrderJpaMapper.toDomain(entity, laborItems, materialItems, budget);
     }
 
     @Override
@@ -69,7 +113,7 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
         Pageable pageable = PageRequest.of(query.page(), query.size(), sort);
 
         var page = jpaRepository.findAll(spec, pageable);
-        return new WorkOrderPageResult(page.map(WorkOrderJpaMapper::toDomain).getContent(),
+        return new WorkOrderPageResult(page.map(WorkOrderJpaMapper::toDomainLight).getContent(),
                 page.getTotalElements()
         );
     }

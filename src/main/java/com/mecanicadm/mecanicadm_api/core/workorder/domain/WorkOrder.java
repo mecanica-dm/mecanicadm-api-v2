@@ -43,21 +43,11 @@ public class WorkOrder extends AuditDomain {
         validate();
     }
 
-    private WorkOrder(UUID id, UUID clientId, String vehicleId, String description, WorkOrderStatus status, LocalDateTime executionStartAt, LocalDateTime executionEndAt, Set<WorkOrderLaborItem> laborItems, Set<WorkOrderMaterialItem> materialItems, WorkOrderBudget budget, LocalDateTime dateCreated, LocalDateTime dateUpdated, LocalDateTime deletedAt) {
-        this.id = id;
-        this.clientId = clientId;
-        this.vehicleId = vehicleId;
-        this.description = description;
-        this.status = status;
+    private WorkOrder(UUID id, UUID clientId, String vehicleId, String description, WorkOrderStatus status,
+                      LocalDateTime executionStartAt, LocalDateTime executionEndAt) {
+        this(id, clientId, vehicleId, description, status);
         this.executionStartAt = executionStartAt;
         this.executionEndAt = executionEndAt;
-        this.laborItems = laborItems;
-        this.materialItems = materialItems;
-        this.budget = budget;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
-        this.deletedAt = deletedAt;
-        validate();
     }
 
     public static WorkOrder create(UUID clientId, String vehicleId, String description) {
@@ -66,8 +56,16 @@ public class WorkOrder extends AuditDomain {
         return workOrder;
     }
 
+    @SuppressWarnings("java:S107")
     public static WorkOrder restore(UUID id, UUID clientId, String vehicleId, String description, WorkOrderStatus status, LocalDateTime executionStartAt, LocalDateTime executionEndAt, Set<WorkOrderLaborItem> laborItems, Set<WorkOrderMaterialItem> materialItems, WorkOrderBudget budget, LocalDateTime dateCreated, LocalDateTime dateUpdated, LocalDateTime deletedAt) {
-        return new WorkOrder(id, clientId, vehicleId, description, status, executionStartAt, executionEndAt, laborItems, materialItems, budget, dateCreated, dateUpdated, deletedAt);
+        WorkOrder workOrder = new WorkOrder(id, clientId, vehicleId, description, status, executionStartAt, executionEndAt);
+        workOrder.laborItems = new HashSet<>(laborItems);
+        workOrder.materialItems = new HashSet<>(materialItems);
+        workOrder.budget = budget;
+        workOrder.dateCreated = dateCreated;
+        workOrder.dateUpdated = dateUpdated;
+        workOrder.deletedAt = deletedAt;
+        return workOrder;
     }
 
     public void update(UUID clientId, String vehicleId, String description) {

@@ -1,7 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderLaborItemResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;

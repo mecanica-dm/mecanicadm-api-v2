@@ -184,6 +184,7 @@ class GlobalExceptionHandlerTest {
 
         @PostMapping("/test/validation-error")
         public void throwValidationError(@Valid @RequestBody ValidatedRequest request) {
+            // method body is intentionally empty - validation error occurs before execution
         }
     }
 

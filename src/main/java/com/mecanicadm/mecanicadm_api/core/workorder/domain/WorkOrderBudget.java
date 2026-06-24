@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.domain;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderBudgetStatus;
+import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class WorkOrderBudget {
         this.workOrder = requireNonNull(workOrder);
         this.totalPrice = requireNonNull(totalPrice);
         this.status = WorkOrderBudgetStatus.PENDING;
+        validate();
     }
 
     private WorkOrderBudget(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String rejectionReason) {
@@ -33,6 +35,7 @@ public class WorkOrderBudget {
         this.totalPrice = totalPrice;
         this.status = status;
         this.rejectionReason = rejectionReason;
+        validate();
     }
 
     public static WorkOrderBudget create(WorkOrder workOrder, BigDecimal totalPrice) {
@@ -47,6 +50,7 @@ public class WorkOrderBudget {
         this.totalPrice = requireNonNull(totalPrice);
         this.status = WorkOrderBudgetStatus.PENDING;
         this.rejectionReason = null;
+        validate();
     }
 
     public void updateStatus(WorkOrderBudgetStatus status) {
@@ -70,6 +74,15 @@ public class WorkOrderBudget {
         } else {
             this.status = WorkOrderBudgetStatus.REJECTED;
             this.workOrder.cancel();
+        }
+    }
+
+    private void validate() {
+        if (totalPrice == null || totalPrice.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new WorkOrderExceptions.BudgetTotalPriceInvalid();
+        }
+        if (status == null) {
+            throw new WorkOrderExceptions.BudgetStatusInvalid();
         }
     }
 

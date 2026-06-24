@@ -102,4 +102,28 @@ public class WorkOrderExceptions {
             super("work.order.report.period.invalid", 400);
         }
     }
+
+    public static class BudgetTotalPriceInvalid extends DomainExceptionCore {
+        public BudgetTotalPriceInvalid() {
+            super("work.order.budget.total.price.invalid", 400);
+        }
+    }
+
+    public static class BudgetStatusInvalid extends DomainExceptionCore {
+        public BudgetStatusInvalid() {
+            super("work.order.budget.status.invalid", 400);
+        }
+    }
+
+    public static class LaborIdRequired extends DomainExceptionCore {
+        public LaborIdRequired() {
+            super("work.order.labor.id.required", 400);
+        }
+    }
+
+    public static class MaterialIdRequired extends DomainExceptionCore {
+        public MaterialIdRequired() {
+            super("work.order.material.id.required", 400);
+        }
+    }
 }
