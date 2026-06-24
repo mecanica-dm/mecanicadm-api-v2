@@ -7,10 +7,7 @@ import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderMaterialItem
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.LaborExecutionStatus;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderBudgetStatus;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderBudgetJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderLaborItemJpaEntity;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderMaterialItemJpaEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

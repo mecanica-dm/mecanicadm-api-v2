@@ -52,19 +52,19 @@ public class LaborController extends LaborOpenApi {
     }
 
     @Override
-    public ResponseEntity<Void> update(@PathVariable UUID id, @Valid @RequestBody UpdateLaborRequest request) {
+    public ResponseEntity<Void> update(@PathVariable("id") UUID id, @Valid @RequestBody UpdateLaborRequest request) {
         updateLaborUseCase.execute(new UpdateLaborCommand(id, request.name(), request.price()));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") UUID id) {
         deleteLaborUseCase.execute(new DeleteLaborCommand(id));
         return ResponseEntity.noContent().build();
     }
 
     @Override
-    public ResponseEntity<LaborResponse> findById(@PathVariable UUID id) {
+    public ResponseEntity<LaborResponse> findById(@PathVariable("id") UUID id) {
         var labor = getLaborByIdUseCase.execute(new GetLaborByIdQuery(id));
         return ResponseEntity.ok(LaborResponse.from(labor));
     }
