@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public class PasswordResetToken {
 
-    private UUID id;
-    private String token;
-    private User user;
-    private LocalDateTime expiryDate;
+    private final UUID id;
+    private final String token;
+    private final User user;
+    private final LocalDateTime expiryDate;
 
     public PasswordResetToken(UUID id, String token, User user, LocalDateTime expiryDate) {
         this.id = id;

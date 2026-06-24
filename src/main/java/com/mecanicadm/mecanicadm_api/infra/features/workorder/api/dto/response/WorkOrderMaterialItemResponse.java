@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderMaterialItem;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderMaterialItem;
 
 import java.util.UUID;
 
@@ -8,8 +8,8 @@ public record WorkOrderMaterialItemResponse(
         UUID materialId,
         int quantity
 ) {
-    public WorkOrderMaterialItemResponse(WorkOrderMaterialItem materialItem) {
-        this(
+    public static WorkOrderMaterialItemResponse from(WorkOrderMaterialItem materialItem) {
+        return new WorkOrderMaterialItemResponse(
                 materialItem.getMaterialId(),
                 materialItem.getQuantity()
         );

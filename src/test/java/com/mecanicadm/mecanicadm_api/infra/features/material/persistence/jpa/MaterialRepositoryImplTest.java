@@ -20,6 +20,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,8 +52,7 @@ class MaterialRepositoryImplTest {
         domain = mock(Material.class);
         lenient().when(domain.getId()).thenReturn(id);
 
-        entity = new MaterialJpaEntity();
-        entity.setId(id);
+        entity = new MaterialJpaEntity(id, "Material Test", "Marca", "Descricao", BigDecimal.TEN, MaterialType.PART);
     }
 
     @Test

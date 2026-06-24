@@ -48,27 +48,32 @@ public class ClientRepositoryImpl implements ClientGateway {
     }
 
     @Override
+    public boolean existsById(UUID id) {
+        return jpaRepository.existsById(id);
+    }
+
+    @Override
     public Optional<Client> findById(UUID id) {
         return jpaRepository.findById(id).map(ClientJpaMapper::toDomain);
     }
 
     @Override
-    public boolean existsClientByDocument(String document) {
+    public boolean existsByDocument(String document) {
         return jpaRepository.existsByDocument(document);
     }
 
     @Override
-    public boolean existsClientByEmail(String email) {
+    public boolean existsByEmail(String email) {
         return jpaRepository.existsByEmail(email);
     }
 
     @Override
-    public boolean existsClientByDocumentAndIdNot(String document, UUID id) {
+    public boolean existsByDocumentAndIdNot(String document, UUID id) {
         return jpaRepository.existsByDocumentAndIdNot(document, id);
     }
 
     @Override
-    public boolean existsClientByEmailAndIdNot(String email, UUID id) {
+    public boolean existsByEmailAndIdNot(String email, UUID id) {
         return jpaRepository.existsByEmailAndIdNot(email, id);
     }
 

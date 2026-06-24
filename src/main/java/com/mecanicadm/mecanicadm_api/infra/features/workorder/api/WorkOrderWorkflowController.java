@@ -1,15 +1,15 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.DeliverWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.DiagnoseWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.FinishWorkOrderExecutionUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.RecordWorkOrderPaymentUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.StartWorkOrderExecutionUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DeliverWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DiagnoseWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.FinishWorkOrderExecutionCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.RecordWorkOrderPaymentCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.StartWorkOrderExecutionCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.DeliverWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.DiagnoseWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.FinishWorkOrderExecutionUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RecordWorkOrderPaymentUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.StartWorkOrderExecutionUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.DeliverWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.DiagnoseWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.FinishWorkOrderExecutionCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.RecordWorkOrderPaymentCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.StartWorkOrderExecutionCommand;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderWorkflowOpenApi;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;

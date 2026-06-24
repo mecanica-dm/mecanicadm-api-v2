@@ -1,7 +1,10 @@
 package com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity;
 
 import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
@@ -14,7 +17,6 @@ public class LaborJpaEntity extends AuditEntity {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "name", nullable = false)
@@ -23,7 +25,7 @@ public class LaborJpaEntity extends AuditEntity {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    public LaborJpaEntity() {
+    protected LaborJpaEntity() {
     }
 
     public LaborJpaEntity(UUID id, String name, BigDecimal price) {
@@ -36,7 +38,7 @@ public class LaborJpaEntity extends AuditEntity {
         return id;
     }
 
-    public void setId(UUID id) {
+    private void setId(UUID id) {
         this.id = id;
     }
 

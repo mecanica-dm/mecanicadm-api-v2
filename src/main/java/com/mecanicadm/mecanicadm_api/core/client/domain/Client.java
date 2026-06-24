@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class Client extends AuditDomain {
 
-    private UUID id;
+    private final UUID id;
     private String name;
     private String email;
     private String document;
@@ -24,12 +24,12 @@ public class Client extends AuditDomain {
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
         this.deletedAt = deletedAt;
+        validate();
     }
 
     public static Client create(String name, String email, String document, String phone) {
         Client client = new Client(UUID.randomUUID(), name, email, document, phone, null, null, null);
         client.create();
-        client.validate();
         return client;
     }
 

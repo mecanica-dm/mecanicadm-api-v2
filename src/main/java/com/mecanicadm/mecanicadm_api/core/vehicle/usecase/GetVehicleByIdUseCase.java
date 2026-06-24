@@ -16,6 +16,7 @@ public class GetVehicleByIdUseCase implements UseCase<GetVehicleByIdQuery, Vehic
         this.gateway = gateway;
     }
 
+    @Override
     public Vehicle execute(GetVehicleByIdQuery query) {
         Optional<Vehicle> opt = gateway.findByLicensePlate(query.licensePlate());
         return opt.orElseThrow(VehicleExceptions.NotFound::new);

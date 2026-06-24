@@ -34,8 +34,7 @@ class GetLaborByIdUseCaseTest {
     @DisplayName("Deve retornar um serviço quando o ID existir")
     void shouldReturnLaborWhenIdExists() {
         UUID id = UUID.randomUUID();
-        Labor labor = Labor.create("Alinhamento", new BigDecimal("100"));
-        labor.setId(id);
+        Labor labor = Labor.restore(id, "Alinhamento", new BigDecimal("100"), null, null, null);
 
         when(gateway.findById(id)).thenReturn(Optional.of(labor));
 

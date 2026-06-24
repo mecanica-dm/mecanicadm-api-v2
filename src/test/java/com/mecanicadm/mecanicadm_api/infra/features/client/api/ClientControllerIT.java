@@ -113,6 +113,21 @@ class ClientControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 400 ao criar cliente com dados invalidos")
+    void shouldReturn400WhenCreateCommandIsInvalid() {
+        CreateClientRequest invalidRequest = new CreateClientRequest("", "", "", "");
+
+        RestAssuredMockMvc.given()
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(invalidRequest)
+                .when()
+                .post("/clients")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     @DisplayName("Deve retornar 400 ao tentar criar cliente com Documento inválido")
     void shouldReturn400WhenDocumentIsInvalid() {
         CreateClientRequest request = new CreateClientRequest(

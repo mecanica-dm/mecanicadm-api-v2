@@ -14,6 +14,7 @@ public class UpdateMaterialUseCase implements VoidUseCase<UpdateMaterialCommand>
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(UpdateMaterialCommand cmd) {
         Material material = gateway.findById(cmd.id())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);

@@ -185,6 +185,34 @@ class UserControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 400 ao criar usuario com dados invalidos")
+    void shouldReturn400WhenCreateUserWithInvalidData() {
+        CreateUserRequest invalidRequest = new CreateUserRequest("", "", "");
+
+        RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(invalidRequest)
+                .when()
+                .post("/user")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 400 ao fazer login com dados invalidos")
+    void shouldReturn400WhenLoginWithInvalidData() {
+        LoginRequest invalidRequest = new LoginRequest("", "");
+
+        RestAssuredMockMvc.given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(invalidRequest)
+                .when()
+                .post("/user/login")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     @Sql(scripts = "/sql/user.sql")
     @DisplayName("Deve realizar exclusão lógica (soft delete) do usuário autenticado")
     void shouldSoftDeleteUser() {

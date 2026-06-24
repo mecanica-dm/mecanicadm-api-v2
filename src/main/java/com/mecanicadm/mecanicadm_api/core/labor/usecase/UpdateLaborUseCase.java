@@ -16,6 +16,7 @@ public class UpdateLaborUseCase implements UseCase<UpdateLaborCommand, UUID> {
         this.gateway = gateway;
     }
 
+    @Override
     public UUID execute(UpdateLaborCommand command) {
         Labor labor = gateway.findById(command.id())
                 .orElseThrow(LaborExceptions.LaborNotFound::new);

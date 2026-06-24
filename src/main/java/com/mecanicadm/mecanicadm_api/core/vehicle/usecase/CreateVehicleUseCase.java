@@ -14,6 +14,7 @@ public class CreateVehicleUseCase implements UseCase<CreateVehicleCommand, Strin
         this.gateway = gateway;
     }
 
+    @Override
     public String execute(CreateVehicleCommand command) {
         gateway.findByLicensePlate(command.licensePlate())
                 .ifPresent(v -> {

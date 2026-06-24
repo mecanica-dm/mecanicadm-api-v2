@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableBudgetResponse;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.dto.PrintableBudgetResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.DecideWorkOrderBudgetRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.ManuallyAdjustWorkOrderBudgetRequest;
 import io.swagger.v3.oas.annotations.Operation;

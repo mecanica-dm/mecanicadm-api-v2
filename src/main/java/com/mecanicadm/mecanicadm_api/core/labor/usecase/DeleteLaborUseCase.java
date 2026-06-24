@@ -14,6 +14,7 @@ public class DeleteLaborUseCase implements VoidUseCase<DeleteLaborCommand> {
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(DeleteLaborCommand command) {
         Labor labor = gateway.findById(command.id())
                 .orElseThrow(LaborExceptions.LaborNotFound::new);

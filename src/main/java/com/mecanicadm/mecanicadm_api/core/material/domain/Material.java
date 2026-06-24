@@ -1,17 +1,16 @@
 package com.mecanicadm.mecanicadm_api.core.material.domain;
 
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
+import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
 import com.mecanicadm.mecanicadm_api.shared.domain.AuditDomain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
-
 public class Material extends AuditDomain {
 
-    private UUID id;
+    private final UUID id;
 
     private String name;
 
@@ -26,34 +25,48 @@ public class Material extends AuditDomain {
     private Material(UUID id, String name, String brand, String description, BigDecimal price, MaterialType type,
                      LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
         this.id = id;
-        this.name = requireNonNull(name);
+        this.name = name;
         this.brand = brand;
         this.description = description;
-        this.price = requireNonNull(price);
-        this.type = requireNonNull(type);
+        this.price = price;
+        this.type = type;
         this.deletedAt = deletedAt;
         this.dateCreated = dateCreated;
         this.dateUpdated = dateUpdated;
+        validate();
     }
 
     public static Material create(String name, String brand, String description, BigDecimal price, MaterialType type) {
-        var material = new Material(null, name, brand, description, price, type, null, null, null);
+        var material = new Material(UUID.randomUUID(), name, brand, description, price, type, null, null, null);
         material.create();
         return material;
     }
 
     public void update(String name, String brand, String description, BigDecimal price, MaterialType type) {
-        this.name = requireNonNull(name);
+        this.name = name;
         this.brand = brand;
         this.description = description;
-        this.price = requireNonNull(price);
-        this.type = requireNonNull(type);
+        this.price = price;
+        this.type = type;
         update();
+        validate();
     }
 
     public static Material restore(UUID id, String name, String brand, String description, BigDecimal price, MaterialType type,
                                     LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
         return new Material(id, name, brand, description, price, type, deletedAt, dateCreated, dateUpdated);
+    }
+
+    private void validate() {
+        if (name == null || name.isBlank()) {
+            throw new MaterialExceptions.NameRequired();
+        }
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MaterialExceptions.PriceRequired();
+        }
+        if (type == null) {
+            throw new MaterialExceptions.TypeRequired();
+        }
     }
 
     public UUID getId() {

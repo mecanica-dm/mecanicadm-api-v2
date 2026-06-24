@@ -1,9 +1,9 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.AddMaterialToWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.RemoveMaterialItemFromWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.AddMaterialToWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.RemoveMaterialItemFromWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.AddMaterialToWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RemoveMaterialItemFromWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.AddMaterialToWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.RemoveMaterialItemFromWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.AddMaterialToWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderMaterialOpenApi;
 import jakarta.validation.Valid;

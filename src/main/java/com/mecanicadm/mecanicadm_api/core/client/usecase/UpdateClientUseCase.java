@@ -34,11 +34,11 @@ public class UpdateClientUseCase implements VoidUseCase<UpdateClientCommand> {
     }
 
     private void validate(UpdateClientCommand cmd, UUID clientId) {
-        if (gateway.existsClientByEmailAndIdNot(cmd.email(), clientId)) {
+        if (gateway.existsByEmailAndIdNot(cmd.email(), clientId)) {
             throw new ClientExceptions.EmailExists();
         }
 
-        if (gateway.existsClientByDocumentAndIdNot(cmd.document(), clientId)) {
+        if (gateway.existsByDocumentAndIdNot(cmd.document(), clientId)) {
             throw new ClientExceptions.DocumentExists();
         }
     }

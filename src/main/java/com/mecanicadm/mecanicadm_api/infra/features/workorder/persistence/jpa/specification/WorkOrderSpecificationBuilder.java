@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.port.WorkOrderFilter;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderFilter;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;

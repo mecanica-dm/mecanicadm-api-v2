@@ -8,15 +8,15 @@ import java.util.UUID;
 
 public class StockMovements extends AuditDomain {
 
-    private UUID id;
+    private final UUID id;
 
-    private UUID workOrderId;
+    private final UUID workOrderId;
 
-    private UUID materialId;
+    private final UUID materialId;
 
-    private Integer quantity;
+    private final Integer quantity;
 
-    private MovementType type;
+    private final MovementType type;
 
     private StockMovements(UUID id, UUID materialId, UUID workOrderId, Integer quantity, MovementType type,
                            LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {

@@ -4,6 +4,9 @@ import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 
 public final class VehicleExceptions {
 
+    private VehicleExceptions() {
+    }
+
     public static class LicensePlateNotEmpty extends DomainExceptionCore {
         public LicensePlateNotEmpty() { super("validation.vehicle.licensePlate.not.blank", 400); }
     }

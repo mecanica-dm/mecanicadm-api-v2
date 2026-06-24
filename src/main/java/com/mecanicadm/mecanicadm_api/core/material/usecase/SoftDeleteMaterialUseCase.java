@@ -14,6 +14,7 @@ public class SoftDeleteMaterialUseCase implements VoidUseCase<SoftDeleteMaterial
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(SoftDeleteMaterialCommand cmd) {
         Material material = gateway.findById(cmd.id())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);

@@ -1,16 +1,19 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborExecutionSummaryProjection;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborTypeStatsProjection;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.LaborExecutionSummaryProjection;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.LaborTypeStatsProjection;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderLaborItemJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public interface WorkOrderLaborItemJpaRepository extends JpaRepository<WorkOrderLaborItemJpaEntity, UUID> {
 
     @Query(value = "SELECT COUNT(wli.id) AS totalProcessedLabors, " +

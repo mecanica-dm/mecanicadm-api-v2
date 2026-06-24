@@ -13,7 +13,4 @@ public record UpdateMaterialCommand(
         BigDecimal price,
         MaterialType type
 ) {
-    public UpdateMaterialCommand withId(UUID id) {
-        return new UpdateMaterialCommand(id, name, brand, description, price, type);
-    }
 }

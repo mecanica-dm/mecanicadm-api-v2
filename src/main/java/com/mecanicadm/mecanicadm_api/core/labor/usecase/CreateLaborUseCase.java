@@ -15,6 +15,7 @@ public class CreateLaborUseCase implements UseCase<CreateLaborCommand, UUID> {
         this.gateway = gateway;
     }
 
+    @Override
     public UUID execute(CreateLaborCommand command) {
         Labor created = gateway.create(Labor.create(command.name(), command.price()));
         return created.getId();

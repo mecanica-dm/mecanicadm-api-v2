@@ -14,6 +14,7 @@ public class UpdateVehicleUseCase implements UseCase<UpdateVehicleCommand, Vehic
         this.gateway = gateway;
     }
 
+    @Override
     public Vehicle execute(UpdateVehicleCommand command) {
         Vehicle vehicle = gateway.findByLicensePlate(command.licensePlate())
                 .orElseThrow(VehicleExceptions.NotFound::new);

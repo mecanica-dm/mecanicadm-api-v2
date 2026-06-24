@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.stockmovements.api.dto.response;
 
-import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockStatement;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.dto.StockStatement;
 
 import java.util.List;
 import java.util.UUID;

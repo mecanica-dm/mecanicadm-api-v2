@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderStatus;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,8 +23,8 @@ public record WorkOrderResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-    public WorkOrderResponse(WorkOrder workOrder) {
-        this(
+    public static WorkOrderResponse from(WorkOrder workOrder) {
+        return new WorkOrderResponse(
                 workOrder.getId(),
                 workOrder.getClientId(),
                 workOrder.getVehicleId(),
@@ -33,12 +33,11 @@ public record WorkOrderResponse(
                 workOrder.getExecutionStartAt().orElse(null),
                 workOrder.getExecutionEndAt().orElse(null),
                 calculateTotalExecutionTime(workOrder.getExecutionStartAt().orElse(null), workOrder.getExecutionEndAt().orElse(null)),
-                workOrder.getLaborItems().stream().map(WorkOrderLaborItemResponse::new).toList(),
-                workOrder.getMaterialItems().stream().map(WorkOrderMaterialItemResponse::new).toList(),
-                workOrder.getBudget().map(WorkOrderBudgetResponse::new).orElse(null),
-                null, null
-//              TODO: workOrder.getDateCreated(),
-//              TODO: workOrder.getDateUpdated()
+                workOrder.getLaborItems().stream().map(WorkOrderLaborItemResponse::from).toList(),
+                workOrder.getMaterialItems().stream().map(WorkOrderMaterialItemResponse::from).toList(),
+                workOrder.getBudget().map(WorkOrderBudgetResponse::from).orElse(null),
+                workOrder.getDateCreated(),
+                workOrder.getDateUpdated()
         );
     }
 

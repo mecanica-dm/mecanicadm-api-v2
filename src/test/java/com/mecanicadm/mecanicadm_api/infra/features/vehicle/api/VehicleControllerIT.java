@@ -1,7 +1,12 @@
 package com.mecanicadm.mecanicadm_api.infra.features.vehicle.api;
 
-import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.CreateVehicleRequest;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
+import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.*;
+import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.DeleteVehicleCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.CreateVehicleRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.vehicle.api.dto.request.UpdateVehicleRequest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,57 +16,166 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
-import static com.mecanicadm.mecanicadm_api.testutils.AuthUtils.getAuthToken;
-import static org.hamcrest.Matchers.*;
+import java.util.List;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 class VehicleControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    private String authToken;
+    @MockitoBean
+    private CreateVehicleUseCase createVehicleUseCase;
+
+    @MockitoBean
+    private GetVehicleByIdUseCase getVehicleByIdUseCase;
+
+    @MockitoBean
+    private UpdateVehicleUseCase updateVehicleUseCase;
+
+    @MockitoBean
+    private DeleteVehicleUseCase deleteVehicleUseCase;
+
+    @MockitoBean
+    private GetAllVehicleUseCase getAllVehicleUseCase;
 
     @BeforeEach
     void setUp() {
         RestAssuredMockMvc.mockMvc(mockMvc);
-        authToken = getAuthToken("vehicle-admin@example.com", "password123", "Vehicle Admin");
     }
 
     @Test
-    @DisplayName("Deve filtrar veículos por placa e modelo")
-    void shouldFilterVehicles() {
-        CreateVehicleRequest v1 = new CreateVehicleRequest("Civic", "MJE-0545", "Honda", Short.valueOf("2023"));
-        CreateVehicleRequest v2 = new CreateVehicleRequest("Corolla", "JYL-8719", "Toyota", Short.valueOf("2022"));
-        CreateVehicleRequest v3 = new CreateVehicleRequest("Civic Si", "MYP-7853", "Honda", Short.valueOf("2024"));
-
-        RestAssuredMockMvc.given().header("Authorization", "Bearer " + authToken).contentType(MediaType.APPLICATION_JSON).body(v1).post("/vehicle");
-        RestAssuredMockMvc.given().header("Authorization", "Bearer " + authToken).contentType(MediaType.APPLICATION_JSON).body(v2).post("/vehicle");
-        RestAssuredMockMvc.given().header("Authorization", "Bearer " + authToken).contentType(MediaType.APPLICATION_JSON).body(v3).post("/vehicle");
+    @WithMockUser
+    @DisplayName("Deve criar um veículo e retornar 201 Created")
+    void shouldCreateVehicleAndReturn201() {
+        CreateVehicleRequest request = new CreateVehicleRequest("Civic", "ABC1234", "Honda", (short) 2023);
+        when(createVehicleUseCase.execute(any())).thenReturn("ABC1234");
 
         RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + authToken)
-                .queryParam("model", "Civic")
+                .postProcessors(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .when()
+                .post("/vehicle")
+                .then()
+                .statusCode(HttpStatus.CREATED.value())
+                .header("Location", equalTo("/vehicle/ABC1234"))
+                .body(equalTo("ABC1234"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve retornar 400 Bad Request ao tentar criar veículo com dados inválidos")
+    void shouldReturn400WhenCommandIsInvalid() {
+        CreateVehicleRequest invalidCommand = new CreateVehicleRequest("", "", "", null);
+
+        RestAssuredMockMvc.given()
+                .postProcessors(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(invalidCommand)
+                .when()
+                .post("/vehicle")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve atualizar um veículo e retornar 204 No Content")
+    void shouldUpdateVehicleAndReturn204() {
+        String licensePlate = "ABC1234";
+        UpdateVehicleRequest command = new UpdateVehicleRequest("Civic Updated", "Honda", (short) 2019);
+        var vehicle = Vehicle.restore("Civic Updated", licensePlate, "Honda", (short) 2019, null, null, null);
+        when(updateVehicleUseCase.execute(any())).thenReturn(vehicle);
+
+        RestAssuredMockMvc.given()
+                .postProcessors(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(command)
+                .when()
+                .put("/vehicle/{licensePlate}", licensePlate)
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+
+        verify(updateVehicleUseCase, times(1)).execute(any());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve retornar 400 Bad Request ao tentar atualizar veículo com dados inválidos")
+    void shouldReturn400WhenUpdateCommandIsInvalid() {
+        String licensePlate = "ABC1234";
+        UpdateVehicleRequest invalidCommand = new UpdateVehicleRequest("", "", null);
+
+        RestAssuredMockMvc.given()
+                .postProcessors(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(invalidCommand)
+                .when()
+                .put("/vehicle/{licensePlate}", licensePlate)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve excluir um veículo e retornar 204 No Content")
+    void shouldDeleteVehicleAndReturn204() {
+        String licensePlate = "ABC1234";
+
+        RestAssuredMockMvc.given()
+                .postProcessors(csrf())
+                .when()
+                .delete("/vehicle/{licensePlate}", licensePlate)
+                .then()
+                .statusCode(HttpStatus.NO_CONTENT.value());
+
+        verify(deleteVehicleUseCase, times(1)).execute(any(DeleteVehicleCommand.class));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve buscar um veículo e retornar 200 OK")
+    void shouldFindVehicleAndReturn200() {
+        String licensePlate = "ABC1234";
+        var vehicleResponse = Vehicle.restore("Civic", licensePlate, "Honda", (short) 2023, null, null, null);
+        when(getVehicleByIdUseCase.execute(any())).thenReturn(vehicleResponse);
+
+        RestAssuredMockMvc.given()
+                .when()
+                .get("/vehicle/{licensePlate}", licensePlate)
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("licensePlate", equalTo(licensePlate))
+                .body("model", equalTo("Civic"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve listar os veículos e retornar 200 OK")
+    void shouldGetAllVehiclesAndReturn200() {
+        var vehicle = Vehicle.restore("Civic", "ABC1234", "Honda", (short) 2023, null, null, null);
+        var pageResult = new VehiclePageResult(List.of(vehicle), 1L);
+        when(getAllVehicleUseCase.execute(any())).thenReturn(pageResult);
+
+        RestAssuredMockMvc.given()
                 .when()
                 .get("/vehicle")
                 .then()
                 .statusCode(HttpStatus.OK.value())
-                .body("content.size()", greaterThanOrEqualTo(2))
-                .body("content.model", hasItems("Civic", "Civic Si"));
+                .body("content[0].licensePlate", equalTo("ABC1234"))
+                .body("page.totalElements", equalTo(1));
 
-        RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + authToken)
-                .queryParam("licensePlate", "MJE-0545")
-                .when()
-                .get("/vehicle")
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("content.size()", equalTo(1))
-                .body("content[0].model", equalTo("Civic"));
+        verify(getAllVehicleUseCase, times(1)).execute(any());
     }
 }

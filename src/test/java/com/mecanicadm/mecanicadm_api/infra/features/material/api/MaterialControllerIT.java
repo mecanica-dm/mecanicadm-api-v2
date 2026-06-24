@@ -169,6 +169,21 @@ class MaterialControllerIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Deve retornar 400 ao criar material com dados invalidos")
+    void shouldReturn400WhenCreateCommandIsInvalid() {
+        CreateMaterialCommand invalidCommand = new CreateMaterialCommand(null, null, null, null, null, 0);
+
+        RestAssuredMockMvc.given()
+                .header("Authorization", "Bearer " + authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(invalidCommand)
+                .when()
+                .post("/materials")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
     @DisplayName("Deve deletar um material")
     void shouldDeleteMaterial() {
         CreateMaterialCommand createCmd = new CreateMaterialCommand("Para Deletar", "Marca", "Desc", new BigDecimal("10"), MaterialType.PART, 1);

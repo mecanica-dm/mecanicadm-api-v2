@@ -19,6 +19,7 @@ public class CreateMaterialUseCase implements UseCase<CreateMaterialCommand, UUI
         this.addStockUseCase = addStockUseCase;
     }
 
+    @Override
     public UUID execute(CreateMaterialCommand cmd) {
         Material material = Material.create(
                 cmd.name(),

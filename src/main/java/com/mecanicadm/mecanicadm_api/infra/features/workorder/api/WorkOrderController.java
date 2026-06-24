@@ -1,25 +1,21 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.CreateWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetAllWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetWorkOrderByIdUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.SoftDeleteWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.UpdateWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CreateWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.SoftDeleteWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.UpdateWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetAllWorkOrdersQuery;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetWorkOrderByIdQuery;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.CreateWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetAllWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderByIdUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.SoftDeleteWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.UpdateWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.CreateWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.SoftDeleteWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.UpdateWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetWorkOrderByIdQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.CreateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.UpdateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderOpenApi;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -79,8 +75,8 @@ public class WorkOrderController implements WorkOrderOpenApi {
     @Override
     @GetMapping("/{id}")
     public ResponseEntity<WorkOrderResponse> findById(@PathVariable UUID id) {
-        WorkOrder workOrder = getWorkOrderByIdUseCase.execute(new GetWorkOrderByIdQuery(id));
-        return ResponseEntity.ok(new WorkOrderResponse(workOrder));
+        var workOrder = getWorkOrderByIdUseCase.execute(new GetWorkOrderByIdQuery(id));
+        return ResponseEntity.ok(WorkOrderResponse.from(workOrder));
     }
 
     @Override
@@ -89,20 +85,9 @@ public class WorkOrderController implements WorkOrderOpenApi {
             @RequestParam(required = false) UUID clientId,
             @RequestParam(required = false) String licensePlate,
             @PageableDefault(size = 20) Pageable pageable) {
-
-        var sort = pageable.getSort().get().findFirst();
-        var sortBy = sort.map(Sort.Order::getProperty).orElse("executionStartAt");
-        var direction = sort.map(s -> s.getDirection().name()).orElse("DESC");
-
-        var query = new GetAllWorkOrdersQuery(clientId, licensePlate, pageable.getPageNumber(), pageable.getPageSize(), sortBy, direction);
+        var query = WorkOrderQueryMapper.toQuery(clientId, licensePlate, pageable);
         var result = getAllWorkOrderUseCase.execute(query);
-
-        var responseList = result.items().stream()
-                .map(WorkOrderResponse::new)
-                .toList();
-
-        Page<WorkOrderResponse> response = new PageImpl<>(responseList, pageable, result.totalElements());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(WorkOrderQueryMapper.toPage(result, pageable));
     }
 
     @Override

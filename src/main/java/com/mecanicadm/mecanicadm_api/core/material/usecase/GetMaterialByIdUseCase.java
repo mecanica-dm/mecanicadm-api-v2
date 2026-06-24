@@ -14,6 +14,7 @@ public class GetMaterialByIdUseCase implements UseCase<GetMaterialByIdQuery, Mat
         this.gateway = gateway;
     }
 
+    @Override
     public Material execute(GetMaterialByIdQuery query) {
         return gateway.findById(query.id())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);

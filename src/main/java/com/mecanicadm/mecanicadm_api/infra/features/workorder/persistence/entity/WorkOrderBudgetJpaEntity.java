@@ -1,21 +1,10 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.WorkOrderBudgetStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderBudgetStatus;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "work_order_budgets")
@@ -48,12 +37,6 @@ public class WorkOrderBudgetJpaEntity {
         this.totalPrice = totalPrice;
         this.status = status;
         this.rejectionReason = rejectionReason;
-    }
-
-    private WorkOrderBudgetJpaEntity(WorkOrderJpaEntity workOrder, BigDecimal totalPrice) {
-        this.workOrder = requireNonNull(workOrder);
-        this.totalPrice = requireNonNull(totalPrice);
-        this.status = WorkOrderBudgetStatus.PENDING;
     }
 
     public UUID getWorkOrderId() {

@@ -1,14 +1,15 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.WorkOrderExecutionDurationProjection;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.WorkOrderExecutionSummaryProjection;
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrder;
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.port.WorkOrderGateway;
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.port.WorkOrderPageQuery;
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.port.WorkOrderPageResult;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageQuery;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
-import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.mapper.WorkOrderJpaMapper;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderJpaMapper;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification.WorkOrderSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -19,6 +20,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class WorkOrderRepositoryImpl implements WorkOrderGateway {
@@ -31,6 +34,9 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
 
     @Override
     public WorkOrder create(WorkOrder workOrder) {
+        if (isNull(workOrder)) {
+            throw new TechnicalException("error.technical.entity.null", "WorkOrder", "criação");
+        }
         WorkOrderJpaEntity entity = WorkOrderJpaMapper.toEntity(workOrder);
         WorkOrderJpaEntity saved = jpaRepository.save(entity);
         return WorkOrderJpaMapper.toDomain(saved);
@@ -38,6 +44,9 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
 
     @Override
     public WorkOrder update(WorkOrder workOrder) {
+        if (isNull(workOrder)) {
+            throw new TechnicalException("error.technical.entity.null", "WorkOrder", "atualização");
+        }
         WorkOrderJpaEntity entity = WorkOrderJpaMapper.toEntity(workOrder);
         WorkOrderJpaEntity saved = jpaRepository.save(entity);
         return WorkOrderJpaMapper.toDomain(saved);
@@ -68,18 +77,11 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
     @Override
     public BigDecimal sumMaterialsTotalByWorkOrderId(UUID workOrderId) {
         return jpaRepository.sumMaterialsTotalByWorkOrderId(workOrderId);
-
     }
 
     @Override
     public BigDecimal sumLaborTotalByWorkOrderId(UUID workOrderId) {
         return jpaRepository.sumLaborTotalByWorkOrderId(workOrderId);
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        jpaRepository.deleteById(id);
-
     }
 
     @Override

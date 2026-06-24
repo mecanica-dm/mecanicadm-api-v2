@@ -12,13 +12,13 @@ public interface ClientGateway {
 
     Optional<Client> findById(UUID id);
 
-    boolean existsClientByDocument(String document);
+    boolean existsByDocument(String document);
 
-    boolean existsClientByEmail(String email);
+    boolean existsByEmail(String email);
 
-    boolean existsClientByDocumentAndIdNot(String document, UUID id);
+    boolean existsByDocumentAndIdNot(String document, UUID id);
 
-    boolean existsClientByEmailAndIdNot(String email, UUID id);
+    boolean existsByEmailAndIdNot(String email, UUID id);
 
     ClientPageResult findAll(ClientPageQuery pageQuery);
 

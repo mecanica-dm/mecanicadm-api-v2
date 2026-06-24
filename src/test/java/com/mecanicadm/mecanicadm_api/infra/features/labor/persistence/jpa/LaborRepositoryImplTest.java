@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,8 +51,7 @@ class LaborRepositoryImplTest {
         domain = mock(Labor.class);
         lenient().when(domain.getId()).thenReturn(id);
 
-        entity = new LaborJpaEntity();
-        entity.setId(id);
+        entity = new LaborJpaEntity(id, "Labor Test", BigDecimal.TEN);
     }
 
     @Test

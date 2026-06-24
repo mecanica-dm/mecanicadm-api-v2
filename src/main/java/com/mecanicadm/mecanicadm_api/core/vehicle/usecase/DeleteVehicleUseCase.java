@@ -14,6 +14,7 @@ public class DeleteVehicleUseCase implements VoidUseCase<DeleteVehicleCommand> {
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(DeleteVehicleCommand command) {
         Vehicle vehicle = gateway.findByLicensePlate(command.licensePlate())
                 .orElseThrow(VehicleExceptions.NotFound::new);

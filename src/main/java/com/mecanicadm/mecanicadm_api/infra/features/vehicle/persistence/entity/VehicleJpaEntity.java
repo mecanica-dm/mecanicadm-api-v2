@@ -25,7 +25,7 @@ public class VehicleJpaEntity extends AuditEntity {
     @Column(name = "model_year")
     private Short modelYear;
 
-    public VehicleJpaEntity() {}
+    protected VehicleJpaEntity() {}
 
     public VehicleJpaEntity(String licensePlate, String model, String brand, Short modelYear) {
         this.licensePlate = licensePlate;

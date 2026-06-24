@@ -18,11 +18,11 @@ public class CreateClientUseCase implements UseCase<CreateClientCommand, UUID> {
 
     @Override
     public UUID execute(CreateClientCommand cmd) {
-        if (gateway.existsClientByEmail(cmd.email())) {
+        if (gateway.existsByEmail(cmd.email())) {
             throw new ClientExceptions.EmailExists();
         }
 
-        if (gateway.existsClientByDocument(cmd.document())) {
+        if (gateway.existsByDocument(cmd.document())) {
             throw new ClientExceptions.DocumentExists();
         }
 

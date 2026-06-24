@@ -1,0 +1,201 @@
+package com.mecanicadm.mecanicadm_api.infra.features.workorder.config;
+
+import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
+import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.SoftDeleteStockUseCase;
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
+import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
+import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@SpringBootTest
+class WorkOrderConfigurationIT extends AbstractIntegrationTest {
+
+    @MockitoBean
+    private WorkOrderGateway workOrderGateway;
+    @MockitoBean
+    private WorkOrderLaborItemGateway workOrderLaborItemGateway;
+    @MockitoBean
+    private ClientGateway clientGateway;
+    @MockitoBean
+    private VehicleGateway vehicleGateway;
+    @MockitoBean
+    private LaborGateway laborGateway;
+    @MockitoBean
+    private MaterialGateway materialGateway;
+    @MockitoBean
+    private DeductStockUseCase deductStockUseCase;
+    @MockitoBean
+    private SoftDeleteStockUseCase softDeleteStockUseCase;
+    @MockitoBean
+    private PdfGenerator pdfGenerator;
+
+    @Autowired
+    private WorkOrderConfiguration workOrderConfiguration;
+
+    @Test
+    @DisplayName("Deve carregar WorkOrderConfiguration no contexto")
+    void shouldLoadWorkOrderConfiguration() {
+        assertNotNull(workOrderConfiguration);
+    }
+
+    @Test
+    @DisplayName("Deve criar bean CreateWorkOrderUseCase")
+    void shouldCreateCreateWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.createWorkOrderUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean UpdateWorkOrderUseCase")
+    void shouldCreateUpdateWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.updateWorkOrderUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean GetWorkOrderByIdUseCase")
+    void shouldCreateGetWorkOrderByIdUseCase() {
+        assertNotNull(workOrderConfiguration.getWorkOrderByIdUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean GetAllWorkOrderUseCase")
+    void shouldCreateGetAllWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.getAllWorkOrderUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean SoftDeleteWorkOrderUseCase")
+    void shouldCreateSoftDeleteWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.softDeleteWorkOrderUseCase(workOrderGateway, null));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean CalculateWorkOrderBudgetUseCase")
+    void shouldCreateCalculateWorkOrderBudgetUseCase() {
+        assertNotNull(workOrderConfiguration.calculateWorkOrderBudgetUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean DiagnoseWorkOrderUseCase")
+    void shouldCreateDiagnoseWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.diagnoseWorkOrderUseCase(workOrderGateway, clientGateway, vehicleGateway, null));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean DecideWorkOrderBudgetUseCase")
+    void shouldCreateDecideWorkOrderBudgetUseCase() {
+        assertNotNull(workOrderConfiguration.decideWorkOrderBudgetUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean CreateWorkOrderLaborItemUseCase")
+    void shouldCreateCreateWorkOrderLaborItemUseCase() {
+        assertNotNull(workOrderConfiguration.createWorkOrderLaborItemUseCase(laborGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean CreateWorkOrderMaterialItemUseCase")
+    void shouldCreateCreateWorkOrderMaterialItemUseCase() {
+        assertNotNull(workOrderConfiguration.createWorkOrderMaterialItemUseCase(materialGateway, deductStockUseCase));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean AddLaborToWorkOrderUseCase")
+    void shouldCreateAddLaborToWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.addLaborToWorkOrderUseCase(workOrderGateway, null));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean AddMaterialToWorkOrderUseCase")
+    void shouldCreateAddMaterialToWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.addMaterialToWorkOrderUseCase(workOrderGateway, null));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean DeliverWorkOrderUseCase")
+    void shouldCreateDeliverWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.deliverWorkOrderUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean FinishLaborExecutionUseCase")
+    void shouldCreateFinishLaborExecutionUseCase() {
+        assertNotNull(workOrderConfiguration.finishLaborExecutionUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean FinishWorkOrderExecutionUseCase")
+    void shouldCreateFinishWorkOrderExecutionUseCase() {
+        assertNotNull(workOrderConfiguration.finishWorkOrderExecutionUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean GetAllWorkOrderExecutionTimeReportUseCase")
+    void shouldCreateGetAllWorkOrderExecutionTimeReportUseCase() {
+        assertNotNull(workOrderConfiguration.getAllWorkOrderExecutionTimeReportUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean GetPrintableBudgetUseCase")
+    void shouldCreateGetPrintableBudgetUseCase() {
+        assertNotNull(workOrderConfiguration.getPrintableBudgetUseCase(workOrderGateway, clientGateway, vehicleGateway, laborGateway, materialGateway, pdfGenerator));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean GetWorkOrderLaborItemByIdUseCase")
+    void shouldCreateGetWorkOrderLaborItemByIdUseCase() {
+        assertNotNull(workOrderConfiguration.getWorkOrderLaborItemByIdUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean ManuallyAdjustWorkOrderBudgetUseCase")
+    void shouldCreateManuallyAdjustWorkOrderBudgetUseCase() {
+        assertNotNull(workOrderConfiguration.manuallyAdjustWorkOrderBudgetUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean RecordWorkOrderPaymentUseCase")
+    void shouldCreateRecordWorkOrderPaymentUseCase() {
+        assertNotNull(workOrderConfiguration.recordWorkOrderPaymentUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean RemoveLaborItemFromWorkOrderUseCase")
+    void shouldCreateRemoveLaborItemFromWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.removeLaborItemFromWorkOrderUseCase(workOrderLaborItemGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean RemoveMaterialItemFromWorkOrderUseCase")
+    void shouldCreateRemoveMaterialItemFromWorkOrderUseCase() {
+        assertNotNull(workOrderConfiguration.removeMaterialItemFromWorkOrderUseCase(workOrderGateway, softDeleteStockUseCase));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean SendWorkOrderBudgetUseCase")
+    void shouldCreateSendWorkOrderBudgetUseCase() {
+        assertNotNull(workOrderConfiguration.sendWorkOrderBudgetUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean StartLaborExecutionUseCase")
+    void shouldCreateStartLaborExecutionUseCase() {
+        assertNotNull(workOrderConfiguration.startLaborExecutionUseCase(workOrderGateway));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean StartWorkOrderExecutionUseCase")
+    void shouldCreateStartWorkOrderExecutionUseCase() {
+        assertNotNull(workOrderConfiguration.startWorkOrderExecutionUseCase(workOrderGateway));
+    }
+}

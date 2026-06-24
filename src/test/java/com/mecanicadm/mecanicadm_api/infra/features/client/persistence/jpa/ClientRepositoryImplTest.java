@@ -125,7 +125,7 @@ class ClientRepositoryImplTest {
     void shouldCheckDocumentExistence() {
         when(jpaRepository.existsByDocument("123")).thenReturn(true);
 
-        assertTrue(repository.existsClientByDocument("123"));
+        assertTrue(repository.existsByDocument("123"));
         verify(jpaRepository).existsByDocument("123");
     }
 
@@ -134,7 +134,7 @@ class ClientRepositoryImplTest {
     void shouldCheckDocumentNonExistence() {
         when(jpaRepository.existsByDocument("123")).thenReturn(false);
 
-        assertFalse(repository.existsClientByDocument("123"));
+        assertFalse(repository.existsByDocument("123"));
     }
 
     @Test
@@ -142,7 +142,7 @@ class ClientRepositoryImplTest {
     void shouldCheckEmailExistence() {
         when(jpaRepository.existsByEmail("a@b.com")).thenReturn(true);
 
-        assertTrue(repository.existsClientByEmail("a@b.com"));
+        assertTrue(repository.existsByEmail("a@b.com"));
         verify(jpaRepository).existsByEmail("a@b.com");
     }
 
@@ -151,7 +151,7 @@ class ClientRepositoryImplTest {
     void shouldCheckEmailNonExistence() {
         when(jpaRepository.existsByEmail("a@b.com")).thenReturn(false);
 
-        assertFalse(repository.existsClientByEmail("a@b.com"));
+        assertFalse(repository.existsByEmail("a@b.com"));
     }
 
     @Test
@@ -159,7 +159,7 @@ class ClientRepositoryImplTest {
     void shouldCheckDocumentExistenceIgnoringId() {
         when(jpaRepository.existsByDocumentAndIdNot("123", id)).thenReturn(true);
 
-        assertTrue(repository.existsClientByDocumentAndIdNot("123", id));
+        assertTrue(repository.existsByDocumentAndIdNot("123", id));
         verify(jpaRepository).existsByDocumentAndIdNot("123", id);
     }
 
@@ -168,7 +168,7 @@ class ClientRepositoryImplTest {
     void shouldCheckDocumentNonExistenceIgnoringId() {
         when(jpaRepository.existsByDocumentAndIdNot("123", id)).thenReturn(false);
 
-        assertFalse(repository.existsClientByDocumentAndIdNot("123", id));
+        assertFalse(repository.existsByDocumentAndIdNot("123", id));
     }
 
     @Test
@@ -176,7 +176,7 @@ class ClientRepositoryImplTest {
     void shouldCheckEmailExistenceIgnoringId() {
         when(jpaRepository.existsByEmailAndIdNot("a@b.com", id)).thenReturn(true);
 
-        assertTrue(repository.existsClientByEmailAndIdNot("a@b.com", id));
+        assertTrue(repository.existsByEmailAndIdNot("a@b.com", id));
         verify(jpaRepository).existsByEmailAndIdNot("a@b.com", id);
     }
 
@@ -185,7 +185,7 @@ class ClientRepositoryImplTest {
     void shouldCheckEmailNonExistenceIgnoringId() {
         when(jpaRepository.existsByEmailAndIdNot("a@b.com", id)).thenReturn(false);
 
-        assertFalse(repository.existsClientByEmailAndIdNot("a@b.com", id));
+        assertFalse(repository.existsByEmailAndIdNot("a@b.com", id));
     }
 
     @Test

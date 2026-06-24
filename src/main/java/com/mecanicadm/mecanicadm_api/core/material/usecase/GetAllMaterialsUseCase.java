@@ -15,6 +15,7 @@ public class GetAllMaterialsUseCase implements UseCase<SearchMaterialsQuery, Mat
         this.gateway = gateway;
     }
 
+    @Override
     public MaterialPageResult execute(SearchMaterialsQuery query) {
         MaterialFilter filter = new MaterialFilter(query.name(), query.brand(), query.type());
         MaterialPageQuery pageQuery = new MaterialPageQuery(filter, query.page(), query.size(), query.sortBy(), query.direction());

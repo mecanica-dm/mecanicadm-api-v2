@@ -1,16 +1,8 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "work_order_material_items")
@@ -33,14 +25,6 @@ public class WorkOrderMaterialItemJpaEntity {
     public WorkOrderMaterialItemJpaEntity(UUID id, UUID materialId, int quantity) {
         this.id = id;
         this.materialId = materialId;
-        this.quantity = quantity;
-    }
-
-    private WorkOrderMaterialItemJpaEntity(UUID materialId, int quantity) {
-        this.materialId = requireNonNull(materialId);
-        if (quantity <= 0) {
-            throw new WorkOrderExceptions.InvalidMaterialQuantity();
-        }
         this.quantity = quantity;
     }
 

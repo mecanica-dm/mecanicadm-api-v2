@@ -1,7 +1,15 @@
 package com.mecanicadm.mecanicadm_api.infra.features.labor.api;
 
-import com.mecanicadm.mecanicadm_api.core.labor.usecase.command.CreateLaborCommand;
-import com.mecanicadm.mecanicadm_api.core.labor.usecase.command.UpdateLaborCommand;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.Labor;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.CreateLaborUseCase;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.DeleteLaborUseCase;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetAllLaborsUseCase;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetLaborByIdUseCase;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.UpdateLaborUseCase;
+import com.mecanicadm.mecanicadm_api.core.labor.usecase.command.DeleteLaborCommand;
+import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.request.CreateLaborRequest;
+import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.request.UpdateLaborRequest;
 import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,110 +20,154 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
-import static com.mecanicadm.mecanicadm_api.testutils.AuthUtils.getAuthToken;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 class LaborControllerIT extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    private String token;
+    @MockitoBean
+    private CreateLaborUseCase createLaborUseCase;
+
+    @MockitoBean
+    private UpdateLaborUseCase updateLaborUseCase;
+
+    @MockitoBean
+    private DeleteLaborUseCase deleteLaborUseCase;
+
+    @MockitoBean
+    private GetLaborByIdUseCase getLaborByIdUseCase;
+
+    @MockitoBean
+    private GetAllLaborsUseCase getAllLaborsUseCase;
 
     @BeforeEach
     void setUp() {
         RestAssuredMockMvc.mockMvc(mockMvc);
-        token = getAuthToken("admin@example.com", "Admin User");
     }
 
     @Test
-    @DisplayName("Deve criar um novo serviço com sucesso")
-    void shouldCreateLabor() {
-        CreateLaborCommand command = new CreateLaborCommand("Alinhamento", new BigDecimal("100.00"));
+    @WithMockUser
+    @DisplayName("Deve criar labor e retornar 201 Created")
+    void shouldCreateLaborAndReturn201() {
+        UUID laborId = UUID.randomUUID();
+        when(createLaborUseCase.execute(any())).thenReturn(laborId);
+
+        CreateLaborRequest request = new CreateLaborRequest("Troca de Óleo", BigDecimal.valueOf(150));
 
         RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + token)
+                .postProcessors(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(command)
+                .body(request)
                 .when()
                 .post("/labor")
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
-                .header("Location", not(emptyString()))
-                .body(notNullValue());
+                .body(equalTo("\"" + laborId.toString() + "\""));
     }
 
     @Test
-    @Sql(scripts = "/sql/labor.sql")
-    @DisplayName("Deve listar serviços com filtros e paginação")
-    void shouldListLaborsWithFilters() {
-        RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + token)
-                .queryParam("name", "Óleo")
-                .queryParam("page", 0)
-                .queryParam("size", 10)
-                .when()
-                .get("/labor")
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("content", hasSize(1))
-                .body("content[0].name", equalTo("Troca de Óleo"));
-    }
-
-    @Test
-    @Sql(scripts = "/sql/labor.sql")
-    @DisplayName("Deve buscar um serviço por ID")
-    void shouldFindLaborById() {
-        UUID laborId = UUID.fromString("550e8400-e29b-41d4-a716-446655440011");
+    @WithMockUser
+    @DisplayName("Deve retornar 400 ao criar labor com dados invalidos")
+    void shouldReturn400WhenCreateCommandIsInvalid() {
+        CreateLaborRequest invalidRequest = new CreateLaborRequest("", null);
 
         RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + token)
-                .when()
-                .get("/labor/{id}", laborId)
-                .then()
-                .statusCode(HttpStatus.OK.value())
-                .body("id", equalTo(laborId.toString()))
-                .body("name", equalTo("Troca de Óleo"));
-    }
-
-    @Test
-    @Sql(scripts = "/sql/labor.sql")
-    @DisplayName("Deve atualizar um serviço existente")
-    void shouldUpdateLabor() {
-        UUID laborId = UUID.fromString("550e8400-e29b-41d4-a716-446655440012");
-        UpdateLaborCommand command = new UpdateLaborCommand(laborId, "Revisão Premium", new BigDecimal("500.00"));
-
-        RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + token)
+                .postProcessors(csrf())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(command)
+                .body(invalidRequest)
+                .when()
+                .post("/labor")
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve atualizar labor e retornar 204 No Content")
+    void shouldUpdateLaborAndReturn204() {
+        UUID laborId = UUID.randomUUID();
+        UpdateLaborRequest request = new UpdateLaborRequest("Troca de Óleo Atualizada", BigDecimal.valueOf(200));
+
+        RestAssuredMockMvc.given()
+                .postProcessors(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
                 .when()
                 .put("/labor/{id}", laborId)
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
+
+        verify(updateLaborUseCase, times(1)).execute(any());
     }
 
     @Test
-    @Sql(scripts = "/sql/labor.sql")
-    @DisplayName("Deve excluir um serviço")
-    void shouldDeleteLabor() {
-        UUID laborId = UUID.fromString("550e8400-e29b-41d4-a716-446655440013");
+    @WithMockUser
+    @DisplayName("Deve deletar labor e retornar 204 No Content")
+    void shouldDeleteLaborAndReturn204() {
+        UUID laborId = UUID.randomUUID();
 
         RestAssuredMockMvc.given()
-                .header("Authorization", "Bearer " + token)
+                .postProcessors(csrf())
                 .when()
                 .delete("/labor/{id}", laborId)
                 .then()
                 .statusCode(HttpStatus.NO_CONTENT.value());
+
+        verify(deleteLaborUseCase, times(1)).execute(any(DeleteLaborCommand.class));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve buscar labor por ID e retornar 200 OK")
+    void shouldFindLaborByIdAndReturn200() {
+        UUID laborId = UUID.randomUUID();
+        Labor labor = mock(Labor.class);
+        when(labor.getId()).thenReturn(laborId);
+        when(labor.getName()).thenReturn("Troca de Óleo");
+        when(labor.getPrice()).thenReturn(BigDecimal.valueOf(150));
+        when(getLaborByIdUseCase.execute(any())).thenReturn(labor);
+
+        RestAssuredMockMvc.given()
+                .when()
+                .get("/labor/{id}", laborId)
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("name", equalTo("Troca de Óleo"));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve listar labors e retornar 200 OK")
+    void shouldGetAllLaborsAndReturn200() {
+        Labor labor = mock(Labor.class);
+        when(labor.getId()).thenReturn(UUID.randomUUID());
+        when(labor.getName()).thenReturn("Troca de Óleo");
+        when(labor.getPrice()).thenReturn(BigDecimal.valueOf(150));
+
+        var pageResult = new LaborPageResult(List.of(labor), 1L);
+        when(getAllLaborsUseCase.execute(any())).thenReturn(pageResult);
+
+        RestAssuredMockMvc.given()
+                .when()
+                .get("/labor")
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("content[0].name", equalTo("Troca de Óleo"))
+                .body("page.totalElements", equalTo(1));
     }
 }

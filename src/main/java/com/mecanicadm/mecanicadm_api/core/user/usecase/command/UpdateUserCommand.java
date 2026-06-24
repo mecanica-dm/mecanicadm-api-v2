@@ -8,7 +8,4 @@ public record UpdateUserCommand(
         String password,
         String currentPassword
 ) {
-    public UpdateUserCommand withId(UUID id) {
-        return new UpdateUserCommand(id, this.name, this.password, this.currentPassword);
-    }
 }

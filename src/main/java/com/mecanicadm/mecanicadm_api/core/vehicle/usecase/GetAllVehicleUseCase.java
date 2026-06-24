@@ -15,6 +15,7 @@ public class GetAllVehicleUseCase implements UseCase<GetAllVehiclesQuery, Vehicl
         this.gateway = gateway;
     }
 
+    @Override
     public VehiclePageResult execute(GetAllVehiclesQuery query) {
         VehicleFilter filter = new VehicleFilter(query.licensePlate(), query.model(), query.brand(), query.modelYear());
         VehiclePageQuery pageQuery = new VehiclePageQuery(filter, query.page(), query.size(), query.sortBy(), query.direction());

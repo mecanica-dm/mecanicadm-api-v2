@@ -141,7 +141,7 @@ Ao criar uma nova feature, seguir este fluxo:
   - `update()` — atualiza `dateUpdated`.
   - `delete()` — define `deletedAt` e `dateUpdated`.
 - **Factory method**: a criação da entidade é feita por um método estático `create(...)` que chama `new()` + `create()` + `validate()`.
-- **Reconstituição**: para recriar a entidade a partir da persistência (JPA mapper), usar um método estático `with(...)` que recebe os timestamps como parâmetros, **sem** chamar `create()`.
+- **Reconstituição**: para recriar a entidade a partir da persistência (JPA mapper), usar um método estático `restore(...)` que recebe os timestamps como parâmetros, **sem** chamar `create()`.
 - **Soft delete**:
   - O domínio marca a exclusão via `entidade.delete()` (seta `deletedAt`).
   - O gateway persiste a mudança chamando `update()`, **não** `delete()`.
@@ -203,11 +203,4 @@ Esta ADR complementa e reforça:
 - [ADR 006 - Contrato de Exceções de Domínio e i18n](docs/adr/006-contrato_excecoes_dominio_i18n.md)
 - [ADR 010 - Estratégia de i18n e Múltiplos Idiomas](docs/adr/010-estrategia_i18n_multi_idioma.md)
 
-Com a refatoração da feature `client`, os padrões de `UseCase<I,O>`, `VoidUseCase<I>`, `TechnicalException`, `AuditDomain` e gateways descritivos tornam-se o novo padrão de referência. O `vehicle` deve ser atualizado para seguir estes mesmos padrões.
-
-Migrações futuras:
-- `vehicle` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e `AuditDomain`.
-- `workorder` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e gateway descritivo.
-- `user` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e `AuditDomain`.
-- `labor` / `material` / `stock` → adotar `UseCase<I,O>` / `VoidUseCase<I>`, e `AuditDomain`.
 

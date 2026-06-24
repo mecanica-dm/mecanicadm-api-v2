@@ -14,6 +14,7 @@ public class GetLaborByIdUseCase implements UseCase<GetLaborByIdQuery, Labor> {
         this.gateway = gateway;
     }
 
+    @Override
     public Labor execute(GetLaborByIdQuery query) {
         return gateway.findById(query.id()).orElseThrow(LaborExceptions.LaborNotFound::new);
     }

@@ -1,19 +1,10 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.LaborExecutionStatus;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.LaborExecutionStatus;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "work_order_labor_items")
@@ -46,11 +37,6 @@ public class WorkOrderLaborItemJpaEntity {
         this.executionStartAt = executionStartAt;
         this.executionEndAt = executionEndAt;
         this.status = status;
-    }
-
-    private WorkOrderLaborItemJpaEntity(UUID laborId) {
-        this.laborId = requireNonNull(laborId);
-        this.status = LaborExecutionStatus.AWAITING_EXECUTION;
     }
 
     public UUID getId() {
