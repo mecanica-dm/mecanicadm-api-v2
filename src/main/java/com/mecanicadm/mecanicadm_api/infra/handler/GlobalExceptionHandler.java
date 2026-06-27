@@ -1,8 +1,8 @@
 package com.mecanicadm.mecanicadm_api.infra.handler;
 
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
 import com.mecanicadm.mecanicadm_api.infra.exception.SecurityException;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -38,8 +38,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-    @ExceptionHandler(DomainException.class)
-    public ResponseEntity<Map<String, String>> handleDomainException(DomainException ex, Locale locale) {
+    @ExceptionHandler(DomainExceptionCore.class)
+    public ResponseEntity<Map<String, String>> handleDomainException(DomainExceptionCore ex, Locale locale) {
         String message = messageSource.getMessage(ex.getMessageKey(), ex.getArgs(), ex.getMessageKey(), locale);
         Map<String, String> response = new HashMap<>();
         response.put(ERROR_FIELD_NAME, message);

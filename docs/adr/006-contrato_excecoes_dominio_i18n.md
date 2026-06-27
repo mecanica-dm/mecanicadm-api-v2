@@ -5,13 +5,13 @@
 
 ## 1. Contexto e Problema
 
-O projeto evoluiu para um tratamento padronizado de erros de negócio usando `DomainException`, com `messageKey` para internacionalização e `HttpStatus` por exceção. Sem documentar esse contrato, surgem inconsistências como uso de exceções genéricas (`IllegalArgumentException`/`RuntimeException`) para regras de negócio e ausência de chaves de mensagem nos bundles.
+O projeto evoluiu para um tratamento padronizado de erros de negócio usando `DomainExceptionCore`, com `messageKey` para internacionalização e `HttpStatus` por exceção. Sem documentar esse contrato, surgem inconsistências como uso de exceções genéricas (`IllegalArgumentException`/`RuntimeException`) para regras de negócio e ausência de chaves de mensagem nos bundles.
 
 ## 2. Decisão
 
 Padronizamos o contrato de erros de domínio com as seguintes regras:
 
-- Exceções de negócio devem estender `DomainException`.
+- Exceções de negócio devem estender `DomainExceptionCore`.
 - Exceções devem ser centralizadas por módulo na classe `[Dominio]Exceptions` (classes internas estáticas).
 - Cada exceção deve definir `messageKey` e `HttpStatus` no construtor.
 - Toda `messageKey` deve existir em `messages.properties`, `messages_en.properties` e `messages_es.properties`.

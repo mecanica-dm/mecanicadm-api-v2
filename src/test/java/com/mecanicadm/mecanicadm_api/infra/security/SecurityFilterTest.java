@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.security;
 
-import com.mecanicadm.mecanicadm_api.core.user.adapter.repository.UserRepository;
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.infra.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ class SecurityFilterTest {
 
     private SecurityFilter securityFilter;
     private TokenService tokenService;
-    private UserRepository userRepository;
+    private UserGateway userGateway;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
@@ -31,8 +31,8 @@ class SecurityFilterTest {
     @BeforeEach
     void setUp() {
         tokenService = mock(TokenService.class);
-        userRepository = mock(UserRepository.class);
-        securityFilter = new SecurityFilter(tokenService, userRepository);
+        userGateway = mock(UserGateway.class);
+        securityFilter = new SecurityFilter(tokenService, userGateway);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
@@ -45,15 +45,16 @@ class SecurityFilterTest {
         String token = "valid-token";
         String email = "user@test.com";
         User user = User.create(email, "password", "Test User", mock(PasswordEncoder.class));
+        UserAdapter userAdapter = new UserAdapter(user);
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(tokenService.validateToken(token)).thenReturn(email);
-        when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));
+        when(userGateway.findByEmail(email)).thenReturn(Optional.of(user));
 
         securityFilter.doFilterInternal(request, response, filterChain);
 
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-        assertEquals(user, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        assertEquals(userAdapter, SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         verify(filterChain).doFilter(request, response);
     }
 
@@ -94,7 +95,7 @@ class SecurityFilterTest {
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
         when(tokenService.validateToken(token)).thenReturn(email);
-        when(userRepository.findUserByEmail(email)).thenReturn(Optional.empty());
+        when(userGateway.findByEmail(email)).thenReturn(Optional.empty());
 
         securityFilter.doFilterInternal(request, response, filterChain);
 

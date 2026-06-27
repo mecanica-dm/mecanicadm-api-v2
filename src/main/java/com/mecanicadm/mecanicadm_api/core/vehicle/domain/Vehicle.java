@@ -1,52 +1,70 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.domain;
 
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
+import io.micrometer.common.util.StringUtils;
 
-@Entity
-@Table(name = "vehicle")
-@SQLDelete(sql = "UPDATE vehicle SET deleted_at = now() WHERE id = ?")
-@SQLRestriction("deleted_at IS NULL")
-public class Vehicle extends AuditEntity {
-    @Id
-    private String licensePlate;
-    private String model;
-    private String brand;
-    private Short modelYear;
+import static java.util.Objects.isNull;
 
-    public Vehicle() {
-    }
+public class Vehicle {
+    private final String licensePlate;
+    private final String model;
+    private final String brand;
+    private final Short modelYear;
 
     public Vehicle(String model, String licensePlate, String brand, Short modelYear) {
         this.model = model;
         this.licensePlate = licensePlate;
         this.brand = brand;
         this.modelYear = modelYear;
+        validate();
     }
 
-    public String getLicensePlate() {
-        return licensePlate;
+    public static Vehicle create(String model, String licensePlate, String brand, Short modelYear) {
+        return new Vehicle(model, licensePlate, brand, modelYear);
     }
 
-    public String getModel() {
-        return model;
+    public Vehicle updateInfo(String model, String brand, Short modelYear) {
+        return new Vehicle(model, this.getLicensePlate(), brand, modelYear);
     }
 
-    public String getBrand() {
-        return brand;
+    public Vehicle update(String model, String brand, Short modelYear) {
+        return updateInfo(model, brand, modelYear);
     }
 
-    public Short getModelYear() {
-        return modelYear;
+    private void validate() {
+        validateModel();
+        validateBrand();
+        validateModelYear();
     }
 
-    public void update(String model, String brand, Short modelYear) {
-        this.model = model;
-        this.brand = brand;
-        this.modelYear = modelYear;
+    private void validateModel() {
+        if (isBlank(this.model)) {
+            throw new VehicleExceptions.ModelNotEmpty();
+        }
     }
+
+    private void validateBrand() {
+        if (isBlank(this.brand)) {
+            throw new VehicleExceptions.BrandNotEmpty();
+        }
+    }
+
+    private void validateModelYear() {
+        if (isNull(this.modelYear)) {
+            throw new VehicleExceptions.InvalidModelYear();
+        }
+        if (this.modelYear < 1886 || this.modelYear > 9999) {
+            throw new VehicleExceptions.InvalidModelYear();
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return StringUtils.isBlank(value);
+    }
+
+    public String getLicensePlate() { return licensePlate; }
+    public String getModel() { return model; }
+    public String getBrand() { return brand; }
+    public Short getModelYear() { return modelYear; }
 }
+

@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorders.domain;
 
 import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import com.mecanicadm.mecanicadm_api.infra.exception.DomainException;
+import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -38,8 +38,8 @@ class WorkOrderMaterialItemTest {
     void shouldNotCreateMaterialItemWithZeroQuantity() {
         UUID id = UUID.randomUUID();
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> WorkOrderMaterialItem.create(id, 0)
         );
 
@@ -55,8 +55,8 @@ class WorkOrderMaterialItemTest {
     void shouldNotCreateMaterialItemWithNegativeQuantity() {
         UUID id = UUID.randomUUID();
 
-        DomainException exception = assertThrows(
-                DomainException.class,
+        DomainExceptionCore exception = assertThrows(
+                DomainExceptionCore.class,
                 () -> WorkOrderMaterialItem.create(id, -1)
         );
 

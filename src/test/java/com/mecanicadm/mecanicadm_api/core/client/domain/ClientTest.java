@@ -55,7 +55,7 @@ class ClientTest {
     void shouldUpdateClientInfo() {
         Client client = Client.create("Old Name", "old@example.com", "17871234053", "48999999999");
 
-        client.updateInfo("New Name", "new@example.com", "43615632009", "48888888888");
+        client.update("New Name", "new@example.com", "43615632009", "48888888888");
 
         assertEquals("New Name", client.getName());
         assertEquals("new@example.com", client.getEmail());
