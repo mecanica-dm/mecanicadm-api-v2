@@ -7,7 +7,6 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialPageResul
 import com.mecanicadm.mecanicadm_api.infra.features.material.persistence.entity.MaterialJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.material.persistence.jpa.specification.MaterialSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,8 +35,6 @@ class MaterialRepositoryImplTest {
 
     @Mock
     private MaterialJpaRepository jpaRepository;
-    @Mock
-    private EntityManager entityManager;
 
     private MaterialRepositoryImpl repository;
     private UUID id;
@@ -46,7 +43,7 @@ class MaterialRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        repository = new MaterialRepositoryImpl(jpaRepository, entityManager);
+        repository = new MaterialRepositoryImpl(jpaRepository);
 
         id = UUID.randomUUID();
         domain = mock(Material.class);
@@ -89,8 +86,6 @@ class MaterialRepositoryImplTest {
 
             assertSame(domain, result);
             verify(jpaRepository).save(entity);
-            verify(entityManager).flush();
-            verify(entityManager).detach(entity);
         }
     }
 
@@ -99,7 +94,6 @@ class MaterialRepositoryImplTest {
     void shouldThrowExceptionWhenUpdatingNullMaterial() {
         assertThrows(TechnicalException.class, () -> repository.update(null));
         verifyNoInteractions(jpaRepository);
-        verifyNoInteractions(entityManager);
     }
 
     @Test

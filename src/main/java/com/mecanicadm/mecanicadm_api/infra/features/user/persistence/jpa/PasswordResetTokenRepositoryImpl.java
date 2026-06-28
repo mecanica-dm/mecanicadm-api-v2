@@ -5,6 +5,7 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.PasswordResetTokenGateway;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,6 +21,7 @@ public class PasswordResetTokenRepositoryImpl implements PasswordResetTokenGatew
     }
 
     @Override
+    @Transactional
     public void deleteByUser(User user) {
         if (isNull(user)) {
             throw new TechnicalException("error.technical.entity.null", "User", "exclusão");

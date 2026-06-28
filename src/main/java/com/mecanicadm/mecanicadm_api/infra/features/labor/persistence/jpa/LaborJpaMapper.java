@@ -26,5 +26,6 @@ public class LaborJpaMapper {
         entity.setDeletedAt(domain.getDeletedAt());
         return entity;
     }
+
 }
 

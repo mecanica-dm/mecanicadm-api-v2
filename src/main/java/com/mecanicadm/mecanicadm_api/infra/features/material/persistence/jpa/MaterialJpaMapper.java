@@ -26,4 +26,5 @@ public class MaterialJpaMapper {
         entity.setDeletedAt(domain.getDeletedAt());
         return entity;
     }
+
 }

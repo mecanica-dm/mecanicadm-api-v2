@@ -7,7 +7,6 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity.LaborJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.jpa.specification.LaborSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
-import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,11 +24,9 @@ import static java.util.Objects.isNull;
 public class LaborRepositoryImpl implements LaborGateway {
 
     private final LaborJpaRepository jpaRepository;
-    private final EntityManager entityManager;
 
-    public LaborRepositoryImpl(LaborJpaRepository jpaRepository, EntityManager entityManager) {
+    public LaborRepositoryImpl(LaborJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -48,8 +45,6 @@ public class LaborRepositoryImpl implements LaborGateway {
         }
         LaborJpaEntity entity = LaborJpaMapper.toEntity(labor);
         LaborJpaEntity saved = jpaRepository.save(entity);
-        entityManager.flush();
-        entityManager.detach(saved);
         return LaborJpaMapper.toDomain(saved);
     }
 

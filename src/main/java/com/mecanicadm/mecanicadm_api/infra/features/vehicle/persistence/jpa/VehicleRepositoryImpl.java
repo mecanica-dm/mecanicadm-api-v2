@@ -53,7 +53,7 @@ public class VehicleRepositoryImpl implements VehicleGateway {
 
     @Override
     public boolean existsByLicensePlate(String licensePlate) {
-        return jpaRepository.existsById(licensePlate);
+        return jpaRepository.existsByLicensePlate(licensePlate);
     }
 
     @Override

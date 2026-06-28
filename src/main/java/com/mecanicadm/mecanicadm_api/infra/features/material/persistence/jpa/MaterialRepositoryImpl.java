@@ -7,7 +7,6 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialPageResul
 import com.mecanicadm.mecanicadm_api.infra.features.material.persistence.entity.MaterialJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.material.persistence.jpa.specification.MaterialSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
-import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,11 +24,9 @@ import static java.util.Objects.isNull;
 public class MaterialRepositoryImpl implements MaterialGateway {
 
     private final MaterialJpaRepository jpaRepository;
-    private final EntityManager entityManager;
 
-    public MaterialRepositoryImpl(MaterialJpaRepository jpaRepository, EntityManager entityManager) {
+    public MaterialRepositoryImpl(MaterialJpaRepository jpaRepository) {
         this.jpaRepository = jpaRepository;
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -48,8 +45,6 @@ public class MaterialRepositoryImpl implements MaterialGateway {
         }
         MaterialJpaEntity entity = MaterialJpaMapper.toEntity(material);
         MaterialJpaEntity saved = jpaRepository.save(entity);
-        entityManager.flush();
-        entityManager.detach(saved);
         return MaterialJpaMapper.toDomain(saved);
     }
 

@@ -16,10 +16,9 @@ public class CreateVehicleUseCase implements UseCase<CreateVehicleCommand, Strin
 
     @Override
     public String execute(CreateVehicleCommand command) {
-        gateway.findByLicensePlate(command.licensePlate())
-                .ifPresent(v -> {
-                    throw new VehicleExceptions.VehicleExists(command.licensePlate());
-                });
+        if (gateway.existsByLicensePlate(command.licensePlate())) {
+            throw new VehicleExceptions.VehicleExists(command.licensePlate());
+        }
         Vehicle vehicle = Vehicle.create(command.model(), command.licensePlate(), command.brand(), command.modelYear());
         Vehicle created = gateway.create(vehicle);
         return created.getLicensePlate();

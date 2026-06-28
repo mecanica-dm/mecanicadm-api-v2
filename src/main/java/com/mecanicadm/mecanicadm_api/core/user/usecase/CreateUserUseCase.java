@@ -21,7 +21,7 @@ public class CreateUserUseCase implements UseCase<CreateUserCommand, UUID> {
 
     @Override
     public UUID execute(CreateUserCommand command) {
-        if (userGateway.findByEmail(command.email()).isPresent()) {
+        if (userGateway.existsByEmail(command.email())) {
             throw new UserExceptions.UserAlreadyExists();
         }
 

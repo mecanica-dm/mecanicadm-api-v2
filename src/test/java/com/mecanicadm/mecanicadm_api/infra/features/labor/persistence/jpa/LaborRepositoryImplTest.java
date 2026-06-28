@@ -7,7 +7,6 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity.LaborJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.jpa.specification.LaborSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,6 @@ class LaborRepositoryImplTest {
 
     @Mock
     private LaborJpaRepository jpaRepository;
-    @Mock
-    private EntityManager entityManager;
 
     private LaborRepositoryImpl repository;
     private UUID id;
@@ -45,7 +42,7 @@ class LaborRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        repository = new LaborRepositoryImpl(jpaRepository, entityManager);
+        repository = new LaborRepositoryImpl(jpaRepository);
 
         id = UUID.randomUUID();
         domain = mock(Labor.class);
@@ -88,8 +85,6 @@ class LaborRepositoryImplTest {
 
             assertSame(domain, result);
             verify(jpaRepository).save(entity);
-            verify(entityManager).flush();
-            verify(entityManager).detach(entity);
         }
     }
 
@@ -98,7 +93,6 @@ class LaborRepositoryImplTest {
     void shouldThrowExceptionWhenUpdatingNullLabor() {
         assertThrows(TechnicalException.class, () -> repository.update(null));
         verifyNoInteractions(jpaRepository);
-        verifyNoInteractions(entityManager);
     }
 
     @Test

@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -40,7 +38,7 @@ class CreateVehicleUseCaseTest {
     @Test
     @DisplayName("Deve criar um veículo com sucesso quando a placa não existe")
     void shouldCreateVehicleSuccessfully() {
-        when(repository.findByLicensePlate(command.licensePlate())).thenReturn(Optional.empty());
+        when(repository.existsByLicensePlate(command.licensePlate())).thenReturn(false);
 
         Vehicle savedVehicle = Vehicle.create(command.model(), command.licensePlate(), command.brand(), command.modelYear());
         when(repository.create(any(Vehicle.class))).thenReturn(savedVehicle);
@@ -49,18 +47,18 @@ class CreateVehicleUseCaseTest {
 
         assertNotNull(resultLicensePlate);
         assertEquals(command.licensePlate(), resultLicensePlate);
-        verify(repository).findByLicensePlate(command.licensePlate());
+        verify(repository).existsByLicensePlate(command.licensePlate());
         verify(repository).create(any(Vehicle.class));
     }
 
     @Test
     @DisplayName("Deve lançar exceção quando a placa já está cadastrada")
     void shouldThrowExceptionWhenVehicleExists() {
-        when(repository.findByLicensePlate(command.licensePlate())).thenReturn(Optional.of(mock(Vehicle.class)));
+        when(repository.existsByLicensePlate(command.licensePlate())).thenReturn(true);
 
         assertThrows(VehicleExceptions.VehicleExists.class, () -> createVehicleUseCase.execute(command));
 
-        verify(repository).findByLicensePlate(command.licensePlate());
+        verify(repository).existsByLicensePlate(command.licensePlate());
         verify(repository, never()).create(any(Vehicle.class));
     }
 }

@@ -122,16 +122,16 @@ class VehicleRepositoryImplTest {
     @Test
     @DisplayName("Deve verificar existencia de placa")
     void shouldCheckLicensePlateExistence() {
-        when(jpaRepository.existsById(licensePlate)).thenReturn(true);
+        when(jpaRepository.existsByLicensePlate(licensePlate)).thenReturn(true);
 
         assertTrue(repository.existsByLicensePlate(licensePlate));
-        verify(jpaRepository).existsById(licensePlate);
+        verify(jpaRepository).existsByLicensePlate(licensePlate);
     }
 
     @Test
     @DisplayName("Deve verificar inexistencia de placa")
     void shouldCheckLicensePlateNonExistence() {
-        when(jpaRepository.existsById(licensePlate)).thenReturn(false);
+        when(jpaRepository.existsByLicensePlate(licensePlate)).thenReturn(false);
 
         assertFalse(repository.existsByLicensePlate(licensePlate));
     }
