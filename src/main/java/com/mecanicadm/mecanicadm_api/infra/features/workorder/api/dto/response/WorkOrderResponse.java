@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record WorkOrderResponse(
         UUID id,
         UUID clientId,
