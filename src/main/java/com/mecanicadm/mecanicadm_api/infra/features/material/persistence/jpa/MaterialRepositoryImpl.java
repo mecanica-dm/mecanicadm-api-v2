@@ -50,7 +50,7 @@ public class MaterialRepositoryImpl implements MaterialGateway {
 
     @Override
     public Optional<Material> findById(UUID id) {
-        return jpaRepository.findById(id).map(MaterialJpaMapper::toDomain);
+        return jpaRepository.findActiveById(id).map(MaterialJpaMapper::toDomain);
     }
 
     @Override

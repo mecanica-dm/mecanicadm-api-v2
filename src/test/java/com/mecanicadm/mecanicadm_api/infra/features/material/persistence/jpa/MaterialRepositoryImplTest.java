@@ -99,7 +99,7 @@ class MaterialRepositoryImplTest {
     @Test
     @DisplayName("Deve buscar material por ID com sucesso")
     void shouldFindMaterialById() {
-        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(jpaRepository.findActiveById(id)).thenReturn(Optional.of(entity));
 
         try (MockedStatic<MaterialJpaMapper> mapper = mockStatic(MaterialJpaMapper.class)) {
             mapper.when(() -> MaterialJpaMapper.toDomain(entity)).thenReturn(domain);
@@ -108,19 +108,19 @@ class MaterialRepositoryImplTest {
 
             assertTrue(result.isPresent());
             assertSame(domain, result.get());
-            verify(jpaRepository).findById(id);
+            verify(jpaRepository).findActiveById(id);
         }
     }
 
     @Test
     @DisplayName("Deve retornar vazio ao buscar material por ID inexistente")
     void shouldReturnEmptyWhenMaterialNotFoundById() {
-        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+        when(jpaRepository.findActiveById(id)).thenReturn(Optional.empty());
 
         Optional<Material> result = repository.findById(id);
 
         assertTrue(result.isEmpty());
-        verify(jpaRepository).findById(id);
+        verify(jpaRepository).findActiveById(id);
     }
 
     @Test
