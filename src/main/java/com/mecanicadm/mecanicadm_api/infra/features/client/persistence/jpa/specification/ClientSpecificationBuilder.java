@@ -6,7 +6,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +30,14 @@ public class ClientSpecificationBuilder {
         };
     }
 
-    public static void addNameFilter(List<Predicate> predicates, ClientFilter filter, Root<ClientJpaEntity> root, CriteriaBuilder cb) {
-            if (StringUtils.hasText(filter.name())) {
+    private static void addNameFilter(List<Predicate> predicates, ClientFilter filter, Root<ClientJpaEntity> root, CriteriaBuilder cb) {
+        if (filter.name() != null && !filter.name().isBlank()) {
                 predicates.add(cb.like(cb.lower(root.get("name")), "%" + filter.name().toLowerCase() + "%"));
             }
     }
 
-    public static void addDocumentFilter(List<Predicate> predicates, ClientFilter filter, Root<ClientJpaEntity> root, CriteriaBuilder cb) {
-        if (StringUtils.hasText(filter.document())) {
+    private static void addDocumentFilter(List<Predicate> predicates, ClientFilter filter, Root<ClientJpaEntity> root, CriteriaBuilder cb) {
+        if (filter.document() != null && !filter.document().isBlank()) {
             predicates.add(cb.equal(root.get("document"), filter.document()));
         }
     }

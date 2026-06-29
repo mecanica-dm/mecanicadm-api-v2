@@ -5,6 +5,7 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.PasswordResetTokenGateway;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.RequestPasswordResetCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-public class RequestPasswordResetUseCase {
+public class RequestPasswordResetUseCase implements VoidUseCase<RequestPasswordResetCommand> {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestPasswordResetUseCase.class);
 
@@ -25,6 +26,7 @@ public class RequestPasswordResetUseCase {
         this.passwordResetTokenGateway = passwordResetTokenGateway;
     }
 
+    @Override
     public void execute(RequestPasswordResetCommand cmd) {
         Optional<User> userOptional = userGateway.findByEmail(cmd.email());
         if (userOptional.isEmpty()) {

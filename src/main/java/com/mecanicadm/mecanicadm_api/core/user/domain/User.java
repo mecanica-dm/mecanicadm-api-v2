@@ -3,8 +3,6 @@ package com.mecanicadm.mecanicadm_api.core.user.domain;
 import com.mecanicadm.mecanicadm_api.core.user.domain.enums.UserRole;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.shared.domain.AuditDomain;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,15 +17,12 @@ public class User extends AuditDomain {
     private String name;
     private List<UserRole> roles = new ArrayList<>();
 
-    private User(UUID id, String email, String password, String name, List<UserRole> roles, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+    private User(UUID id, String email, String password, String name, List<UserRole> roles) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
         this.roles = roles;
-        this.deletedAt = deletedAt;
-        this.dateCreated = dateCreated;
-        this.dateUpdated = dateUpdated;
         validate();
     }
 
@@ -41,38 +36,41 @@ public class User extends AuditDomain {
         validate();
     }
 
-    public static User create(String email, String rawPassword, String name, PasswordEncoder passwordEncoder) {
-        validatePassword(rawPassword);
-        return new User(email, passwordEncoder.encode(rawPassword), name);
+    public static User create(String email, String encodedPassword, String name) {
+        var user = new User(email, encodedPassword, name);
+        user.create();
+        return user;
     }
 
+    @SuppressWarnings("java:S107")
     public static User restore(UUID id, String email, String password, String name, List<UserRole> roles, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
-        return new User(id, email, password, name, roles, deletedAt, dateCreated, dateUpdated);
+        User user = new User(id, email, password, name, roles);
+        user.deletedAt = deletedAt;
+        user.dateCreated = dateCreated;
+        user.dateUpdated = dateUpdated;
+        return user;
     }
 
     public void updateInfo(String name, String email) {
         this.name = name;
         this.email = email;
-        this.dateUpdated = LocalDateTime.now();
+        update();
         validate();
     }
 
-    public void changePassword(String rawPassword, PasswordEncoder passwordEncoder) {
-        validatePassword(rawPassword);
-        this.password = passwordEncoder.encode(rawPassword);
-        this.dateUpdated = LocalDateTime.now();
+    public void updatePassword(String encodedPassword) {
+        this.password = encodedPassword;
+        update();
     }
 
-    private static void validatePassword(String rawPassword) {
-        if (!StringUtils.hasText(rawPassword) || rawPassword.length() < 6) {
+    public static void validatePassword(String rawPassword) {
+        if (rawPassword == null || rawPassword.isBlank() || rawPassword.length() < 6) {
             throw new UserExceptions.PasswordMinLength();
         }
     }
 
-    public void verifyPassword(String rawPassword, PasswordEncoder passwordEncoder) {
-        if (!passwordEncoder.matches(rawPassword, this.password)) {
-            throw new UserExceptions.BadCredentials();
-        }
+    public void softDelete() {
+        delete();
     }
 
     public UUID getId() {
@@ -97,16 +95,16 @@ public class User extends AuditDomain {
 
     public void addRole(UserRole role) {
         this.roles.add(role);
-        this.dateUpdated = LocalDateTime.now();
+        update();
     }
 
     public void removeRole(UserRole role) {
         this.roles.remove(role);
-        this.dateUpdated = LocalDateTime.now();
+        update();
     }
 
     private void validate() {
-        if (!StringUtils.hasText(this.email)) {
+        if (this.email == null || this.email.isBlank()) {
             throw new UserExceptions.EmailNotEmpty();
         }
     }

@@ -9,8 +9,6 @@ public interface VehicleGateway {
 
     Vehicle update(Vehicle vehicle);
 
-    void deleteByLicensePlate(String licensePlate);
-
     Optional<Vehicle> findByLicensePlate(String licensePlate);
 
     VehiclePageResult findAll(VehiclePageQuery query);

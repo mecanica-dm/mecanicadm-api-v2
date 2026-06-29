@@ -5,25 +5,19 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.enums.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class UserAdapterTest {
 
     @Test
     @DisplayName("Deve mapear corretamente os dados do User para UserDetails")
     void shouldMapUserDetailsCorrectly() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode("password123")).thenReturn("encoded_password");
-        
-        User user = User.create("test@example.com", "password123", "Test User", encoder);
+        User user = User.create("test@example.com", "encoded_password", "Test User");
         user.addRole(UserRole.MECHANIC);
         user.addRole(UserRole.ATTENDANT);
         UserAdapter adapter = new UserAdapter(user);
@@ -45,10 +39,7 @@ class UserAdapterTest {
     @Test
     @DisplayName("Deve retornar isEnabled falso se o usuário estiver deletado")
     void shouldReturnDisabledWhenUserIsDeleted() {
-        PasswordEncoder encoder = mock(PasswordEncoder.class);
-        when(encoder.encode("password123")).thenReturn("encoded_password");
-        
-        User user = User.create("test@example.com", "password123", "Test User", encoder);
+        User user = User.create("test@example.com", "encoded_password", "Test User");
         ReflectionTestUtils.setField(user, "deletedAt", LocalDateTime.now());
         UserAdapter adapter = new UserAdapter(user);
 

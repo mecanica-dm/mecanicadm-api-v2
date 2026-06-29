@@ -4,10 +4,11 @@ import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.command.UpdateClientCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
-import static java.util.Objects.requireNonNullElse;
+import java.util.UUID;
 
-public class UpdateClientUseCase {
+public class UpdateClientUseCase implements VoidUseCase<UpdateClientCommand> {
 
     private final ClientGateway gateway;
 
@@ -15,33 +16,30 @@ public class UpdateClientUseCase {
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(UpdateClientCommand cmd) {
         Client client = gateway.findById(cmd.id())
                 .orElseThrow(ClientExceptions.NotFound::new);
 
-        if (cmd.document() != null && !cmd.document().equals(client.getDocument())) {
-            gateway.findClientByDocument(cmd.document()).ifPresent(existingClient -> {
-                if (!existingClient.getId().equals(cmd.id())) {
-                    throw new ClientExceptions.DocumentExists();
-                }
-            });
-        }
-
-        if (cmd.email() != null && !cmd.email().equals(client.getEmail())) {
-            gateway.findClientByEmail(cmd.email()).ifPresent(existingClient -> {
-                if (!existingClient.getId().equals(cmd.id())) {
-                    throw new ClientExceptions.EmailExists();
-                }
-            });
-        }
+        validate(cmd, client.getId());
 
         client.update(
-                requireNonNullElse(cmd.name(), client.getName()),
-                requireNonNullElse(cmd.email(), client.getEmail()),
-                requireNonNullElse(cmd.document(), client.getDocument()),
-                requireNonNullElse(cmd.phone(), client.getPhone())
+                cmd.name(),
+                cmd.email(),
+                cmd.document(),
+                cmd.phone()
         );
 
         gateway.update(client);
+    }
+
+    private void validate(UpdateClientCommand cmd, UUID clientId) {
+        if (gateway.existsByEmailAndIdNot(cmd.email(), clientId)) {
+            throw new ClientExceptions.EmailExists();
+        }
+
+        if (gateway.existsByDocumentAndIdNot(cmd.document(), clientId)) {
+            throw new ClientExceptions.DocumentExists();
+        }
     }
 }

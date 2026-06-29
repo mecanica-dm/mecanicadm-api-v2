@@ -8,7 +8,4 @@ public record UpdateLaborCommand(
         String name,
         BigDecimal price
 ) {
-    public UpdateLaborCommand withId(UUID id) {
-        return new UpdateLaborCommand(id, name, price);
-    }
 }

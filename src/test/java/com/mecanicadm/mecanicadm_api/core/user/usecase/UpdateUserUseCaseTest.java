@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,8 +38,7 @@ class UpdateUserUseCaseTest {
 
         userId = UUID.randomUUID();
 
-        when(passwordEncoder.encode("123456")).thenReturn("encoded");
-        existingUser = User.create("teste@email.com", "123456", "Nome Antigo", passwordEncoder);
+        existingUser = User.create("teste@email.com", "encoded", "Nome Antigo");
         existingUser = User.restore(userId, existingUser.getEmail(), existingUser.getPassword(), existingUser.getName(), existingUser.getRoles(), null, LocalDateTime.now(), LocalDateTime.now());
     }
 
@@ -112,5 +112,38 @@ class UpdateUserUseCaseTest {
         verify(gateway).findById(userId);
         verify(passwordEncoder).matches("senhaIncorreta", "encoded");
         verify(gateway, never()).update(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Deve atualizar nome e senha simultaneamente")
+    void shouldUpdateNameAndPasswordSimultaneously() {
+        UpdateUserCommand command = new UpdateUserCommand(userId, "Novo Nome", "novaSenha", "currentPassword");
+
+        when(gateway.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("currentPassword", "encoded")).thenReturn(true);
+        when(passwordEncoder.encode("novaSenha")).thenReturn("novaEncoded");
+
+        useCase.execute(command);
+
+        verify(gateway).findById(userId);
+        verify(passwordEncoder).matches("currentPassword", "encoded");
+        verify(passwordEncoder).encode("novaSenha");
+        verify(gateway).update(existingUser);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar usuario com nome vazio (apenas senha)")
+    void shouldUpdatePasswordOnlyWhenNameIsBlank() {
+        UpdateUserCommand command = new UpdateUserCommand(userId, "", "novaSenha", "currentPassword");
+
+        when(gateway.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches("currentPassword", "encoded")).thenReturn(true);
+        when(passwordEncoder.encode("novaSenha")).thenReturn("novaEncoded");
+
+        useCase.execute(command);
+
+        verify(gateway).findById(userId);
+        verify(passwordEncoder).matches("currentPassword", "encoded");
+        verify(gateway).update(existingUser);
     }
 }

@@ -1,8 +1,8 @@
 package com.mecanicadm.mecanicadm_api.infra.security;
 
 import com.mecanicadm.mecanicadm_api.core.user.domain.User;
+import com.mecanicadm.mecanicadm_api.core.user.domain.port.TokenService;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
-import com.mecanicadm.mecanicadm_api.infra.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -44,7 +43,7 @@ class SecurityFilterTest {
     void shouldAuthenticateUserWhenValidTokenProvided() throws Exception {
         String token = "valid-token";
         String email = "user@test.com";
-        User user = User.create(email, "password", "Test User", mock(PasswordEncoder.class));
+        User user = User.create(email, "encodedPassword", "Test User");
         UserAdapter userAdapter = new UserAdapter(user);
 
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);

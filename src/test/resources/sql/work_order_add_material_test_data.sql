@@ -14,4 +14,4 @@ VALUES ('660e8400-e29b-41d4-a716-446655440097', 'Óleo do Motor', 'Brand X', 'Ó
         '2023-01-01 10:00:00', '2023-01-01 10:00:00');
 
 INSERT INTO stock_movements (id, material_id, quantity, type, date_created, date_updated)
-VALUES (UUID(), '660e8400-e29b-41d4-a716-446655440097', 10, 'ADDITION', '2023-01-01 10:00:00', '2023-01-01 10:00:00');
+VALUES (gen_random_uuid(), '660e8400-e29b-41d4-a716-446655440097', 10, 'ADDITION', '2023-01-01 10:00:00', '2023-01-01 10:00:00');

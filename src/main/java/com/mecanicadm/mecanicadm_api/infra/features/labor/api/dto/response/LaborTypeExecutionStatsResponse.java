@@ -1,6 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborTypeStatsProjection;
+import com.mecanicadm.mecanicadm_api.core.labor.domain.LaborTypeExecutionStats;
 
 import java.util.UUID;
 
@@ -12,15 +12,14 @@ public record LaborTypeExecutionStatsResponse(
         Double shortestExecutionTimeInMinutes,
         Double longestExecutionTimeInMinutes
 ) {
-
-    public LaborTypeExecutionStatsResponse(LaborTypeStatsProjection proj) {
-        this(
-                proj.getLaborId(),
-                proj.getLaborName(),
-                proj.getTotalExecutions(),
-                proj.getAverageExecutionMinutes(),
-                proj.getMinExecutionMinutes(),
-                proj.getMaxExecutionMinutes()
+    public static LaborTypeExecutionStatsResponse from(LaborTypeExecutionStats stats) {
+        return new LaborTypeExecutionStatsResponse(
+                stats.laborId(),
+                stats.laborName(),
+                stats.totalExecutions(),
+                stats.averageExecutionTimeInMinutes(),
+                stats.shortestExecutionTimeInMinutes(),
+                stats.longestExecutionTimeInMinutes()
         );
     }
 }

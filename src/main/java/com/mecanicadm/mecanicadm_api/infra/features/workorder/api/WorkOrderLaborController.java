@@ -1,16 +1,16 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.AddLaborToWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.FinishLaborExecutionUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetWorkOrderLaborItemByIdUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.RemoveLaborItemFromWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.StartLaborExecutionUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.AddLaborToWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.FinishLaborExecutionCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.RemoveLaborItemFromWorkOrderCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.StartLaborExecutionCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetWorkOrderLaborItemByIdQuery;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.AddLaborToWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.FinishLaborExecutionUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderLaborItemByIdUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RemoveLaborItemFromWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.StartLaborExecutionUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.AddLaborToWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.FinishLaborExecutionCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.RemoveLaborItemFromWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.StartLaborExecutionCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetWorkOrderLaborItemByIdQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderLaborItemResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderLaborOpenApi;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +77,6 @@ public class WorkOrderLaborController implements WorkOrderLaborOpenApi {
     @GetMapping("/{laborItemId}")
     public ResponseEntity<WorkOrderLaborItemResponse> findById(@PathVariable UUID workOrderId, @PathVariable UUID laborItemId) {
         WorkOrderLaborItem laborItem = getWorkOrderLaborItemByIdUseCase.execute(new GetWorkOrderLaborItemByIdQuery(workOrderId, laborItemId));
-        return ResponseEntity.ok(new WorkOrderLaborItemResponse(laborItem));
+        return ResponseEntity.ok(WorkOrderLaborItemResponse.from(laborItem));
     }
 }

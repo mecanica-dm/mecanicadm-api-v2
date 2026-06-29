@@ -1,7 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.WorkOrderLaborItem;
-import com.mecanicadm.mecanicadm_api.core.workorders.domain.enums.LaborExecutionStatus;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.LaborExecutionStatus;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -15,8 +15,8 @@ public record WorkOrderLaborItemResponse(
         LocalDateTime executionEndAt,
         Long totalExecutionTimeInMinutes
 ) {
-    public WorkOrderLaborItemResponse(WorkOrderLaborItem laborItem) {
-        this(
+    public static WorkOrderLaborItemResponse from(WorkOrderLaborItem laborItem) {
+        return new WorkOrderLaborItemResponse(
                 laborItem.getId(),
                 laborItem.getLaborId(),
                 laborItem.getStatus(),

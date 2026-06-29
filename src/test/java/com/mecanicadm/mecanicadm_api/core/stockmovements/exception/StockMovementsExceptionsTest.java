@@ -2,7 +2,6 @@ package com.mecanicadm.mecanicadm_api.core.stockmovements.exception;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,15 +24,15 @@ class StockMovementsExceptionsTest {
     @DisplayName("Deve instanciar todas as exceções de StockMovements para garantir cobertura")
     void shouldInstantiateAllExceptions() {
         var invalidQuantity = new StockMovementsExceptions.InvalidQuantity();
-        assertEquals(HttpStatus.BAD_REQUEST, invalidQuantity.getStatus());
+        assertEquals(400, invalidQuantity.getStatus());
         assertEquals("stock.quantity.invalid", invalidQuantity.getMessageKey());
 
         var insufficientStock = new StockMovementsExceptions.InsufficientStock();
-        assertEquals(HttpStatus.BAD_REQUEST, insufficientStock.getStatus());
+        assertEquals(400, insufficientStock.getStatus());
         assertEquals("stock.quantity.insufficient", insufficientStock.getMessageKey());
 
         var notFound = new StockMovementsExceptions.NotFound();
-        assertEquals(HttpStatus.NOT_FOUND, notFound.getStatus());
+        assertEquals(404, notFound.getStatus());
         assertEquals("stock.not.found", notFound.getMessageKey());
     }
 }

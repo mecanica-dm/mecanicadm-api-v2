@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -43,7 +42,7 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Deve criar um usuario com sucesso")
     void shouldCreateUserSuccessfully() {
-        when(gateway.findByEmail(command.email())).thenReturn(Optional.empty());
+        when(gateway.existsByEmail(command.email())).thenReturn(false);
         when(passwordEncoder.encode(command.password())).thenReturn("encodedPassword");
 
         User savedUser = mock(User.class);
@@ -55,7 +54,7 @@ class CreateUserUseCaseTest {
 
         assertNotNull(resultId);
         assertEquals(expectedId, resultId);
-        verify(gateway).findByEmail(command.email());
+        verify(gateway).existsByEmail(command.email());
         verify(passwordEncoder).encode(command.password());
         verify(gateway).create(any(User.class));
     }
@@ -63,11 +62,11 @@ class CreateUserUseCaseTest {
     @Test
     @DisplayName("Deve lancar excecao quando usuario ja existir")
     void shouldThrowExceptionWhenUserAlreadyExists() {
-        when(gateway.findByEmail(command.email())).thenReturn(Optional.of(mock(User.class)));
+        when(gateway.existsByEmail(command.email())).thenReturn(true);
 
         assertThrows(UserExceptions.UserAlreadyExists.class, () -> useCase.execute(command));
 
-        verify(gateway).findByEmail(command.email());
+        verify(gateway).existsByEmail(command.email());
         verify(passwordEncoder, never()).encode(anyString());
         verify(gateway, never()).create(any(User.class));
     }

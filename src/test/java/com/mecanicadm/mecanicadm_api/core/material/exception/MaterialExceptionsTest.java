@@ -2,7 +2,6 @@ package com.mecanicadm.mecanicadm_api.core.material.exception;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +24,7 @@ class MaterialExceptionsTest {
     @DisplayName("Deve instanciar todas as exceções de Material para garantir cobertura")
     void shouldInstantiateAllExceptions() {
         var notFound = new MaterialExceptions.MaterialNotFound();
-        assertEquals(HttpStatus.NOT_FOUND, notFound.getStatus());
+        assertEquals(404, notFound.getStatus());
         assertEquals("material.not.found", notFound.getMessageKey());
     }
 }

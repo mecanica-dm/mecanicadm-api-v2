@@ -32,6 +32,7 @@ build/
 .vscode/
 
 ### Local Environment ###
+.env
 .env.local
 aws-init-scripts/
 stripe_output.log

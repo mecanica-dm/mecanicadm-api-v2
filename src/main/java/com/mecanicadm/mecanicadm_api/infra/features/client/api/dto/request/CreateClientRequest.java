@@ -17,7 +17,6 @@ public record CreateClientRequest(
         @CpfCnpj
         String document,
 
-        @NotBlank(message = "{validation.client.phone.not.blank}")
         @Phone
         String phone
 ) {

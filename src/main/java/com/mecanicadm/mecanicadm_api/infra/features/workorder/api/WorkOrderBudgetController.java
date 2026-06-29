@@ -1,16 +1,16 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.CalculateWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.DecideWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetPrintableBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.ManuallyAdjustWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.SendWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.CalculateWorkOrderBudgetCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.DecideWorkOrderBudgetCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.ManuallyAdjustWorkOrderBudgetCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.command.SendWorkOrderBudgetCommand;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.dto.PrintableBudgetResponse;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetPrintableBudgetQuery;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.CalculateWorkOrderBudgetUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.DecideWorkOrderBudgetUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetPrintableBudgetUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ManuallyAdjustWorkOrderBudgetUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.SendWorkOrderBudgetUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.CalculateWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.DecideWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.ManuallyAdjustWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.SendWorkOrderBudgetCommand;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.dto.PrintableBudgetResponse;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetPrintableBudgetQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.DecideWorkOrderBudgetRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.ManuallyAdjustWorkOrderBudgetRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderBudgetOpenApi;

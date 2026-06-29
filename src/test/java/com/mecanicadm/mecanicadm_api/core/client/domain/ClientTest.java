@@ -7,8 +7,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ClientTest {
 
@@ -61,5 +63,22 @@ class ClientTest {
         assertEquals("new@example.com", client.getEmail());
         assertEquals("43615632009", client.getDocument());
         assertEquals("48888888888", client.getPhone());
+    }
+
+    @Test
+    @DisplayName("Deve restaurar um cliente a partir de dados existentes")
+    void shouldRestoreClient() {
+        var id = UUID.randomUUID();
+        var now = LocalDateTime.now();
+        var client = Client.restore(id, "Test", "test@test.com", "12345678901", "48999999999", now, now, null);
+
+        assertEquals(id, client.getId());
+        assertEquals("Test", client.getName());
+        assertEquals("test@test.com", client.getEmail());
+        assertEquals("12345678901", client.getDocument());
+        assertEquals("48999999999", client.getPhone());
+        assertEquals(now, client.getDateCreated());
+        assertEquals(now, client.getDateUpdated());
+        assertNull(client.getDeletedAt());
     }
 }

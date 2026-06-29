@@ -10,8 +10,8 @@ public record LaborResponse(
         String name,
         BigDecimal price
 ) {
-    public LaborResponse(Labor labor) {
-        this(
+    public static LaborResponse from(Labor labor) {
+        return new LaborResponse(
                 labor.getId(),
                 labor.getName(),
                 labor.getPrice()

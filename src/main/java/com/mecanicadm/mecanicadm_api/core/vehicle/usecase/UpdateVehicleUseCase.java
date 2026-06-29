@@ -4,8 +4,9 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.UpdateVehicleCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
-public class UpdateVehicleUseCase {
+public class UpdateVehicleUseCase implements UseCase<UpdateVehicleCommand, Vehicle> {
 
     private final VehicleGateway gateway;
 
@@ -13,6 +14,7 @@ public class UpdateVehicleUseCase {
         this.gateway = gateway;
     }
 
+    @Override
     public Vehicle execute(UpdateVehicleCommand command) {
         Vehicle vehicle = gateway.findByLicensePlate(command.licensePlate())
                 .orElseThrow(VehicleExceptions.NotFound::new);

@@ -1,45 +1,62 @@
 package com.mecanicadm.mecanicadm_api.core.labor.domain;
 
+import com.mecanicadm.mecanicadm_api.core.labor.exception.LaborExceptions;
+import com.mecanicadm.mecanicadm_api.shared.domain.AuditDomain;
+
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
+public class Labor extends AuditDomain {
 
-public class Labor {
-
-    private UUID id;
+    private final UUID id;
     private String name;
     private BigDecimal price;
 
     private Labor(UUID id, String name, BigDecimal price) {
         this.id = id;
-        this.name = requireNonNull(name);
-        this.price = requireNonNull(price);
-    }
-
-    private Labor(String name, BigDecimal price) {
-        this(null, name, price);
+        this.name = name;
+        this.price = price;
+        validate();
     }
 
     public static Labor create(String name, BigDecimal price) {
-        return new Labor(name, price);
+        var labor = new Labor(UUID.randomUUID(), name, price);
+        labor.create();
+        return labor;
     }
 
-    public static Labor restore(UUID id, String name, BigDecimal price) {
-        return new Labor(id, name, price);
+    @SuppressWarnings("java:S107")
+    public static Labor restore(UUID id, String name, BigDecimal price, LocalDateTime deletedAt, LocalDateTime dateCreated, LocalDateTime dateUpdated) {
+        Labor labor = new Labor(id, name, price);
+        labor.deletedAt = deletedAt;
+        labor.dateCreated = dateCreated;
+        labor.dateUpdated = dateUpdated;
+        return labor;
     }
 
     public void update(String name, BigDecimal price) {
-        this.name = requireNonNull(name);
-        this.price = requireNonNull(price);
+        this.name = name;
+        this.price = price;
+        update();
+        validate();
+    }
+
+    public void softDelete() {
+        delete();
+    }
+
+    private void validate() {
+        if (name == null || name.isBlank()) {
+            throw new LaborExceptions.NameRequired();
+        }
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new LaborExceptions.PriceRequired();
+        }
     }
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {

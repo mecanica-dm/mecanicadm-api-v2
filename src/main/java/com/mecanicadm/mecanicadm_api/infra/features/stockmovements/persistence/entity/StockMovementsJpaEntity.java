@@ -1,23 +1,14 @@
 package com.mecanicadm.mecanicadm_api.infra.features.stockmovements.persistence.entity;
 
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.enums.MovementType;
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
+import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
+import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "stock_movements")
-@SQLDelete(sql = "UPDATE stock_movements SET deleted_at = now() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class StockMovementsJpaEntity extends AuditEntity {
 

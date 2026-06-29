@@ -4,8 +4,9 @@ import com.mecanicadm.mecanicadm_api.core.client.domain.Client;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.client.exception.ClientExceptions;
 import com.mecanicadm.mecanicadm_api.core.client.usecase.command.SoftDeleteClientCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
-public class SoftDeleteClientUseCase {
+public class SoftDeleteClientUseCase implements VoidUseCase<SoftDeleteClientCommand> {
 
     private final ClientGateway gateway;
 
@@ -13,10 +14,12 @@ public class SoftDeleteClientUseCase {
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(SoftDeleteClientCommand cmd) {
         Client client = gateway.findById(cmd.id())
                 .orElseThrow(ClientExceptions.NotFound::new);
 
-        gateway.delete(client);
+        client.delete();
+        gateway.update(client);
     }
 }

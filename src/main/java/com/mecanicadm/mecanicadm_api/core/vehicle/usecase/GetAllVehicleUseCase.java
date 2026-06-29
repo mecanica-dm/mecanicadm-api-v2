@@ -5,8 +5,9 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageQuery;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.query.GetAllVehiclesQuery;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
-public class GetAllVehicleUseCase {
+public class GetAllVehicleUseCase implements UseCase<GetAllVehiclesQuery, VehiclePageResult> {
 
     private final VehicleGateway gateway;
 
@@ -14,6 +15,7 @@ public class GetAllVehicleUseCase {
         this.gateway = gateway;
     }
 
+    @Override
     public VehiclePageResult execute(GetAllVehiclesQuery query) {
         VehicleFilter filter = new VehicleFilter(query.licensePlate(), query.model(), query.brand(), query.modelYear());
         VehiclePageQuery pageQuery = new VehiclePageQuery(filter, query.page(), query.size(), query.sortBy(), query.direction());

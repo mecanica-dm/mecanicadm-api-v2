@@ -6,6 +6,7 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialPageQuery
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.material.persistence.entity.MaterialJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.material.persistence.jpa.specification.MaterialSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class MaterialRepositoryImpl implements MaterialGateway {
@@ -28,24 +31,26 @@ public class MaterialRepositoryImpl implements MaterialGateway {
 
     @Override
     public Material create(Material material) {
+        if (isNull(material)) {
+            throw new TechnicalException("error.technical.entity.null", "Material", "criação");
+        }
         MaterialJpaEntity saved = jpaRepository.save(MaterialJpaMapper.toEntity(material));
         return MaterialJpaMapper.toDomain(saved);
     }
 
     @Override
     public Material update(Material material) {
-        MaterialJpaEntity saved = jpaRepository.save(MaterialJpaMapper.toEntity(material));
+        if (isNull(material)) {
+            throw new TechnicalException("error.technical.entity.null", "Material", "atualização");
+        }
+        MaterialJpaEntity entity = MaterialJpaMapper.toEntity(material);
+        MaterialJpaEntity saved = jpaRepository.save(entity);
         return MaterialJpaMapper.toDomain(saved);
     }
 
     @Override
-    public void deleteById(UUID id) {
-        jpaRepository.deleteById(id);
-    }
-
-    @Override
     public Optional<Material> findById(UUID id) {
-        return jpaRepository.findById(id).map(MaterialJpaMapper::toDomain);
+        return jpaRepository.findActiveById(id).map(MaterialJpaMapper::toDomain);
     }
 
     @Override
