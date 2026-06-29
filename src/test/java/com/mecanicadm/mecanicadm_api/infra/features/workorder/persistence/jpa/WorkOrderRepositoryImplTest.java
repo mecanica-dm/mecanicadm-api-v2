@@ -67,15 +67,11 @@ class WorkOrderRepositoryImplTest {
     @Test
     @DisplayName("Deve criar work order com sucesso")
     void shouldCreateWorkOrderSuccessfully() {
-        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class);
-             MockedStatic<WorkOrderLaborItemJpaMapper> laborMapper = mockStatic(WorkOrderLaborItemJpaMapper.class);
-             MockedStatic<WorkOrderMaterialItemJpaMapper> materialMapper = mockStatic(WorkOrderMaterialItemJpaMapper.class);
-             MockedStatic<WorkOrderBudgetJpaMapper> budgetMapper = mockStatic(WorkOrderBudgetJpaMapper.class)) {
+        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
 
             mapper.when(() -> WorkOrderJpaMapper.toEntity(domain)).thenReturn(entity);
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(eq(entity), anySet(), anySet(), any())).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomainLight(entity)).thenReturn(domain);
             when(jpaRepository.save(entity)).thenReturn(entity);
-            when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
 
             WorkOrder result = repository.create(domain);
 
@@ -94,15 +90,11 @@ class WorkOrderRepositoryImplTest {
     @Test
     @DisplayName("Deve atualizar work order com sucesso")
     void shouldUpdateWorkOrderSuccessfully() {
-        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class);
-             MockedStatic<WorkOrderLaborItemJpaMapper> laborMapper = mockStatic(WorkOrderLaborItemJpaMapper.class);
-             MockedStatic<WorkOrderMaterialItemJpaMapper> materialMapper = mockStatic(WorkOrderMaterialItemJpaMapper.class);
-             MockedStatic<WorkOrderBudgetJpaMapper> budgetMapper = mockStatic(WorkOrderBudgetJpaMapper.class)) {
+        try (MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
 
             mapper.when(() -> WorkOrderJpaMapper.toEntity(domain)).thenReturn(entity);
-            mapper.when(() -> WorkOrderJpaMapper.toDomain(eq(entity), anySet(), anySet(), any())).thenReturn(domain);
+            mapper.when(() -> WorkOrderJpaMapper.toDomainLight(entity)).thenReturn(domain);
             when(jpaRepository.save(entity)).thenReturn(entity);
-            when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
 
             WorkOrder result = repository.update(domain);
 

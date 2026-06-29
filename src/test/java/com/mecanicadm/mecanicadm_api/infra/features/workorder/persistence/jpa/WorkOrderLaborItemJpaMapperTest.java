@@ -18,9 +18,10 @@ class WorkOrderLaborItemJpaMapperTest {
     @DisplayName("Deve mapear JpaEntity para domínio")
     void shouldMapToDomain() {
         var id = UUID.randomUUID();
+        var workOrderId = UUID.randomUUID();
         var laborId = UUID.randomUUID();
         var now = LocalDateTime.now();
-        var entity = new WorkOrderLaborItemJpaEntity(id, laborId, now, now.plusHours(1), LaborExecutionStatus.EXECUTION_COMPLETED);
+        var entity = new WorkOrderLaborItemJpaEntity(id, workOrderId, laborId, now, now.plusHours(1), LaborExecutionStatus.EXECUTION_COMPLETED);
 
         var domain = WorkOrderLaborItemJpaMapper.toDomain(entity);
 
@@ -35,13 +36,15 @@ class WorkOrderLaborItemJpaMapperTest {
     @DisplayName("Deve mapear domínio para JpaEntity")
     void shouldMapToEntity() {
         var id = UUID.randomUUID();
+        var workOrderId = UUID.randomUUID();
         var laborId = UUID.randomUUID();
         var now = LocalDateTime.now();
-        var domain = WorkOrderLaborItem.restore(id, laborId, now, now.plusHours(2), LaborExecutionStatus.IN_EXECUTION);
+        var domain = WorkOrderLaborItem.restore(id, workOrderId, laborId, now, now.plusHours(2), LaborExecutionStatus.IN_EXECUTION);
 
         var entity = WorkOrderLaborItemJpaMapper.toEntity(domain);
 
         assertEquals(id, entity.getId());
+        assertEquals(workOrderId, entity.getWorkOrderId());
         assertEquals(laborId, entity.getLaborId());
         assertEquals(now, entity.getExecutionStartAt());
         assertEquals(now.plusHours(2), entity.getExecutionEndAt());
@@ -51,27 +54,16 @@ class WorkOrderLaborItemJpaMapperTest {
     @Test
     @DisplayName("Deve mapear conjunto de entidades para conjunto de domínios")
     void shouldMapToDomainSet() {
+        var workOrderId = UUID.randomUUID();
         var id1 = UUID.randomUUID();
         var id2 = UUID.randomUUID();
-        var entity1 = new WorkOrderLaborItemJpaEntity(id1, UUID.randomUUID(), null, null, LaborExecutionStatus.AWAITING_EXECUTION);
-        var entity2 = new WorkOrderLaborItemJpaEntity(id2, UUID.randomUUID(), null, null, LaborExecutionStatus.AWAITING_EXECUTION);
+        var entity1 = new WorkOrderLaborItemJpaEntity(id1, workOrderId, UUID.randomUUID(), null, null, LaborExecutionStatus.AWAITING_EXECUTION);
+        var entity2 = new WorkOrderLaborItemJpaEntity(id2, workOrderId, UUID.randomUUID(), null, null, LaborExecutionStatus.AWAITING_EXECUTION);
 
         var domains = WorkOrderLaborItemJpaMapper.toDomainSet(Set.of(entity1, entity2));
 
         assertNotNull(domains);
         assertEquals(2, domains.size());
-    }
-
-    @Test
-    @DisplayName("Deve mapear conjunto de domínios para conjunto de entidades")
-    void shouldMapToEntitySet() {
-        var domain1 = WorkOrderLaborItem.restore(UUID.randomUUID(), UUID.randomUUID(), null, null, LaborExecutionStatus.AWAITING_EXECUTION);
-        var domain2 = WorkOrderLaborItem.restore(UUID.randomUUID(), UUID.randomUUID(), null, null, LaborExecutionStatus.AWAITING_EXECUTION);
-
-        var entities = WorkOrderLaborItemJpaMapper.toEntitySet(Set.of(domain1, domain2));
-
-        assertNotNull(entities);
-        assertEquals(2, entities.size());
     }
 
     @Test
@@ -90,11 +82,5 @@ class WorkOrderLaborItemJpaMapperTest {
     @DisplayName("Deve retornar vazio quando conjunto de entidades for nulo")
     void shouldReturnEmptyWhenEntitiesSetIsNull() {
         assertTrue(WorkOrderLaborItemJpaMapper.toDomainSet(null).isEmpty());
-    }
-
-    @Test
-    @DisplayName("Deve retornar vazio quando conjunto de domínios for nulo")
-    void shouldReturnEmptyWhenDomainsSetIsNull() {
-        assertTrue(WorkOrderLaborItemJpaMapper.toEntitySet(null).isEmpty());
     }
 }

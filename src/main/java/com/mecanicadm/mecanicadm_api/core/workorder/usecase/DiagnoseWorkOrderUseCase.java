@@ -38,6 +38,7 @@ public class DiagnoseWorkOrderUseCase implements UseCase<DiagnoseWorkOrderComman
         validateDiagnosisPreconditions(workOrder);
 
         workOrder.markAsDiagnosed();
+        gateway.update(workOrder);
 
         calculateWorkOrderBudgetUseCase.execute(new CalculateWorkOrderBudgetCommand(workOrder.getId()));
         return workOrder.getId();

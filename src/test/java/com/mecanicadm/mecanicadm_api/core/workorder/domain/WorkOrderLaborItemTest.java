@@ -16,7 +16,7 @@ class WorkOrderLaborItemTest {
     @DisplayName("Deve criar item de mão de obra com status inicial AWAITING_EXECUTION")
     void shouldCreateLaborItemWithAwaitingExecutionStatus() {
         UUID laborId = UUID.randomUUID();
-        WorkOrderLaborItem item = WorkOrderLaborItem.create(laborId);
+        WorkOrderLaborItem item = WorkOrderLaborItem.create(laborId, UUID.randomUUID());
 
         assertEquals(laborId, item.getLaborId());
         assertEquals(LaborExecutionStatus.AWAITING_EXECUTION, item.getStatus());
@@ -27,13 +27,13 @@ class WorkOrderLaborItemTest {
     @Test
     @DisplayName("Nao deve criar item de mão de obra com laborId nulo")
     void shouldNotCreateLaborItemWithNullLaborId() {
-        assertThrows(NullPointerException.class, () -> WorkOrderLaborItem.create(null));
+        assertThrows(NullPointerException.class, () -> WorkOrderLaborItem.create(null, UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("Deve iniciar execucao de labor quando status for AWAITING_EXECUTION")
     void shouldStartExecutionWhenStatusIsAwaitingExecution() {
-        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
 
         item.startExecution();
 
@@ -44,7 +44,7 @@ class WorkOrderLaborItemTest {
     @Test
     @DisplayName("Deve lancar excecao ao iniciar execucao de labor com status diferente de AWAITING_EXECUTION")
     void shouldThrowExceptionWhenStartingExecutionWithInvalidStatus() {
-        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
         item.startExecution();
 
         DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, item::startExecution);
@@ -59,7 +59,7 @@ class WorkOrderLaborItemTest {
     @Test
     @DisplayName("Deve finalizar execucao de labor quando status for IN_EXECUTION")
     void shouldFinishExecutionWhenStatusIsInExecution() {
-        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
         item.startExecution();
 
         item.finishExecution();
@@ -71,7 +71,7 @@ class WorkOrderLaborItemTest {
     @Test
     @DisplayName("Deve lancar excecao ao finalizar execucao de labor com status diferente de IN_EXECUTION")
     void shouldThrowExceptionWhenFinishingExecutionWithInvalidStatus() {
-        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem item = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
 
         DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, item::finishExecution);
 

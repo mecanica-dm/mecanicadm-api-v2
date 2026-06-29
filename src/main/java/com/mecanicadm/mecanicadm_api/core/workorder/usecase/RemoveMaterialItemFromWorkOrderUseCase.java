@@ -1,31 +1,31 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 
-import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
-
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.SoftDeleteStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.SoftDeleteStockCommand;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.RemoveMaterialItemFromWorkOrderCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
 public class RemoveMaterialItemFromWorkOrderUseCase implements VoidUseCase<RemoveMaterialItemFromWorkOrderCommand> {
-    private final WorkOrderGateway gateway;
+    private final WorkOrderGateway workOrderGateway;
+    private final WorkOrderMaterialItemGateway materialItemGateway;
     private final SoftDeleteStockUseCase softDeleteStockUseCase;
 
-    public RemoveMaterialItemFromWorkOrderUseCase(WorkOrderGateway gateway,
+    public RemoveMaterialItemFromWorkOrderUseCase(WorkOrderGateway workOrderGateway,
+                                                  WorkOrderMaterialItemGateway materialItemGateway,
                                                   SoftDeleteStockUseCase softDeleteStockUseCase) {
-        this.gateway = gateway;
+        this.workOrderGateway = workOrderGateway;
+        this.materialItemGateway = materialItemGateway;
         this.softDeleteStockUseCase = softDeleteStockUseCase;
     }
 
     public void execute(RemoveMaterialItemFromWorkOrderCommand cmd) {
-        WorkOrder workOrder = gateway.findById(cmd.workOrderId())
-                .orElseThrow(WorkOrderExceptions.NotFound::new);
-
+        if (!workOrderGateway.existsById(cmd.workOrderId())) {
+            throw new WorkOrderExceptions.NotFound();
+        }
         softDeleteStockUseCase.execute(new SoftDeleteStockCommand(cmd.materialId(), cmd.workOrderId()));
-
-        workOrder.removeMaterialItem(cmd.materialId());
-        gateway.update(workOrder);
+        materialItemGateway.deleteByWorkOrderIdAndMaterialId(cmd.workOrderId(), cmd.materialId());
     }
 }

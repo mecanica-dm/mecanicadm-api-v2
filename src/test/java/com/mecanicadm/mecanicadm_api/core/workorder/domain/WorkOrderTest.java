@@ -6,6 +6,8 @@ import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -58,7 +60,7 @@ class WorkOrderTest {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
 
         UUID id = UUID.randomUUID();
-        WorkOrderLaborItem item = WorkOrderLaborItem.create(id);
+        WorkOrderLaborItem item = WorkOrderLaborItem.create(id, UUID.randomUUID());
 
         Set<WorkOrderLaborItem> laborItems = workOrder.getLaborItems();
 
@@ -158,12 +160,12 @@ class WorkOrderTest {
     @Test
     @DisplayName("Deve lancar excecao ao marcar como completada com itens de mao de obra pendentes")
     void shouldThrowExceptionWhenMarkingAsCompletedWithPendingLaborItems() {
-        WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
-        workOrder.markAsAwaitingExecution();
-        workOrder.markAsInExecution();
-        
-        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID());
-        workOrder.addLaborItem(laborItem);
+        UUID id = UUID.randomUUID();
+        UUID clientId = UUID.randomUUID();
+        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID(), id);
+        WorkOrder workOrder = WorkOrder.restore(id, clientId, "VEH-001", "Servico",
+                WorkOrderStatus.IN_EXECUTION, LocalDateTime.now(), null,
+                Set.of(laborItem), new HashSet<>(), null, null, null, null);
 
         DomainExceptionCore exception = assertThrows(DomainExceptionCore.class, workOrder::markAsExecutionCompleted);
 

@@ -28,23 +28,12 @@ class WorkOrderBudgetTest {
         WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
         WorkOrderBudget budget = WorkOrderBudget.create(workOrder, new BigDecimal("100.00"));
 
-        budget.updateStatus(WorkOrderBudgetStatus.APPROVED);
+        budget.send();
 
         budget.updateTotalPrice(new BigDecimal("150.00"));
 
         assertEquals(new BigDecimal("150.00"), budget.getTotalPrice());
         assertEquals(WorkOrderBudgetStatus.PENDING, budget.getStatus());
-    }
-
-    @Test
-    @DisplayName("Deve atualizar status do orcamento")
-    void shouldUpdateBudgetStatus() {
-        WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
-        WorkOrderBudget budget = WorkOrderBudget.create(workOrder, new BigDecimal("100.00"));
-
-        budget.updateStatus(WorkOrderBudgetStatus.CHANGES_REQUESTED);
-
-        assertEquals(WorkOrderBudgetStatus.CHANGES_REQUESTED, budget.getStatus());
     }
 
     @Test
@@ -83,14 +72,5 @@ class WorkOrderBudgetTest {
         WorkOrderBudget budget = WorkOrderBudget.create(workOrder, new BigDecimal("100.00"));
 
         assertThrows(NullPointerException.class, () -> budget.updateTotalPrice(null));
-    }
-
-    @Test
-    @DisplayName("Nao deve atualizar status para nulo")
-    void shouldNotUpdateStatusToNull() {
-        WorkOrder workOrder = WorkOrder.create(UUID.randomUUID(), "VEH-001", "Servico");
-        WorkOrderBudget budget = WorkOrderBudget.create(workOrder, new BigDecimal("100.00"));
-
-        assertThrows(NullPointerException.class, () -> budget.updateStatus(null));
     }
 }

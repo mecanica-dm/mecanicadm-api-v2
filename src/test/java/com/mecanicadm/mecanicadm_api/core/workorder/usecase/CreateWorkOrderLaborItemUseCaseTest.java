@@ -32,7 +32,7 @@ class CreateWorkOrderLaborItemUseCaseTest {
         UUID laborId = UUID.randomUUID();
         when(laborGateway.existsById(laborId)).thenReturn(true);
 
-        WorkOrderLaborItem result = useCase.execute(new CreateWorkOrderLaborItemCommand(laborId));
+        WorkOrderLaborItem result = useCase.execute(new CreateWorkOrderLaborItemCommand(laborId, UUID.randomUUID()));
 
         assertNotNull(result);
         verify(laborGateway).existsById(laborId);
@@ -45,7 +45,7 @@ class CreateWorkOrderLaborItemUseCaseTest {
         when(laborGateway.existsById(laborId)).thenReturn(false);
 
         assertThrows(LaborExceptions.LaborNotFound.class,
-                () -> useCase.execute(new CreateWorkOrderLaborItemCommand(laborId)));
+                () -> useCase.execute(new CreateWorkOrderLaborItemCommand(laborId, UUID.randomUUID())));
 
         verify(laborGateway).existsById(laborId);
     }

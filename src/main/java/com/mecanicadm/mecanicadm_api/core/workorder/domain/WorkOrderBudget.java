@@ -12,8 +12,6 @@ public class WorkOrderBudget {
 
     private UUID workOrderId;
 
-    private WorkOrder workOrder;
-
     private BigDecimal totalPrice;
 
     private WorkOrderBudgetStatus status;
@@ -24,7 +22,7 @@ public class WorkOrderBudget {
     }
 
     private WorkOrderBudget(WorkOrder workOrder, BigDecimal totalPrice) {
-        this.workOrder = requireNonNull(workOrder);
+        this.workOrderId = requireNonNull(workOrder).getId();
         this.totalPrice = requireNonNull(totalPrice);
         this.status = WorkOrderBudgetStatus.PENDING;
         validate();
@@ -53,28 +51,17 @@ public class WorkOrderBudget {
         validate();
     }
 
-    public void updateStatus(WorkOrderBudgetStatus status) {
-        this.status = requireNonNull(status);
-    }
-
     public void send() {
         this.status = WorkOrderBudgetStatus.WAITING_DECISION;
     }
 
     public void approve() {
         this.status = WorkOrderBudgetStatus.APPROVED;
-        this.workOrder.markAsAwaitingExecution();
     }
 
     public void reject(String reason, boolean needsRevision) {
         this.rejectionReason = requireNonNull(reason);
-        if (needsRevision) {
-            this.status = WorkOrderBudgetStatus.CHANGES_REQUESTED;
-            this.workOrder.markAsChangesRequested();
-        } else {
-            this.status = WorkOrderBudgetStatus.REJECTED;
-            this.workOrder.cancel();
-        }
+        this.status = needsRevision ? WorkOrderBudgetStatus.CHANGES_REQUESTED : WorkOrderBudgetStatus.REJECTED;
     }
 
     private void validate() {

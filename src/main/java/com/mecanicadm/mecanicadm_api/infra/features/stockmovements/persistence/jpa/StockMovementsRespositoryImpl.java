@@ -59,6 +59,14 @@ public class StockMovementsRespositoryImpl implements StockMovementsGateway {
     }
 
     @Override
+    public List<StockMovements> findAllByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId) {
+        return jpaRepository.findAllByMaterialIdAndWorkOrderId(materialId, workOrderId)
+                .stream()
+                .map(StockMovementsJpaMapper::toDomain)
+                .toList();
+    }
+
+    @Override
     public Optional<StockMovements> findByMaterialId(UUID materialId) {
         return jpaRepository.findByMaterialId(materialId).map(StockMovementsJpaMapper::toDomain);
     }

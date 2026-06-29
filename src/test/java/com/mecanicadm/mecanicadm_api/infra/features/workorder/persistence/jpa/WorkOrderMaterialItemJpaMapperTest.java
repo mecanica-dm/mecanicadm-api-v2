@@ -16,8 +16,9 @@ class WorkOrderMaterialItemJpaMapperTest {
     @DisplayName("Deve mapear JpaEntity para domínio")
     void shouldMapToDomain() {
         var id = UUID.randomUUID();
+        var workOrderId = UUID.randomUUID();
         var materialId = UUID.randomUUID();
-        var entity = new WorkOrderMaterialItemJpaEntity(id, materialId, 5);
+        var entity = new WorkOrderMaterialItemJpaEntity(id, workOrderId, materialId, 5);
 
         var domain = WorkOrderMaterialItemJpaMapper.toDomain(entity);
 
@@ -30,12 +31,14 @@ class WorkOrderMaterialItemJpaMapperTest {
     @DisplayName("Deve mapear domínio para JpaEntity")
     void shouldMapToEntity() {
         var id = UUID.randomUUID();
+        var workOrderId = UUID.randomUUID();
         var materialId = UUID.randomUUID();
         var domain = WorkOrderMaterialItem.restore(id, materialId, 10);
 
-        var entity = WorkOrderMaterialItemJpaMapper.toEntity(domain);
+        var entity = WorkOrderMaterialItemJpaMapper.toEntity(domain, workOrderId);
 
         assertEquals(id, entity.getId());
+        assertEquals(workOrderId, entity.getWorkOrderId());
         assertEquals(materialId, entity.getMaterialId());
         assertEquals(10, entity.getQuantity());
     }
@@ -43,25 +46,14 @@ class WorkOrderMaterialItemJpaMapperTest {
     @Test
     @DisplayName("Deve mapear conjunto de entidades para conjunto de domínios")
     void shouldMapToDomainSet() {
-        var entity1 = new WorkOrderMaterialItemJpaEntity(UUID.randomUUID(), UUID.randomUUID(), 1);
-        var entity2 = new WorkOrderMaterialItemJpaEntity(UUID.randomUUID(), UUID.randomUUID(), 2);
+        var workOrderId = UUID.randomUUID();
+        var entity1 = new WorkOrderMaterialItemJpaEntity(UUID.randomUUID(), workOrderId, UUID.randomUUID(), 1);
+        var entity2 = new WorkOrderMaterialItemJpaEntity(UUID.randomUUID(), workOrderId, UUID.randomUUID(), 2);
 
         var domains = WorkOrderMaterialItemJpaMapper.toDomainSet(Set.of(entity1, entity2));
 
         assertNotNull(domains);
         assertEquals(2, domains.size());
-    }
-
-    @Test
-    @DisplayName("Deve mapear conjunto de domínios para conjunto de entidades")
-    void shouldMapToEntitySet() {
-        var domain1 = WorkOrderMaterialItem.restore(UUID.randomUUID(), UUID.randomUUID(), 3);
-        var domain2 = WorkOrderMaterialItem.restore(UUID.randomUUID(), UUID.randomUUID(), 4);
-
-        var entities = WorkOrderMaterialItemJpaMapper.toEntitySet(Set.of(domain1, domain2));
-
-        assertNotNull(entities);
-        assertEquals(2, entities.size());
     }
 
     @Test
@@ -73,18 +65,12 @@ class WorkOrderMaterialItemJpaMapperTest {
     @Test
     @DisplayName("Deve retornar null quando domínio for nulo")
     void shouldReturnNullWhenDomainIsNull() {
-        assertNull(WorkOrderMaterialItemJpaMapper.toEntity(null));
+        assertNull(WorkOrderMaterialItemJpaMapper.toEntity(null, UUID.randomUUID()));
     }
 
     @Test
     @DisplayName("Deve retornar vazio quando conjunto de entidades for nulo")
     void shouldReturnEmptyWhenEntitiesSetIsNull() {
         assertTrue(WorkOrderMaterialItemJpaMapper.toDomainSet(null).isEmpty());
-    }
-
-    @Test
-    @DisplayName("Deve retornar vazio quando conjunto de domínios for nulo")
-    void shouldReturnEmptyWhenDomainsSetIsNull() {
-        assertTrue(WorkOrderMaterialItemJpaMapper.toEntitySet(null).isEmpty());
     }
 }

@@ -9,7 +9,6 @@ import java.util.UUID;
 public class WorkOrderMaterialItemJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
@@ -25,8 +24,9 @@ public class WorkOrderMaterialItemJpaEntity {
     protected WorkOrderMaterialItemJpaEntity() {
     }
 
-    public WorkOrderMaterialItemJpaEntity(UUID id, UUID materialId, int quantity) {
+    public WorkOrderMaterialItemJpaEntity(UUID id, UUID workOrderId, UUID materialId, int quantity) {
         this.id = id;
+        this.workOrderId = workOrderId;
         this.materialId = materialId;
         this.quantity = quantity;
     }
@@ -37,10 +37,6 @@ public class WorkOrderMaterialItemJpaEntity {
 
     public UUID getWorkOrderId() {
         return workOrderId;
-    }
-
-    public void setWorkOrderId(UUID workOrderId) {
-        this.workOrderId = workOrderId;
     }
 
     public UUID getMaterialId() {

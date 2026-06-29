@@ -3,11 +3,13 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.config;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.SoftDeleteStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.AddLaborToWorkOrderUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.AddMaterialToWorkOrderUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.CalculateWorkOrderBudgetUseCase;
@@ -62,8 +64,9 @@ public class WorkOrderConfiguration {
 
     @Bean
     public SoftDeleteWorkOrderUseCase softDeleteWorkOrderUseCase(WorkOrderGateway gateway,
-                                                                 RemoveMaterialItemFromWorkOrderUseCase removeMaterialItemFromWorkOrderUseCase) {
-        return new SoftDeleteWorkOrderUseCase(gateway, removeMaterialItemFromWorkOrderUseCase);
+                                                                  WorkOrderMaterialItemGateway materialItemGateway,
+                                                                  StockMovementsGateway stockMovementsGateway) {
+        return new SoftDeleteWorkOrderUseCase(gateway, materialItemGateway, stockMovementsGateway);
     }
 
     @Bean
@@ -97,14 +100,16 @@ public class WorkOrderConfiguration {
 
     @Bean
     public AddLaborToWorkOrderUseCase addLaborToWorkOrderUseCase(WorkOrderGateway gateway,
-                                                                 CreateWorkOrderLaborItemUseCase createWorkOrderLaborItemUseCase) {
-        return new AddLaborToWorkOrderUseCase(gateway, createWorkOrderLaborItemUseCase);
+                                                                  WorkOrderLaborItemGateway laborItemGateway,
+                                                                  CreateWorkOrderLaborItemUseCase createWorkOrderLaborItemUseCase) {
+        return new AddLaborToWorkOrderUseCase(gateway, laborItemGateway, createWorkOrderLaborItemUseCase);
     }
 
     @Bean
     public AddMaterialToWorkOrderUseCase addMaterialToWorkOrderUseCase(WorkOrderGateway gateway,
-                                                                       CreateWorkOrderMaterialItemUseCase createWorkOrderMaterialItemUseCase) {
-        return new AddMaterialToWorkOrderUseCase(gateway, createWorkOrderMaterialItemUseCase);
+                                                                        WorkOrderMaterialItemGateway materialItemGateway,
+                                                                        CreateWorkOrderMaterialItemUseCase createWorkOrderMaterialItemUseCase) {
+        return new AddMaterialToWorkOrderUseCase(gateway, materialItemGateway, createWorkOrderMaterialItemUseCase);
     }
 
     @Bean
@@ -113,8 +118,9 @@ public class WorkOrderConfiguration {
     }
 
     @Bean
-    public FinishLaborExecutionUseCase finishLaborExecutionUseCase(WorkOrderGateway gateway) {
-        return new FinishLaborExecutionUseCase(gateway);
+    public FinishLaborExecutionUseCase finishLaborExecutionUseCase(WorkOrderGateway gateway,
+                                                                   WorkOrderLaborItemGateway laborItemGateway) {
+        return new FinishLaborExecutionUseCase(gateway, laborItemGateway);
     }
 
     @Bean
@@ -158,9 +164,10 @@ public class WorkOrderConfiguration {
     }
 
     @Bean
-    public RemoveMaterialItemFromWorkOrderUseCase removeMaterialItemFromWorkOrderUseCase(WorkOrderGateway gateway,
-                                                                                         SoftDeleteStockUseCase softDeleteStockUseCase) {
-        return new RemoveMaterialItemFromWorkOrderUseCase(gateway, softDeleteStockUseCase);
+    public RemoveMaterialItemFromWorkOrderUseCase removeMaterialItemFromWorkOrderUseCase(WorkOrderGateway workOrderGateway,
+                                                                                          WorkOrderMaterialItemGateway materialItemGateway,
+                                                                                          SoftDeleteStockUseCase softDeleteStockUseCase) {
+        return new RemoveMaterialItemFromWorkOrderUseCase(workOrderGateway, materialItemGateway, softDeleteStockUseCase);
     }
 
     @Bean
@@ -169,8 +176,9 @@ public class WorkOrderConfiguration {
     }
 
     @Bean
-    public StartLaborExecutionUseCase startLaborExecutionUseCase(WorkOrderGateway gateway) {
-        return new StartLaborExecutionUseCase(gateway);
+    public StartLaborExecutionUseCase startLaborExecutionUseCase(WorkOrderGateway gateway,
+                                                                 WorkOrderLaborItemGateway laborItemGateway) {
+        return new StartLaborExecutionUseCase(gateway, laborItemGateway);
     }
 
     @Bean

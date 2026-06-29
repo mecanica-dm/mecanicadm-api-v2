@@ -27,7 +27,7 @@ class WorkOrderJpaMapperTest {
         var clientId = UUID.randomUUID();
         var now = LocalDateTime.now();
 
-        var laborItem = WorkOrderLaborItem.restore(UUID.randomUUID(), UUID.randomUUID(), now, now.plusHours(1), LaborExecutionStatus.EXECUTION_COMPLETED);
+        var laborItem = WorkOrderLaborItem.restore(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), now, now.plusHours(1), LaborExecutionStatus.EXECUTION_COMPLETED);
         var materialItem = WorkOrderMaterialItem.restore(UUID.randomUUID(), UUID.randomUUID(), 5);
         var budget = WorkOrderBudget.restore(id, new BigDecimal("500.00"), WorkOrderBudgetStatus.APPROVED, null);
 

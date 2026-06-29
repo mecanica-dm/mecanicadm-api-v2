@@ -1,14 +1,14 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderMaterialItem;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.AddMaterialToWorkOrderCommand;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,27 +26,51 @@ class AddMaterialToWorkOrderUseCaseTest {
     private WorkOrderGateway gateway;
 
     @Mock
+    private WorkOrderMaterialItemGateway materialItemGateway;
+
+    @Mock
     private CreateWorkOrderMaterialItemUseCase createWorkOrderMaterialItemUseCase;
 
-    @InjectMocks
     private AddMaterialToWorkOrderUseCase useCase;
 
+    @BeforeEach
+    void setUp() {
+        useCase = new AddMaterialToWorkOrderUseCase(gateway, materialItemGateway, createWorkOrderMaterialItemUseCase);
+    }
+
     @Test
-    @DisplayName("Deve adicionar material à ordem de serviço com sucesso")
-    void shouldAddMaterialToWorkOrderSuccessfully() {
+    @DisplayName("Deve criar novo material item quando não existir")
+    void shouldCreateNewMaterialItemWhenNotExists() {
         UUID workOrderId = UUID.randomUUID();
         UUID materialId = UUID.randomUUID();
         int quantity = 2;
-        WorkOrder workOrder = mock(WorkOrder.class);
-        WorkOrderMaterialItem materialItem = mock(WorkOrderMaterialItem.class);
-        when(gateway.findById(workOrderId)).thenReturn(Optional.of(workOrder));
-        when(createWorkOrderMaterialItemUseCase.execute(any())).thenReturn(materialItem);
+        when(gateway.existsById(workOrderId)).thenReturn(true);
+        when(materialItemGateway.findByWorkOrderIdAndMaterialId(workOrderId, materialId)).thenReturn(Optional.empty());
 
         useCase.execute(new AddMaterialToWorkOrderCommand(workOrderId, materialId, quantity));
 
-        verify(gateway).findById(workOrderId);
-        verify(workOrder).addMaterialItem(materialItem);
-        verify(gateway).update(workOrder);
+        verify(gateway).existsById(workOrderId);
+        verify(materialItemGateway).findByWorkOrderIdAndMaterialId(workOrderId, materialId);
+        verify(materialItemGateway).create(any(WorkOrderMaterialItem.class), eq(workOrderId));
+    }
+
+    @Test
+    @DisplayName("Deve atualizar quantidade quando material item já existir")
+    void shouldUpdateQuantityWhenMaterialItemExists() {
+        UUID workOrderId = UUID.randomUUID();
+        UUID materialId = UUID.randomUUID();
+        int quantity = 3;
+        var existingItem = mock(WorkOrderMaterialItem.class);
+        when(gateway.existsById(workOrderId)).thenReturn(true);
+        when(materialItemGateway.findByWorkOrderIdAndMaterialId(workOrderId, materialId)).thenReturn(Optional.of(existingItem));
+
+        useCase.execute(new AddMaterialToWorkOrderCommand(workOrderId, materialId, quantity));
+
+        verify(gateway).existsById(workOrderId);
+        verify(materialItemGateway).findByWorkOrderIdAndMaterialId(workOrderId, materialId);
+        verify(existingItem).addQuantity(quantity);
+        verify(materialItemGateway).update(existingItem, workOrderId);
+        verify(materialItemGateway, never()).create(any(), any());
     }
 
     @Test
@@ -54,12 +79,12 @@ class AddMaterialToWorkOrderUseCaseTest {
         UUID workOrderId = UUID.randomUUID();
         UUID materialId = UUID.randomUUID();
         int quantity = 1;
-        when(gateway.findById(workOrderId)).thenReturn(Optional.empty());
+        when(gateway.existsById(workOrderId)).thenReturn(false);
 
         assertThrows(WorkOrderExceptions.NotFound.class,
                 () -> useCase.execute(new AddMaterialToWorkOrderCommand(workOrderId, materialId, quantity)));
 
-        verify(gateway).findById(workOrderId);
-        verify(gateway, never()).update(any());
+        verify(gateway).existsById(workOrderId);
+        verifyNoInteractions(materialItemGateway);
     }
 }

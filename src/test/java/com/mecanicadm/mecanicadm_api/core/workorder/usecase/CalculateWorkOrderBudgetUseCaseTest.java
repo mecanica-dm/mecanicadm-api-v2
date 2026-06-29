@@ -38,15 +38,14 @@ class CalculateWorkOrderBudgetUseCaseTest {
         when(gateway.sumMaterialsTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("100.00"));
         when(gateway.sumLaborTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("50.00"));
         when(workOrder.getBudget()).thenReturn(Optional.of(existingBudget));
-        when(gateway.update(workOrder)).thenReturn(workOrder);
         when(workOrder.getId()).thenReturn(workOrderId);
 
         UUID resultId = useCase.execute(new CalculateWorkOrderBudgetCommand(workOrderId));
 
         assertEquals(workOrderId, resultId);
         verify(existingBudget).updateTotalPrice(new BigDecimal("150.00"));
-        verify(workOrder, never()).assignBudget(any());
-        verify(gateway).update(workOrder);
+        verify(gateway).saveBudget(existingBudget);
+        verify(gateway, never()).update(any());
     }
 
     @Test
@@ -58,14 +57,13 @@ class CalculateWorkOrderBudgetUseCaseTest {
         when(gateway.sumMaterialsTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("100.00"));
         when(gateway.sumLaborTotalByWorkOrderId(workOrderId)).thenReturn(new BigDecimal("50.00"));
         when(workOrder.getBudget()).thenReturn(Optional.empty());
-        when(gateway.update(workOrder)).thenReturn(workOrder);
         when(workOrder.getId()).thenReturn(workOrderId);
 
         UUID resultId = useCase.execute(new CalculateWorkOrderBudgetCommand(workOrderId));
 
         assertEquals(workOrderId, resultId);
-        verify(workOrder).assignBudget(any(WorkOrderBudget.class));
-        verify(gateway).update(workOrder);
+        verify(gateway).saveBudget(any(WorkOrderBudget.class));
+        verify(gateway, never()).update(any());
     }
 
     @Test
@@ -79,5 +77,6 @@ class CalculateWorkOrderBudgetUseCaseTest {
 
         verify(gateway).findById(workOrderId);
         verify(gateway, never()).update(any());
+        verify(gateway, never()).saveBudget(any());
     }
 }

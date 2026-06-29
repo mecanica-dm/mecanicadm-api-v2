@@ -17,5 +17,7 @@ public interface StockMovementsGateway {
 
     Optional<StockMovements> findByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId);
 
+    List<StockMovements> findAllByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId);
+
     Optional<StockMovements> findByMaterialId(UUID materialId);
 }

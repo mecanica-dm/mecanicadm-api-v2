@@ -3,11 +3,13 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.config;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.SoftDeleteStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,8 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @MockitoBean
     private WorkOrderLaborItemGateway workOrderLaborItemGateway;
     @MockitoBean
+    private WorkOrderMaterialItemGateway workOrderMaterialItemGateway;
+    @MockitoBean
     private ClientGateway clientGateway;
     @MockitoBean
     private VehicleGateway vehicleGateway;
@@ -37,6 +41,8 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     private DeductStockUseCase deductStockUseCase;
     @MockitoBean
     private SoftDeleteStockUseCase softDeleteStockUseCase;
+    @MockitoBean
+    private StockMovementsGateway stockMovementsGateway;
     @MockitoBean
     private PdfGenerator pdfGenerator;
 
@@ -76,7 +82,7 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean SoftDeleteWorkOrderUseCase")
     void shouldCreateSoftDeleteWorkOrderUseCase() {
-        assertNotNull(workOrderConfiguration.softDeleteWorkOrderUseCase(workOrderGateway, null));
+        assertNotNull(workOrderConfiguration.softDeleteWorkOrderUseCase(workOrderGateway, workOrderMaterialItemGateway, stockMovementsGateway));
     }
 
     @Test
@@ -112,13 +118,13 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean AddLaborToWorkOrderUseCase")
     void shouldCreateAddLaborToWorkOrderUseCase() {
-        assertNotNull(workOrderConfiguration.addLaborToWorkOrderUseCase(workOrderGateway, null));
+        assertNotNull(workOrderConfiguration.addLaborToWorkOrderUseCase(workOrderGateway, workOrderLaborItemGateway, null));
     }
 
     @Test
     @DisplayName("Deve criar bean AddMaterialToWorkOrderUseCase")
     void shouldCreateAddMaterialToWorkOrderUseCase() {
-        assertNotNull(workOrderConfiguration.addMaterialToWorkOrderUseCase(workOrderGateway, null));
+        assertNotNull(workOrderConfiguration.addMaterialToWorkOrderUseCase(workOrderGateway, workOrderMaterialItemGateway, null));
     }
 
     @Test
@@ -130,7 +136,7 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean FinishLaborExecutionUseCase")
     void shouldCreateFinishLaborExecutionUseCase() {
-        assertNotNull(workOrderConfiguration.finishLaborExecutionUseCase(workOrderGateway));
+        assertNotNull(workOrderConfiguration.finishLaborExecutionUseCase(workOrderGateway, workOrderLaborItemGateway));
     }
 
     @Test
@@ -178,7 +184,7 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean RemoveMaterialItemFromWorkOrderUseCase")
     void shouldCreateRemoveMaterialItemFromWorkOrderUseCase() {
-        assertNotNull(workOrderConfiguration.removeMaterialItemFromWorkOrderUseCase(workOrderGateway, softDeleteStockUseCase));
+        assertNotNull(workOrderConfiguration.removeMaterialItemFromWorkOrderUseCase(workOrderGateway, workOrderMaterialItemGateway, softDeleteStockUseCase));
     }
 
     @Test
@@ -190,7 +196,7 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean StartLaborExecutionUseCase")
     void shouldCreateStartLaborExecutionUseCase() {
-        assertNotNull(workOrderConfiguration.startLaborExecutionUseCase(workOrderGateway));
+        assertNotNull(workOrderConfiguration.startLaborExecutionUseCase(workOrderGateway, workOrderLaborItemGateway));
     }
 
     @Test

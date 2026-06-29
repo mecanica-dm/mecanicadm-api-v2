@@ -15,7 +15,7 @@ class WorkOrderLaborItemResponseTest {
     @Test
     @DisplayName("Deve retornar 0 quando data de inicio da execucao for nula")
     void shouldReturnZeroWhenExecutionStartAtIsNull() {
-        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
 
         ReflectionTestUtils.setField(laborItem, "executionEndAt", LocalDateTime.of(2026, 4, 30, 10, 0));
 
@@ -27,7 +27,7 @@ class WorkOrderLaborItemResponseTest {
     @Test
     @DisplayName("Deve retornar 0 quando data de fim da execucao for nula")
     void shouldReturnZeroWhenExecutionEndAtIsNull() {
-        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
 
         ReflectionTestUtils.setField(laborItem, "executionStartAt", LocalDateTime.of(2026, 4, 30, 9, 0));
 
@@ -39,7 +39,7 @@ class WorkOrderLaborItemResponseTest {
     @Test
     @DisplayName("Deve calcular total de minutos quando datas de inicio e fim existem")
     void shouldCalculateTotalExecutionTimeWhenExecutionStartAtAndExecutionEndAtArePresent() {
-        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID());
+        WorkOrderLaborItem laborItem = WorkOrderLaborItem.create(UUID.randomUUID(), UUID.randomUUID());
         LocalDateTime start = LocalDateTime.of(2026, 4, 30, 9, 0);
         LocalDateTime end = LocalDateTime.of(2026, 4, 30, 10, 30);
 

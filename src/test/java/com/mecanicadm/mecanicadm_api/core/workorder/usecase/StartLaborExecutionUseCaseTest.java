@@ -1,7 +1,9 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.StartLaborExecutionCommand;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +25,9 @@ class StartLaborExecutionUseCaseTest {
     @Mock
     private WorkOrderGateway gateway;
 
+    @Mock
+    private WorkOrderLaborItemGateway laborItemGateway;
+
     @InjectMocks
     private StartLaborExecutionUseCase useCase;
 
@@ -32,11 +37,14 @@ class StartLaborExecutionUseCaseTest {
         UUID workOrderId = UUID.randomUUID();
         UUID laborItemId = UUID.randomUUID();
         WorkOrder workOrder = mock(WorkOrder.class);
+        WorkOrderLaborItem laborItem = mock(WorkOrderLaborItem.class);
         when(gateway.findById(workOrderId)).thenReturn(Optional.of(workOrder));
+        when(workOrder.findLaborItem(laborItemId)).thenReturn(Optional.of(laborItem));
 
         useCase.execute(new StartLaborExecutionCommand(workOrderId, laborItemId));
 
         verify(workOrder).startLaborItem(laborItemId);
+        verify(laborItemGateway).update(laborItem);
         verify(gateway).update(workOrder);
     }
 

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,19 +32,22 @@ class SoftDeleteStockUseCaseTest {
     }
 
     @Test
-    @DisplayName("Deve realizar soft delete do movimento de estoque com sucesso")
-    void shouldSoftDeleteStockSuccessfully() {
+    @DisplayName("Deve realizar soft delete de múltiplos movimentos de estoque com sucesso")
+    void shouldSoftDeleteAllStockMovementsSuccessfully() {
         var materialId = UUID.randomUUID();
         var workOrderId = UUID.randomUUID();
         var command = new SoftDeleteStockCommand(materialId, workOrderId);
-        var stock = mock(StockMovements.class);
-        when(gateway.findByMaterialIdAndWorkOrderId(materialId, workOrderId)).thenReturn(Optional.of(stock));
+        var stock1 = mock(StockMovements.class);
+        var stock2 = mock(StockMovements.class);
+        when(gateway.findAllByMaterialIdAndWorkOrderId(materialId, workOrderId)).thenReturn(List.of(stock1, stock2));
 
         useCase.execute(command);
 
-        verify(gateway).findByMaterialIdAndWorkOrderId(materialId, workOrderId);
-        verify(stock).delete();
-        verify(gateway).update(stock);
+        verify(gateway).findAllByMaterialIdAndWorkOrderId(materialId, workOrderId);
+        verify(stock1).delete();
+        verify(gateway).update(stock1);
+        verify(stock2).delete();
+        verify(gateway).update(stock2);
     }
 
     @Test
@@ -53,11 +56,11 @@ class SoftDeleteStockUseCaseTest {
         var materialId = UUID.randomUUID();
         var workOrderId = UUID.randomUUID();
         var command = new SoftDeleteStockCommand(materialId, workOrderId);
-        when(gateway.findByMaterialIdAndWorkOrderId(materialId, workOrderId)).thenReturn(Optional.empty());
+        when(gateway.findAllByMaterialIdAndWorkOrderId(materialId, workOrderId)).thenReturn(List.of());
 
         assertThrows(StockMovementsExceptions.NotFound.class, () -> useCase.execute(command));
 
-        verify(gateway).findByMaterialIdAndWorkOrderId(materialId, workOrderId);
+        verify(gateway).findAllByMaterialIdAndWorkOrderId(materialId, workOrderId);
         verify(gateway, never()).update(any());
     }
 }

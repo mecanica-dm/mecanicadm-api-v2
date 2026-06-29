@@ -98,10 +98,6 @@ public class WorkOrder extends AuditDomain {
         }
     }
 
-    public void assignBudget(WorkOrderBudget budget) {
-        this.budget = requireNonNull(budget);
-    }
-
     public void markAsDiagnosed() {
         if (this.status != WorkOrderStatus.RECEIVED) {
             throw new WorkOrderExceptions.InvalidStatusTransition(this.status.name(), WorkOrderStatus.DIAGNOSED.name());
@@ -119,18 +115,6 @@ public class WorkOrder extends AuditDomain {
         }
         this.status = WorkOrderStatus.IN_EXECUTION;
         this.executionStartAt = LocalDateTime.now();
-    }
-
-    public void addLaborItem(WorkOrderLaborItem laborItem) {
-        this.laborItems.add(requireNonNull(laborItem));
-    }
-
-    public void addMaterialItem(WorkOrderMaterialItem materialItem) {
-        this.materialItems.add(requireNonNull(materialItem));
-    }
-
-    public void removeMaterialItem(UUID materialId) {
-        this.materialItems.removeIf(item -> item.getMaterialId().equals(materialId));
     }
 
     public void startLaborItem(UUID laborItemId) {

@@ -41,7 +41,7 @@ class ManuallyAdjustWorkOrderBudgetUseCaseTest {
         useCase.execute(new ManuallyAdjustWorkOrderBudgetCommand(workOrderId, newTotalPrice));
 
         verify(budget).updateTotalPrice(newTotalPrice);
-        verify(gateway).update(workOrder);
+        verify(gateway).saveBudget(budget);
     }
 
     @Test
@@ -54,6 +54,7 @@ class ManuallyAdjustWorkOrderBudgetUseCaseTest {
                 () -> useCase.execute(new ManuallyAdjustWorkOrderBudgetCommand(workOrderId, BigDecimal.TEN)));
 
         verify(gateway, never()).update(any());
+        verify(gateway, never()).saveBudget(any());
     }
 
     @Test
@@ -68,5 +69,6 @@ class ManuallyAdjustWorkOrderBudgetUseCaseTest {
                 () -> useCase.execute(new ManuallyAdjustWorkOrderBudgetCommand(workOrderId, BigDecimal.TEN)));
 
         verify(gateway, never()).update(any());
+        verify(gateway, never()).saveBudget(any());
     }
 }

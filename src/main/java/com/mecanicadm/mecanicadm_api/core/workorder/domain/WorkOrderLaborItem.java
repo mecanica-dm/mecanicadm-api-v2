@@ -12,6 +12,8 @@ public class WorkOrderLaborItem {
 
     private UUID id;
 
+    private UUID workOrderId;
+
     private UUID laborId;
 
     private LocalDateTime executionStartAt;
@@ -23,14 +25,17 @@ public class WorkOrderLaborItem {
     protected WorkOrderLaborItem() {
     }
 
-    private WorkOrderLaborItem(UUID laborId) {
+    private WorkOrderLaborItem(UUID laborId, UUID workOrderId) {
+        this.id = UUID.randomUUID();
         this.laborId = requireNonNull(laborId);
+        this.workOrderId = requireNonNull(workOrderId);
         this.status = LaborExecutionStatus.AWAITING_EXECUTION;
         validate();
     }
 
-    private WorkOrderLaborItem(UUID id, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
+    private WorkOrderLaborItem(UUID id, UUID workOrderId, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
         this.id = id;
+        this.workOrderId = workOrderId;
         this.laborId = laborId;
         this.executionStartAt = executionStartAt;
         this.executionEndAt = executionEndAt;
@@ -38,12 +43,12 @@ public class WorkOrderLaborItem {
         validate();
     }
 
-    public static WorkOrderLaborItem create(UUID laborId) {
-        return new WorkOrderLaborItem(laborId);
+    public static WorkOrderLaborItem create(UUID laborId, UUID workOrderId) {
+        return new WorkOrderLaborItem(laborId, workOrderId);
     }
 
-    public static WorkOrderLaborItem restore(UUID id, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
-        return new WorkOrderLaborItem(id, laborId, executionStartAt, executionEndAt, status);
+    public static WorkOrderLaborItem restore(UUID id, UUID workOrderId, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
+        return new WorkOrderLaborItem(id, workOrderId, laborId, executionStartAt, executionEndAt, status);
     }
 
     public void startExecution() {
@@ -66,10 +71,17 @@ public class WorkOrderLaborItem {
         if (laborId == null) {
             throw new WorkOrderExceptions.LaborIdRequired();
         }
+        if (workOrderId == null) {
+            throw new WorkOrderExceptions.WorkOrderIdRequired();
+        }
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public UUID getWorkOrderId() {
+        return workOrderId;
     }
 
     public UUID getLaborId() {

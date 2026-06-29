@@ -36,7 +36,7 @@ public class SendWorkOrderBudgetUseCase implements VoidUseCase<SendWorkOrderBudg
         workOrder.getBudget().ifPresentOrElse(
                 budget -> {
                     budget.send();
-                    gateway.update(workOrder);
+                    gateway.saveBudget(budget);
 
                     logger.info(BUDGET_SENT_LOG_MESSAGE,
                             workOrder.getId(),

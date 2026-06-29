@@ -34,10 +34,6 @@ public class WorkOrderBudgetJpaEntity {
         this.rejectionReason = rejectionReason;
     }
 
-    public void setWorkOrderId(UUID workOrderId) {
-        this.workOrderId = workOrderId;
-    }
-
     public UUID getWorkOrderId() {
         return workOrderId;
     }

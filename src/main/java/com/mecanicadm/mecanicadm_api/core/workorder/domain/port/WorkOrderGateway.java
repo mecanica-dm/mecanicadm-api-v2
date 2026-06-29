@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.domain.port;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderBudget;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -11,6 +12,10 @@ public interface WorkOrderGateway {
     WorkOrder create(WorkOrder workOrder);
 
     WorkOrder update(WorkOrder workOrder);
+
+    void saveBudget(WorkOrderBudget budget);
+
+    boolean existsById(UUID id);
 
     Optional<WorkOrder> findById(UUID id);
 

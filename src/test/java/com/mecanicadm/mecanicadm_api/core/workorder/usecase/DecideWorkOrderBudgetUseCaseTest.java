@@ -47,7 +47,8 @@ class DecideWorkOrderBudgetUseCaseTest {
         useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.APPROVED, null));
 
         verify(budget).approve();
-        verify(gateway).create(workOrder);
+        verify(gateway).saveBudget(budget);
+        verify(gateway).update(workOrder);
     }
 
     @Test
@@ -61,7 +62,8 @@ class DecideWorkOrderBudgetUseCaseTest {
         useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.REJECTED, "Motivo"));
 
         verify(budget).reject("Motivo", false);
-        verify(gateway).create(workOrder);
+        verify(gateway).saveBudget(budget);
+        verify(gateway).update(workOrder);
     }
 
     @Test
@@ -75,7 +77,8 @@ class DecideWorkOrderBudgetUseCaseTest {
         useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.CHANGES_REQUESTED, "Alterar"));
 
         verify(budget).reject("Alterar", true);
-        verify(gateway).create(workOrder);
+        verify(gateway).saveBudget(budget);
+        verify(gateway).update(workOrder);
     }
 
     @Test
@@ -89,6 +92,8 @@ class DecideWorkOrderBudgetUseCaseTest {
                 () -> useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.APPROVED, null)));
 
         verify(gateway, never()).create(any());
+        verify(gateway, never()).saveBudget(any());
+        verify(gateway, never()).update(any());
     }
 
     @Test
@@ -102,5 +107,7 @@ class DecideWorkOrderBudgetUseCaseTest {
                 () -> useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.REJECTED, "")));
 
         verify(gateway, never()).create(any());
+        verify(gateway, never()).saveBudget(any());
+        verify(gateway, never()).update(any());
     }
 }

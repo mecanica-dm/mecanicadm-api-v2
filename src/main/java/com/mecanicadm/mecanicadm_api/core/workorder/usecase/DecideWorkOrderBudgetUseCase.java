@@ -28,20 +28,26 @@ public class DecideWorkOrderBudgetUseCase implements VoidUseCase<DecideWorkOrder
             throw new WorkOrderExceptions.BudgetNotWaitingDecision();
         }
 
-        processDecision(budget, cmd);
-        gateway.create(workOrder);
+        processDecision(workOrder, budget, cmd);
+        gateway.saveBudget(budget);
+        gateway.update(workOrder);
     }
 
-    private void processDecision(WorkOrderBudget budget, DecideWorkOrderBudgetCommand cmd) {
+    private void processDecision(WorkOrder workOrder, WorkOrderBudget budget, DecideWorkOrderBudgetCommand cmd) {
         switch (cmd.decision()) {
-            case APPROVED -> budget.approve();
+            case APPROVED -> {
+                budget.approve();
+                workOrder.markAsAwaitingExecution();
+            }
             case REJECTED -> {
                 validateRejectionReason(cmd.rejectionReason());
                 budget.reject(cmd.rejectionReason(), false);
+                workOrder.cancel();
             }
             case CHANGES_REQUESTED -> {
                 validateRejectionReason(cmd.rejectionReason());
                 budget.reject(cmd.rejectionReason(), true);
+                workOrder.markAsChangesRequested();
             }
             default -> throw new WorkOrderExceptions.BudgetDecisionInvalid(cmd.decision().name());
         }

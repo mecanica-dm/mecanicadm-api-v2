@@ -45,7 +45,7 @@ class SendWorkOrderBudgetUseCaseTest {
         useCase.execute(new SendWorkOrderBudgetCommand(workOrderId));
 
         verify(budget).send();
-        verify(gateway).update(workOrder);
+        verify(gateway).saveBudget(budget);
     }
 
     @Test
@@ -60,5 +60,6 @@ class SendWorkOrderBudgetUseCaseTest {
                 () -> useCase.execute(new SendWorkOrderBudgetCommand(workOrderId)));
 
         verify(gateway, never()).update(any());
+        verify(gateway, never()).saveBudget(any());
     }
 }

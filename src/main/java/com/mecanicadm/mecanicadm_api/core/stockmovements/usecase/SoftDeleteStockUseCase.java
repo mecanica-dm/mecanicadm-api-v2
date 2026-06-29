@@ -6,6 +6,8 @@ import com.mecanicadm.mecanicadm_api.core.stockmovements.exception.StockMovement
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.command.SoftDeleteStockCommand;
 import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
+import java.util.List;
+
 public class SoftDeleteStockUseCase implements VoidUseCase<SoftDeleteStockCommand> {
 
     private final StockMovementsGateway gateway;
@@ -15,10 +17,13 @@ public class SoftDeleteStockUseCase implements VoidUseCase<SoftDeleteStockComman
     }
 
     public void execute(SoftDeleteStockCommand cmd) {
-        StockMovements stock = gateway.findByMaterialIdAndWorkOrderId(cmd.materialId(), cmd.workOrderId())
-                .orElseThrow(StockMovementsExceptions.NotFound::new);
-
-        stock.delete();
-        gateway.update(stock);
+        List<StockMovements> stocks = gateway.findAllByMaterialIdAndWorkOrderId(cmd.materialId(), cmd.workOrderId());
+        if (stocks.isEmpty()) {
+            throw new StockMovementsExceptions.NotFound();
+        }
+        stocks.forEach(stock -> {
+            stock.delete();
+            gateway.update(stock);
+        });
     }
 }

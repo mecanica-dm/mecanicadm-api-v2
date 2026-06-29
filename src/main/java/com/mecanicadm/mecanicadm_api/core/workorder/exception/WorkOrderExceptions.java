@@ -126,4 +126,10 @@ public class WorkOrderExceptions {
             super("work.order.material.id.required", 400);
         }
     }
+
+    public static class WorkOrderIdRequired extends DomainExceptionCore {
+        public WorkOrderIdRequired() {
+            super("work.order.id.required", 400);
+        }
+    }
 }

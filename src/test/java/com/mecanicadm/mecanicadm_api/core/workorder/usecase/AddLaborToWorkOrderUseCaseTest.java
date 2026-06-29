@@ -1,18 +1,17 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.AddLaborToWorkOrderCommand;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,26 +24,31 @@ class AddLaborToWorkOrderUseCaseTest {
     private WorkOrderGateway gateway;
 
     @Mock
+    private WorkOrderLaborItemGateway laborItemGateway;
+
+    @Mock
     private CreateWorkOrderLaborItemUseCase createWorkOrderLaborItemUseCase;
 
-    @InjectMocks
     private AddLaborToWorkOrderUseCase useCase;
+
+    @BeforeEach
+    void setUp() {
+        useCase = new AddLaborToWorkOrderUseCase(gateway, laborItemGateway, createWorkOrderLaborItemUseCase);
+    }
 
     @Test
     @DisplayName("Deve adicionar serviço à ordem de serviço com sucesso")
     void shouldAddLaborToWorkOrderSuccessfully() {
         UUID workOrderId = UUID.randomUUID();
         UUID laborId = UUID.randomUUID();
-        WorkOrder workOrder = mock(WorkOrder.class);
         WorkOrderLaborItem laborItem = mock(WorkOrderLaborItem.class);
-        when(gateway.findById(workOrderId)).thenReturn(Optional.of(workOrder));
+        when(gateway.existsById(workOrderId)).thenReturn(true);
         when(createWorkOrderLaborItemUseCase.execute(any())).thenReturn(laborItem);
 
         useCase.execute(new AddLaborToWorkOrderCommand(workOrderId, laborId));
 
-        verify(gateway).findById(workOrderId);
-        verify(workOrder).addLaborItem(laborItem);
-        verify(gateway).update(workOrder);
+        verify(gateway).existsById(workOrderId);
+        verify(laborItemGateway).create(laborItem);
     }
 
     @Test
@@ -52,12 +56,12 @@ class AddLaborToWorkOrderUseCaseTest {
     void shouldThrowExceptionWhenWorkOrderNotFound() {
         UUID workOrderId = UUID.randomUUID();
         UUID laborId = UUID.randomUUID();
-        when(gateway.findById(workOrderId)).thenReturn(Optional.empty());
+        when(gateway.existsById(workOrderId)).thenReturn(false);
 
         assertThrows(WorkOrderExceptions.NotFound.class,
                 () -> useCase.execute(new AddLaborToWorkOrderCommand(workOrderId, laborId)));
 
-        verify(gateway).findById(workOrderId);
-        verify(gateway, never()).update(any());
+        verify(gateway).existsById(workOrderId);
+        verifyNoInteractions(laborItemGateway);
     }
 }

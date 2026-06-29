@@ -3,6 +3,7 @@ package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderLaborItem;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.FinishLaborExecutionCommand;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +25,9 @@ class FinishLaborExecutionUseCaseTest {
     @Mock
     private WorkOrderGateway gateway;
 
+    @Mock
+    private WorkOrderLaborItemGateway laborItemGateway;
+
     @InjectMocks
     private FinishLaborExecutionUseCase useCase;
 
@@ -40,6 +44,7 @@ class FinishLaborExecutionUseCaseTest {
         useCase.execute(new FinishLaborExecutionCommand(workOrderId, laborItemId));
 
         verify(laborItem).finishExecution();
+        verify(laborItemGateway).update(laborItem);
         verify(gateway).update(workOrder);
     }
 
@@ -69,5 +74,6 @@ class FinishLaborExecutionUseCaseTest {
                 () -> useCase.execute(new FinishLaborExecutionCommand(workOrderId, laborItemId)));
 
         verify(gateway, never()).update(any());
+        verify(laborItemGateway, never()).update(any());
     }
 }

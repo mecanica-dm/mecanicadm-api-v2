@@ -28,11 +28,17 @@ public class CalculateWorkOrderBudgetUseCase implements UseCase<CalculateWorkOrd
         BigDecimal totalPrice = totalMaterials.add(totalLabor);
 
         workOrder.getBudget().ifPresentOrElse(
-                budget -> budget.updateTotalPrice(totalPrice),
-                () -> workOrder.assignBudget(WorkOrderBudget.create(workOrder, totalPrice))
+                budget -> {
+                    budget.updateTotalPrice(totalPrice);
+                    gateway.saveBudget(budget);
+                },
+                () -> {
+                    WorkOrderBudget newBudget = WorkOrderBudget.create(workOrder, totalPrice);
+                    gateway.saveBudget(newBudget);
+                }
         );
 
-        return gateway.update(workOrder).getId();
+        return workOrder.getId();
     }
 
     private BigDecimal defaultToZero(BigDecimal value) {

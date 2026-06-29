@@ -131,7 +131,7 @@ class WorkOrderLaborControllerIT extends AbstractIntegrationTest {
         UUID laborId = UUID.randomUUID();
 
         WorkOrderLaborItem laborItem = WorkOrderLaborItem.restore(
-                laborItemId, laborId, null, null, LaborExecutionStatus.AWAITING_EXECUTION
+                laborItemId, workOrderId, laborId, null, null, LaborExecutionStatus.AWAITING_EXECUTION
         );
         when(getWorkOrderLaborItemByIdUseCase.execute(any())).thenReturn(laborItem);
 

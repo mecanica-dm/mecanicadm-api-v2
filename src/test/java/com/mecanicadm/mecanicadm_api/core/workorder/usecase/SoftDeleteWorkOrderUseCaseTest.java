@@ -1,8 +1,11 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.StockMovements;
+import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderMaterialItem;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.SoftDeleteWorkOrderCommand;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +29,10 @@ class SoftDeleteWorkOrderUseCaseTest {
     private WorkOrderGateway gateway;
 
     @Mock
-    private RemoveMaterialItemFromWorkOrderUseCase removeMaterialItemFromWorkOrderUseCase;
+    private WorkOrderMaterialItemGateway materialItemGateway;
+
+    @Mock
+    private StockMovementsGateway stockMovementsGateway;
 
     @InjectMocks
     private SoftDeleteWorkOrderUseCase useCase;
@@ -38,21 +44,53 @@ class SoftDeleteWorkOrderUseCaseTest {
         WorkOrder workOrder = mock(WorkOrder.class);
         UUID materialId = UUID.randomUUID();
         WorkOrderMaterialItem materialItem = mock(WorkOrderMaterialItem.class);
+        StockMovements stock = mock(StockMovements.class);
+
         when(materialItem.getMaterialId()).thenReturn(materialId);
         when(workOrder.getMaterialItems()).thenReturn(Set.of(materialItem));
         when(workOrder.getId()).thenReturn(workOrderId);
         when(gateway.findById(workOrderId)).thenReturn(Optional.of(workOrder));
+        when(stockMovementsGateway.findByMaterialIdAndWorkOrderId(materialId, workOrderId))
+                .thenReturn(Optional.of(stock));
 
         useCase.execute(new SoftDeleteWorkOrderCommand(workOrderId));
 
         verify(gateway).findById(workOrderId);
-        verify(removeMaterialItemFromWorkOrderUseCase).execute(any());
+        verify(stockMovementsGateway).findByMaterialIdAndWorkOrderId(materialId, workOrderId);
+        verify(stock).delete();
+        verify(stockMovementsGateway).update(stock);
+        verify(materialItemGateway).deleteByWorkOrderIdAndMaterialId(workOrderId, materialId);
         verify(workOrder).delete();
         verify(gateway).update(workOrder);
     }
 
     @Test
-    @DisplayName("Deve lançar exceção quando a ordem de serviço não for encontrada para exclusão")
+    @DisplayName("Deve excluir logicamente quando stock movement nao existe")
+    void shouldSoftDeleteWorkOrderWhenStockMovementDoesNotExist() {
+        UUID workOrderId = UUID.randomUUID();
+        WorkOrder workOrder = mock(WorkOrder.class);
+        UUID materialId = UUID.randomUUID();
+        WorkOrderMaterialItem materialItem = mock(WorkOrderMaterialItem.class);
+
+        when(materialItem.getMaterialId()).thenReturn(materialId);
+        when(workOrder.getMaterialItems()).thenReturn(Set.of(materialItem));
+        when(workOrder.getId()).thenReturn(workOrderId);
+        when(gateway.findById(workOrderId)).thenReturn(Optional.of(workOrder));
+        when(stockMovementsGateway.findByMaterialIdAndWorkOrderId(materialId, workOrderId))
+                .thenReturn(Optional.empty());
+
+        useCase.execute(new SoftDeleteWorkOrderCommand(workOrderId));
+
+        verify(gateway).findById(workOrderId);
+        verify(stockMovementsGateway).findByMaterialIdAndWorkOrderId(materialId, workOrderId);
+        verify(stockMovementsGateway, never()).update(any());
+        verify(materialItemGateway).deleteByWorkOrderIdAndMaterialId(workOrderId, materialId);
+        verify(workOrder).delete();
+        verify(gateway).update(workOrder);
+    }
+
+    @Test
+    @DisplayName("Deve lancar excecao quando a ordem de servico nao for encontrada para exclusao")
     void shouldThrowExceptionWhenWorkOrderNotFound() {
         UUID workOrderId = UUID.randomUUID();
         when(gateway.findById(workOrderId)).thenReturn(Optional.empty());

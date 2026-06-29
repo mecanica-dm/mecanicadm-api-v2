@@ -29,5 +29,7 @@ public interface StockMovementsJpaRepository extends JpaRepository<StockMovement
 
     Optional<StockMovementsJpaEntity> findByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId);
 
+    List<StockMovementsJpaEntity> findAllByMaterialIdAndWorkOrderId(UUID materialId, UUID workOrderId);
+
     List<StockMovementsJpaEntity> findAllByMaterialIdOrderByDateCreatedDesc(UUID materialId);
 }

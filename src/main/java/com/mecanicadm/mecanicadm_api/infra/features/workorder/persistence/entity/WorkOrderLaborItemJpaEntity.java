@@ -11,7 +11,6 @@ import java.util.UUID;
 public class WorkOrderLaborItemJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
@@ -34,8 +33,9 @@ public class WorkOrderLaborItemJpaEntity {
     protected WorkOrderLaborItemJpaEntity() {
     }
 
-    public WorkOrderLaborItemJpaEntity(UUID id, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
+    public WorkOrderLaborItemJpaEntity(UUID id, UUID workOrderId, UUID laborId, LocalDateTime executionStartAt, LocalDateTime executionEndAt, LaborExecutionStatus status) {
         this.id = id;
+        this.workOrderId = workOrderId;
         this.laborId = laborId;
         this.executionStartAt = executionStartAt;
         this.executionEndAt = executionEndAt;
@@ -48,10 +48,6 @@ public class WorkOrderLaborItemJpaEntity {
 
     public UUID getWorkOrderId() {
         return workOrderId;
-    }
-
-    public void setWorkOrderId(UUID workOrderId) {
-        this.workOrderId = workOrderId;
     }
 
     public UUID getLaborId() {

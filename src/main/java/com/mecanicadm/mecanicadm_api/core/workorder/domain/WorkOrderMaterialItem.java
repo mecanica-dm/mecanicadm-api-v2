@@ -18,6 +18,7 @@ public class WorkOrderMaterialItem {
     }
 
     private WorkOrderMaterialItem(UUID materialId, int quantity) {
+        this.id = UUID.randomUUID();
         this.materialId = requireNonNull(materialId);
         this.quantity = quantity;
         validate();
@@ -45,6 +46,10 @@ public class WorkOrderMaterialItem {
         if (quantity <= 0) {
             throw new WorkOrderExceptions.InvalidMaterialQuantity();
         }
+    }
+
+    public void addQuantity(int quantity) {
+        this.quantity += quantity;
     }
 
     public UUID getId() {

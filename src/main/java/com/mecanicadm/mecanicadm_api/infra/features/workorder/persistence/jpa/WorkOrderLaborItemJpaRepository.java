@@ -18,8 +18,6 @@ public interface WorkOrderLaborItemJpaRepository extends JpaRepository<WorkOrder
 
     List<WorkOrderLaborItemJpaEntity> findByWorkOrderId(UUID workOrderId);
 
-    void deleteByWorkOrderId(UUID workOrderId);
-
     @Query(value = "SELECT COUNT(wli.id) AS totalProcessedLabors, " +
             "COALESCE(AVG((EXTRACT(EPOCH FROM wli.execution_end_at) - EXTRACT(EPOCH FROM wli.execution_start_at)) / 60.0), 0) AS averageExecutionMinutes " +
             "FROM work_order_labor_items wli " +

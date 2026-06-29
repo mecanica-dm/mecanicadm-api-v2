@@ -20,6 +20,6 @@ public class CreateWorkOrderLaborItemUseCase implements UseCase<CreateWorkOrderL
             throw new LaborExceptions.LaborNotFound();
         }
 
-        return WorkOrderLaborItem.create(cmd.laborId());
+        return WorkOrderLaborItem.create(cmd.laborId(), cmd.workOrderId());
     }
 }

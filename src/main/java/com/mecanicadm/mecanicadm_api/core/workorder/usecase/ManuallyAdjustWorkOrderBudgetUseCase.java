@@ -18,10 +18,11 @@ public class ManuallyAdjustWorkOrderBudgetUseCase implements VoidUseCase<Manuall
         WorkOrder workOrder = gateway.findById(cmd.workOrderId())
                 .orElseThrow(WorkOrderExceptions.NotFound::new);
 
-        workOrder.getBudget()
-                .orElseThrow(WorkOrderExceptions.BudgetNotFound::new)
-                .updateTotalPrice(cmd.newTotalPrice());
+        var budget = workOrder.getBudget()
+                .orElseThrow(WorkOrderExceptions.BudgetNotFound::new);
 
-        gateway.update(workOrder);
+        budget.updateTotalPrice(cmd.newTotalPrice());
+
+        gateway.saveBudget(budget);
     }
 }
