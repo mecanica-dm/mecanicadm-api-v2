@@ -50,10 +50,11 @@ class ResetPasswordUseCaseTest {
         when(passwordResetTokenGateway.findByToken(token)).thenReturn(Optional.of(resetToken));
         when(resetToken.getExpiryDate()).thenReturn(LocalDateTime.now().plusMinutes(10));
         when(resetToken.getUser()).thenReturn(user);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPassword");
 
         resetPasswordUseCase.execute(new ResetPasswordCommand(token, newPassword));
 
-        verify(user).changePassword(newPassword, passwordEncoder);
+        verify(user).updatePassword("encodedNewPassword");
         verify(userGateway).update(user);
         verify(passwordResetTokenGateway).delete(resetToken);
     }
@@ -68,7 +69,7 @@ class ResetPasswordUseCaseTest {
         when(resetToken.getExpiryDate()).thenReturn(LocalDateTime.now().minusMinutes(10));
 
         assertThrows(UserExceptions.TokenExpired.class, () -> resetPasswordUseCase.execute(new ResetPasswordCommand(token, "pass")));
-        
+
         verify(userGateway, never()).update(any());
     }
 

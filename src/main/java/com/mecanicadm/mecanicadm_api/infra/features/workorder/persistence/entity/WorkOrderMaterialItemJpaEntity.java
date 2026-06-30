@@ -1,25 +1,19 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.UUID;
-
-import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "work_order_material_items")
 public class WorkOrderMaterialItemJpaEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
+
+    @Column(name = "work_order_id", nullable = false)
+    private UUID workOrderId;
 
     @Column(name = "material_id", nullable = false)
     private UUID materialId;
@@ -30,22 +24,19 @@ public class WorkOrderMaterialItemJpaEntity {
     protected WorkOrderMaterialItemJpaEntity() {
     }
 
-    public WorkOrderMaterialItemJpaEntity(UUID id, UUID materialId, int quantity) {
+    public WorkOrderMaterialItemJpaEntity(UUID id, UUID workOrderId, UUID materialId, int quantity) {
         this.id = id;
+        this.workOrderId = workOrderId;
         this.materialId = materialId;
-        this.quantity = quantity;
-    }
-
-    private WorkOrderMaterialItemJpaEntity(UUID materialId, int quantity) {
-        this.materialId = requireNonNull(materialId);
-        if (quantity <= 0) {
-            throw new WorkOrderExceptions.InvalidMaterialQuantity();
-        }
         this.quantity = quantity;
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public UUID getWorkOrderId() {
+        return workOrderId;
     }
 
     public UUID getMaterialId() {

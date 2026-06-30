@@ -1,23 +1,17 @@
 package com.mecanicadm.mecanicadm_api.infra.features.user.api.openapi;
 
-import com.mecanicadm.mecanicadm_api.core.user.usecase.command.CreateUserCommand;
-import com.mecanicadm.mecanicadm_api.core.user.usecase.command.UpdateUserCommand;
-import com.mecanicadm.mecanicadm_api.core.user.usecase.query.AuthenticateUserQuery;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.AuthenticationResponse;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ForgotPasswordRequest;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.ResetPasswordRequest;
-import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.UserResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.user.api.dto.*;
 import com.mecanicadm.mecanicadm_api.infra.security.UserAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import jakarta.validation.Valid;
 import java.util.UUID;
 
 @Tag(name = "Usuários", description = "Endpoints para gerenciamento de usuários e autenticação")
@@ -26,7 +20,7 @@ public interface UserOpenApi {
     @Operation(summary = "Autenticar usuário", description = "Realiza o login do usuário e retorna um token JWT")
     @ApiResponse(responseCode = "200", description = "Autenticação realizada com sucesso")
     @ApiResponse(responseCode = "401", description = "Credenciais inválidas", content = @Content)
-    ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticateUserQuery query);
+    ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid LoginRequest request);
 
     @Operation(summary = "Solicitar recuperação de senha", description = "Envia um e-mail com link para redefinição de senha")
     @ApiResponse(responseCode = "200", description = "E-mail de recuperação enviado")
@@ -43,11 +37,11 @@ public interface UserOpenApi {
 
     @Operation(summary = "Criar novo usuário", description = "Cadastra um novo usuário no sistema")
     @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso")
-    ResponseEntity<UUID> create(@RequestBody @Valid CreateUserCommand cmd);
+    ResponseEntity<UUID> create(@RequestBody @Valid CreateUserRequest request);
 
     @Operation(summary = "Atualizar usuário", description = "Atualiza os dados do usuário autenticado", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso")
-    ResponseEntity<Void> update(@RequestBody @Valid UpdateUserCommand cmd, @AuthenticationPrincipal UserAdapter userAdapter);
+    ResponseEntity<Void> update(@RequestBody @Valid UpdateUserRequest request, @AuthenticationPrincipal UserAdapter userAdapter);
 
     @Operation(summary = "Excluir usuário", description = "Realiza a exclusão lógica do usuário autenticado", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponse(responseCode = "204", description = "Usuário excluído com sucesso")

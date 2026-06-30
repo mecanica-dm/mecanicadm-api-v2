@@ -1,32 +1,25 @@
 package com.mecanicadm.mecanicadm_api.infra.features.material.persistence.entity;
 
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
+import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import static java.util.Objects.requireNonNull;
-
 @Entity
 @Table(name = "materials")
-@SQLDelete(sql = "UPDATE materials SET deleted_at = now() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class MaterialJpaEntity extends AuditEntity {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "name", nullable = false)
@@ -45,24 +38,20 @@ public class MaterialJpaEntity extends AuditEntity {
     @Column(name = "type", nullable = false)
     private MaterialType type;
 
-    public MaterialJpaEntity() {
+    protected MaterialJpaEntity() {
     }
 
     public MaterialJpaEntity(UUID id, String name, String brand, String description, BigDecimal price, MaterialType type) {
         this.id = id;
-        this.name = requireNonNull(name);
+        this.name = name;
         this.brand = brand;
         this.description = description;
-        this.price = requireNonNull(price);
-        this.type = requireNonNull(type);
+        this.price = price;
+        this.type = type;
     }
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getName() {

@@ -14,8 +14,8 @@ public record MaterialResponse(
         BigDecimal price,
         MaterialType type
 ) {
-    public MaterialResponse(Material material) {
-        this(
+    public static MaterialResponse from(Material material) {
+        return new MaterialResponse(
                 material.getId(),
                 material.getName(),
                 material.getBrand(),

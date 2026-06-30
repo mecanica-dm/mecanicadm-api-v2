@@ -12,8 +12,6 @@ public interface LaborGateway {
 
     Labor update(Labor labor);
 
-    void deleteById(UUID id);
-
     Optional<Labor> findById(UUID id);
 
     LaborPageResult findAll(LaborPageQuery query);

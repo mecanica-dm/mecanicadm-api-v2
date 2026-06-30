@@ -6,11 +6,12 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.port.PasswordResetTokenGat
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.ResetPasswordCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
-public class ResetPasswordUseCase {
+public class ResetPasswordUseCase implements VoidUseCase<ResetPasswordCommand> {
 
     private final UserGateway userGateway;
     private final PasswordResetTokenGateway passwordResetTokenGateway;
@@ -24,6 +25,7 @@ public class ResetPasswordUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Override
     public void execute(ResetPasswordCommand cmd) {
         PasswordResetToken resetToken = passwordResetTokenGateway.findByToken(cmd.token())
                 .orElseThrow(UserExceptions.TokenInvalid::new);
@@ -33,7 +35,7 @@ public class ResetPasswordUseCase {
         }
 
         User user = resetToken.getUser();
-        user.changePassword(cmd.newPassword(), passwordEncoder);
+        user.updatePassword(passwordEncoder.encode(cmd.newPassword()));
 
         userGateway.update(user);
         passwordResetTokenGateway.delete(resetToken);

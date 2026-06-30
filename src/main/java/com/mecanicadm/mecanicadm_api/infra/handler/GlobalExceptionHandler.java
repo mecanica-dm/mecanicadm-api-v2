@@ -1,8 +1,12 @@
 package com.mecanicadm.mecanicadm_api.infra.handler;
 
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
-import com.mecanicadm.mecanicadm_api.infra.exception.SecurityException;
+import com.mecanicadm.mecanicadm_api.infra.security.exception.SecurityException;
 import com.mecanicadm.mecanicadm_api.shared.exception.DomainExceptionCore;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
+import jakarta.validation.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -20,14 +24,24 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     private static final String ERROR_FIELD_NAME = "error";
-    private static final String DEFAULT_VALIDATION_MESSAGE = "Erro de validação";
+    private static final String DEFAULT_VALIDATION_CODE = "validation.error.unknown";
 
     private final MessageSource messageSource;
 
     @Autowired
     public GlobalExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    @ExceptionHandler(TechnicalException.class)
+    public ResponseEntity<Map<String, String>> handleTechnicalException(TechnicalException ex, Locale locale) {
+        String message = messageSource.getMessage(ex.getCode(), ex.getArgs(), "Ocorreu um erro técnico inesperado.", locale);
+        LOGGER.error("Erro técnico: {} - Mensagem: {}", ex.getCode(), message, ex);
+        Map<String, String> response = new HashMap<>();
+        response.put(ERROR_FIELD_NAME, message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(UserExceptions.BadCredentials.class)
@@ -43,7 +57,7 @@ public class GlobalExceptionHandler {
         String message = messageSource.getMessage(ex.getMessageKey(), ex.getArgs(), ex.getMessageKey(), locale);
         Map<String, String> response = new HashMap<>();
         response.put(ERROR_FIELD_NAME, message);
-        return ResponseEntity.status(ex.getStatus()).body(response);
+        return ResponseEntity.status(HttpStatus.valueOf(ex.getStatus())).body(response);
     }
 
     @ExceptionHandler(SecurityException.class)
@@ -63,20 +77,37 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex, Locale locale) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage() != null ? error.getDefaultMessage() : DEFAULT_VALIDATION_MESSAGE;
+            String errorMessage = error.getDefaultMessage() != null
+                    ? error.getDefaultMessage()
+                    : messageSource.getMessage(DEFAULT_VALIDATION_CODE, null, DEFAULT_VALIDATION_CODE, locale);
             errors.put(fieldName, errorMessage);
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, String>> handleConstraintViolation(ConstraintViolationException ex, Locale locale) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach(violation -> {
+            String message = violation.getMessage();
+            errors.put(violation.getPropertyPath().toString(),
+                    message != null && message.startsWith("{")
+                            ? messageSource.getMessage(message.replaceAll("[{}]", ""), null, message, locale)
+                            : message);
+        });
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException() {
+    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex, Locale locale) {
+        LOGGER.error("Erro genérico não tratado", ex);
+        String message = messageSource.getMessage("error.technical.unexpected", null, "Ocorreu um erro interno no servidor", locale);
         Map<String, String> response = new HashMap<>();
-        response.put(ERROR_FIELD_NAME, "Ocorreu um erro interno no servidor");
+        response.put(ERROR_FIELD_NAME, message);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

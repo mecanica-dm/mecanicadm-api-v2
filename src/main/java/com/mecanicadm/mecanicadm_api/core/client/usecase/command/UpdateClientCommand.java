@@ -9,7 +9,4 @@ public record UpdateClientCommand(
         String document,
         String phone
 ) {
-    public UpdateClientCommand withId(UUID id) {
-        return new UpdateClientCommand(id, this.name, this.email, this.document, this.phone);
-    }
 }

@@ -6,6 +6,7 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageQuery;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity.LaborJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.jpa.specification.LaborSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class LaborRepositoryImpl implements LaborGateway {
@@ -28,19 +31,21 @@ public class LaborRepositoryImpl implements LaborGateway {
 
     @Override
     public Labor create(Labor labor) {
+        if (isNull(labor)) {
+            throw new TechnicalException("error.technical.entity.null", "Labor", "criação");
+        }
         LaborJpaEntity saved = jpaRepository.save(LaborJpaMapper.toEntity(labor));
         return LaborJpaMapper.toDomain(saved);
     }
 
     @Override
     public Labor update(Labor labor) {
-        LaborJpaEntity saved = jpaRepository.save(LaborJpaMapper.toEntity(labor));
+        if (isNull(labor)) {
+            throw new TechnicalException("error.technical.entity.null", "Labor", "atualização");
+        }
+        LaborJpaEntity entity = LaborJpaMapper.toEntity(labor);
+        LaborJpaEntity saved = jpaRepository.save(entity);
         return LaborJpaMapper.toDomain(saved);
-    }
-
-    @Override
-    public void deleteById(UUID id) {
-        jpaRepository.deleteById(id);
     }
 
     @Override

@@ -276,4 +276,3 @@ INSERT INTO stock_movements (id, material_id, work_order_id, quantity, type, dat
 ('88886688-cccc-4888-8888-8888888888cc', 'b3c1b691-8d2b-42ea-a4b5-ea93db622616', '88886688-8888-4888-8888-888888888888', 1, 'REDUCTION', now() - interval '1 day', now() - interval '1 day'),
 ('88886688-dddd-4888-8888-8888888888dd', '5c5450e1-236b-43d9-95a7-96a1a1f73b15', '88886688-8888-4888-8888-888888888888', 1, 'REDUCTION', now() - interval '1 day', now() - interval '1 day')
 ON CONFLICT DO NOTHING;
-ON CONFLICT DO NOTHING;

@@ -1,9 +1,9 @@
 package com.mecanicadm.mecanicadm_api.core.labor.usecase;
 
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetAllLaborExecutionTimeReportQuery;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborExecutionSummaryProjection;
-import com.mecanicadm.mecanicadm_api.core.workorders.adapter.repository.projections.LaborTypeStatsProjection;
-import com.mecanicadm.mecanicadm_api.core.workorders.exception.WorkOrderExceptions;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.LaborExecutionSummaryProjection;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.LaborTypeStatsProjection;
+import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborTypeExecutionStatsResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.WorkOrderLaborItemJpaRepository;

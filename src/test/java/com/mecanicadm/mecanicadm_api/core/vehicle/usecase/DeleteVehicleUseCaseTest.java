@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.core.vehicle.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.vehicle.domain.Vehicle;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.vehicle.exception.VehicleExceptions;
 import com.mecanicadm.mecanicadm_api.core.vehicle.usecase.command.DeleteVehicleCommand;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -31,24 +34,25 @@ class DeleteVehicleUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should delete vehicle when it exists")
+    @DisplayName("Should soft delete vehicle when it exists")
     void shouldDeleteVehicleWhenItExists() {
-        when(repository.existsByLicensePlate(licensePlate)).thenReturn(true);
+        Vehicle vehicle = Vehicle.restore("Civic", licensePlate, "Honda", (short) 2023, null, null, null);
+        when(repository.findByLicensePlate(licensePlate)).thenReturn(Optional.of(vehicle));
 
         deleteVehicleUseCase.execute(command);
 
-        verify(repository, times(1)).existsByLicensePlate(licensePlate);
-        verify(repository, times(1)).deleteByLicensePlate(licensePlate);
+        verify(repository, times(1)).findByLicensePlate(licensePlate);
+        verify(repository, times(1)).update(vehicle);
     }
 
     @Test
     @DisplayName("Should throw NotFound exception when vehicle does not exist")
     void shouldThrowNotFoundExceptionWhenVehicleDoesNotExist() {
-        when(repository.existsByLicensePlate(licensePlate)).thenReturn(false);
+        when(repository.findByLicensePlate(licensePlate)).thenReturn(Optional.empty());
 
         assertThrows(VehicleExceptions.NotFound.class, () -> deleteVehicleUseCase.execute(command));
 
-        verify(repository, times(1)).existsByLicensePlate(licensePlate);
-        verify(repository, never()).deleteByLicensePlate(anyString());
+        verify(repository, times(1)).findByLicensePlate(licensePlate);
+        verify(repository, never()).update(any());
     }
 }

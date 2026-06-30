@@ -14,9 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Importante para que o Sonar veja o histórico de commits
+          fetch-depth: 0
 
-      - name: Set up JDK 21  # Forçar Java 21 para não dar erro -> Por padrão pega a versão pré-instalada do ubuntu (Atualmente 17)
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
@@ -27,6 +27,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B verify sonar:sonar -Dsonar.projectKey=mecanica-dm_mecanicadm-api-v1 \
+          mvn -B verify sonar:sonar -Dsonar.projectKey=mecanica-dm_mecanicadm-api-v2 \
             -Dsonar.organization=mecanica-dm \
             -Dsonar.host.url=https://sonarcloud.io/

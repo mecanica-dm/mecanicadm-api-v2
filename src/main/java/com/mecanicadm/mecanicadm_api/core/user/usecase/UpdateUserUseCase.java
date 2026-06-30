@@ -4,11 +4,10 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.UpdateUserCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-public class UpdateUserUseCase {
+public class UpdateUserUseCase implements VoidUseCase<UpdateUserCommand> {
 
     private final UserGateway userGateway;
     private final PasswordEncoder passwordEncoder;
@@ -18,21 +17,25 @@ public class UpdateUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
+    @Override
     public void execute(UpdateUserCommand command) {
         User user = userGateway.findById(command.id()).orElseThrow(UserExceptions.NotFound::new);
 
-        if (StringUtils.hasText(command.name())) {
+        if (command.name() != null && !command.name().isBlank()) {
             user.updateInfo(command.name(), user.getEmail());
         }
 
-        if (StringUtils.hasText(command.password())) {
-            if (!StringUtils.hasText(command.currentPassword())) {
+        if (command.password() != null && !command.password().isBlank()) {
+            if (command.currentPassword() == null || command.currentPassword().isBlank()) {
                 throw new UserExceptions.CurrentPasswordRequired();
             }
 
-            user.verifyPassword(command.currentPassword(), passwordEncoder);
-            user.changePassword(command.password(), passwordEncoder);
+            if (!passwordEncoder.matches(command.currentPassword(), user.getPassword())) {
+                throw new UserExceptions.BadCredentials();
+            }
+
+            User.validatePassword(command.password());
+            user.updatePassword(passwordEncoder.encode(command.password()));
         }
 
         userGateway.update(user);

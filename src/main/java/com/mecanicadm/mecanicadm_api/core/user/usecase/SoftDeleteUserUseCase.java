@@ -1,9 +1,12 @@
 package com.mecanicadm.mecanicadm_api.core.user.usecase;
 
+import com.mecanicadm.mecanicadm_api.core.user.domain.User;
 import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserGateway;
+import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.core.user.usecase.command.SoftDeleteUserCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
-public class SoftDeleteUserUseCase {
+public class SoftDeleteUserUseCase implements VoidUseCase<SoftDeleteUserCommand> {
 
     private final UserGateway userGateway;
 
@@ -11,7 +14,10 @@ public class SoftDeleteUserUseCase {
         this.userGateway = userGateway;
     }
 
+    @Override
     public void execute(SoftDeleteUserCommand command) {
-        userGateway.deleteById(command.id());
+        User user = userGateway.findById(command.id()).orElseThrow(UserExceptions.NotFound::new);
+        user.softDelete();
+        userGateway.update(user);
     }
 }

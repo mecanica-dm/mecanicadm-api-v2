@@ -2,8 +2,8 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.GetAllLaborExecutionTimeReportUseCase;
 import com.mecanicadm.mecanicadm_api.core.labor.usecase.query.GetAllLaborExecutionTimeReportQuery;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.GetAllWorkOrderExecutionTimeReportUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorders.usecase.query.GetAllWorkOrderExecutionTimeReportQuery;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetAllWorkOrderExecutionTimeReportUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetAllWorkOrderExecutionTimeReportQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.api.dto.response.LaborExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderExecutionReportResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderAnalyticsOpenApi;

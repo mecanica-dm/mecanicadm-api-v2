@@ -1,16 +1,14 @@
 package com.mecanicadm.mecanicadm_api.infra.features.vehicle.persistence.entity;
 
-import com.mecanicadm.mecanicadm_api.infra.baseentities.AuditEntity;
+import com.mecanicadm.mecanicadm_api.infra.audit.AuditEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "vehicle")
-@SQLDelete(sql = "UPDATE vehicle SET deleted_at = now() WHERE license_plate = ?")
 @SQLRestriction("deleted_at IS NULL")
 public class VehicleJpaEntity extends AuditEntity {
 
@@ -27,7 +25,7 @@ public class VehicleJpaEntity extends AuditEntity {
     @Column(name = "model_year")
     private Short modelYear;
 
-    public VehicleJpaEntity() {}
+    protected VehicleJpaEntity() {}
 
     public VehicleJpaEntity(String licensePlate, String model, String brand, Short modelYear) {
         this.licensePlate = licensePlate;

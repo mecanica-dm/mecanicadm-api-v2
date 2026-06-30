@@ -4,15 +4,17 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.query.GetMaterialByIdQuery;
+import com.mecanicadm.mecanicadm_api.shared.usecase.UseCase;
 
-public class GetMaterialByIdUseCase {
+public class GetMaterialByIdUseCase implements UseCase<GetMaterialByIdQuery, Material> {
 
-    public final MaterialGateway gateway;
+    private final MaterialGateway gateway;
 
     public GetMaterialByIdUseCase(MaterialGateway gateway) {
         this.gateway = gateway;
     }
 
+    @Override
     public Material execute(GetMaterialByIdQuery query) {
         return gateway.findById(query.id())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);

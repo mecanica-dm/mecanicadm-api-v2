@@ -25,7 +25,7 @@ public class StockMovementsController implements StockMovementsOpenApi {
     @Override
     @GetMapping("/{materialId}/statement")
     public ResponseEntity<StockStatementResponse> getStatement(@PathVariable UUID materialId) {
-        StockStatementResponse statement = getStockStatementUseCase.execute(new GetStockStatementQuery(materialId));
-        return ResponseEntity.ok(statement);
+        var statement = getStockStatementUseCase.execute(new GetStockStatementQuery(materialId));
+        return ResponseEntity.ok(StockStatementResponse.from(statement));
     }
 }

@@ -7,6 +7,7 @@ import com.mecanicadm.mecanicadm_api.core.user.domain.port.UserPageResult;
 import com.mecanicadm.mecanicadm_api.core.user.exception.UserExceptions;
 import com.mecanicadm.mecanicadm_api.infra.features.user.persistence.entity.UserJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.user.persistence.jpa.specification.UserSpecificationBuilder;
+import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @Repository
 public class UserRepositoryImpl implements UserGateway {
@@ -28,6 +31,9 @@ public class UserRepositoryImpl implements UserGateway {
 
     @Override
     public User create(User user) {
+        if (isNull(user)) {
+            throw new TechnicalException("error.technical.entity.null", "User", "criação");
+        }
         UserJpaEntity saved = jpaRepository.save(UserJpaMapper.toEntity(user));
         return UserJpaMapper.toDomain(saved);
     }
@@ -35,6 +41,9 @@ public class UserRepositoryImpl implements UserGateway {
     @Override
     @Transactional
     public User update(User user) {
+        if (isNull(user)) {
+            throw new TechnicalException("error.technical.entity.null", "User", "atualização");
+        }
         UserJpaEntity entity = jpaRepository.findById(user.getId())
                 .orElseThrow(UserExceptions.NotFound::new);
 
@@ -55,13 +64,8 @@ public class UserRepositoryImpl implements UserGateway {
     }
 
     @Override
-    public void deleteById(UUID id) {
-        jpaRepository.deleteById(id);
-    }
-
-    @Override
-    public void save(User user) {
-        jpaRepository.save(UserJpaMapper.toEntity(user));
+    public boolean existsByEmail(String email) {
+        return jpaRepository.existsByEmail(email);
     }
 
     @Override

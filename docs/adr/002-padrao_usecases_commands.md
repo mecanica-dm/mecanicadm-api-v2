@@ -1,6 +1,6 @@
 # [002]: [Padrão de UseCases e Commands]
 
-* **Status**: Aceito
+* **Status**: Substituído por [ADR 011](011-arquitetura-limpa-purista-novas-features.md)
 * **Data**: 21/04/2026
 
 ## 1. Contexto e Problema

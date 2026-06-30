@@ -34,7 +34,7 @@ class UpdateVehicleUseCaseTest {
         Short newYear = Short.valueOf("2024");
         UpdateVehicleCommand command = new UpdateVehicleCommand(licensePlate, newModel, newBrand, newYear);
 
-        Vehicle existing = new Vehicle("OldModel", licensePlate, "OldBrand", (short) 2015);
+        Vehicle existing = Vehicle.restore("OldModel", licensePlate, "OldBrand", (short) 2015, null, null, null);
         Vehicle updated = existing.update(newModel, newBrand, newYear);
 
         when(repository.findByLicensePlate(licensePlate)).thenReturn(Optional.of(existing));

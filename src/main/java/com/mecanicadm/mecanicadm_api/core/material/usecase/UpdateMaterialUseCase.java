@@ -4,8 +4,9 @@ import com.mecanicadm.mecanicadm_api.core.material.domain.Material;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
 import com.mecanicadm.mecanicadm_api.core.material.exception.MaterialExceptions;
 import com.mecanicadm.mecanicadm_api.core.material.usecase.command.UpdateMaterialCommand;
+import com.mecanicadm.mecanicadm_api.shared.usecase.VoidUseCase;
 
-public class UpdateMaterialUseCase {
+public class UpdateMaterialUseCase implements VoidUseCase<UpdateMaterialCommand> {
 
     private final MaterialGateway gateway;
 
@@ -13,6 +14,7 @@ public class UpdateMaterialUseCase {
         this.gateway = gateway;
     }
 
+    @Override
     public void execute(UpdateMaterialCommand cmd) {
         Material material = gateway.findById(cmd.id())
                 .orElseThrow(MaterialExceptions.MaterialNotFound::new);
