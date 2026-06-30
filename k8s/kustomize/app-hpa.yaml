@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mecanica-dm-api-hpa
+  namespace: mecanicadm
+spec:
+  scaleTargetRef: # Aqui definimos que o recurso que vamos escalar é o Deployment "mecanica-dm-api" (app-deployment.yaml)
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mecanica-dm-api
+  # O HPA tem prioridade sobre o valor definido no deployment, então se lá no Deployment está como 2 e aqui o minimo é 1
+  # se não tiver uso significativo o HPA vai diminuir o número de pods para 1
+  minReplicas: 1
+  maxReplicas: 5
+  metrics: # Nessa propriedade definimos as métricas que o HPA deve monitorar
+    - type: Resource # Definimos que será monitorado recursos computacionais (Poderia ser também Pods ou Object)
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50

@@ -4,14 +4,14 @@ metadata:
   name: mecanica-dm-api
   namespace: mecanicadm
 spec:
-  replicas: 2
+  replicas: 2 # Numero de pods que estarão ativos ao mesmo tempo
   selector:
     matchLabels:
-      app: mecanica-dm-api
+      app: mecanica-dm-api # Diz para o controlador (Deployment) quais pods ele deve gerenciar
   template:
     metadata:
       labels:
-        app: mecanica-dm-api
+        app: mecanica-dm-api # Tag que é aplicada a cada pod que é criado pelo deployment
     spec:
       initContainers:
         - name: wait-for-postgres
@@ -23,6 +23,13 @@ spec:
           imagePullPolicy: IfNotPresent # Se não encontrar no docker hub, busca pela imagem localmente
           ports:
             - containerPort: 8080
+          resources: # É necessário definir essa propriedade para o HPA saber quando escalar
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:

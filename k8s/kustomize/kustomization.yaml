@@ -8,3 +8,4 @@ resources:
   - ./postgres/postgres-service.yaml
   - app-deployment.yaml
   - app-service.yaml
+  - app-hpa.yaml

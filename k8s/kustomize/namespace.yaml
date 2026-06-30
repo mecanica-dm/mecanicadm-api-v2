@@ -1,4 +1,7 @@
 apiVersion: v1
+# Com o namespace conseguimos separar nossos recursos em grupos distintos
+# nesse primeiro momento teremos apenas um, mas em um cenário de
+# várias equipes faz sentido separar em mais Namespaces
 kind: Namespace
 metadata:
   name: mecanicadm

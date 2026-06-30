@@ -1,17 +1,17 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment # Responsável por gerenciar Pods e ReplicaSets
 metadata:
   name: postgres-db
   namespace: mecanicadm
 spec:
-  replicas: 1
+  replicas: 1 # Numero de pods que estarão ativos ao mesmo tempo
   selector:
     matchLabels:
-      app: postgres
+      app: postgres # Diz para o controlador (Deployment) quais pods ele deve gerenciar
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres # Tag que é aplicada a cada pod que é criado pelo deployment
     spec:
       containers:
         - name: postgres
