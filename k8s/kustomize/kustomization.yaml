@@ -3,7 +3,9 @@ kind: Kustomization
 
 resources:
   - namespace.yaml
+  - app-configmap.yaml
   - db-secret.yaml
+  - ./postgres/postgres-configmap.yaml
   - ./postgres/postgres-deployment.yaml
   - ./postgres/postgres-service.yaml
   - app-deployment.yaml
