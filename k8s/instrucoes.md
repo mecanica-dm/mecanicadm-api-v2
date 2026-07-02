@@ -1,5 +1,19 @@
 # Guia Kubernetes (mecanicadm)
 
+## 0. Build da Imagem Docker
+
+Antes de iniciar, certifique-se de limpar e gerar um novo artefato da aplicação e buildar a imagem Docker para que ela
+esteja
+disponível no seu ambiente:
+
+```bash
+docker rmi -f mecanica-dm-api:latest
+```
+
+ ```bash
+ docker build -t mecanica-dm-api:latest .
+ ```
+
 ## 1. Aplicar a Configuração
 
 Utilize o Kustomize para aplicar todos os manifestos de uma vez:
