@@ -1,0 +1,14 @@
+apiVersion: v1
+# Fornece DNS estável e IP estável para um grupo de Pods. Outras apps podem se conectar diretamente pelo ip do Service ao invés de saber o IP específico de cada pod
+# Distribui o trafego de rede entre os pods que se encaixam com o selector definido
+kind: Service
+metadata:
+  name: postgres-db
+  namespace: mecanicadm
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432

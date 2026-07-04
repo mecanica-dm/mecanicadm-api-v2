@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mecanica-dm-api
+  namespace: mecanicadm
+spec:
+  replicas: 2 # Numero de pods que estarão ativos ao mesmo tempo
+  selector:
+    matchLabels:
+      app: mecanica-dm-api # Diz para o controlador (Deployment) quais pods ele deve gerenciar
+  template:
+    metadata:
+      labels:
+        app: mecanica-dm-api # Tag que é aplicada a cada pod que é criado pelo deployment
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox:1.28
+          command: [ 'sh', '-c', "until nc -zv postgres-db 5432; do echo waiting for postgres; sleep 2; done;" ]
+      containers:
+        - name: api
+          image: mecanica-dm-api:latest
+          imagePullPolicy: IfNotPresent # Se não encontrar no docker hub, busca pela imagem localmente
+          ports:
+            - containerPort: 8080
+          resources: # É necessário definir essa propriedade para o HPA saber quando escalar
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRING_PROFILES_ACTIVE
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_URL
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: postgres-user
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: postgres-password
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
