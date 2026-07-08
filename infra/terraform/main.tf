@@ -31,9 +31,9 @@ resource "time_sleep" "wait_for_eks" {
 
 # Kube: Fazemos oS deploys dos manifestos
 resource "kubectl_manifest" "k8s_resources" {
-  for_each = fileset("${path.module}/../../k8s/kustomize", "**/*.yaml")
+  for_each = fileset("${path.module}/../../k8s/manifests", "**/*.yaml")
 
-  yaml_body = file("${path.module}/../../k8s/kustomize/${each.value}")
+  yaml_body = file("${path.module}/../../k8s/manifests/${each.value}")
 
   depends_on = [time_sleep.wait_for_eks]
 }
