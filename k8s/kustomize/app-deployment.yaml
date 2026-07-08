@@ -19,8 +19,8 @@ spec:
           command: [ 'sh', '-c', "until nc -zv postgres-db 5432; do echo waiting for postgres; sleep 2; done;" ]
       containers:
         - name: api
-          image: mecanica-dm-api:latest
-          imagePullPolicy: IfNotPresent # Se não encontrar no docker hub, busca pela imagem localmente
+          image: guilhermemuchon/mecanica-dm-api
+          imagePullPolicy: Always # Garante que o K8s baixe a versão mais nova do registro
           ports:
             - containerPort: 8080
           resources: # É necessário definir essa propriedade para o HPA saber quando escalar
