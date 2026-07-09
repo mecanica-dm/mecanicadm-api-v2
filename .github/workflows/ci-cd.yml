@@ -44,7 +44,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: guilhermemuchon/mecanicadm-api:latest
+          tags: guilhermemuchon/mecanica-dm-api:latest
 
   deploy-to-kubernetes:
     needs: build-docker-image
