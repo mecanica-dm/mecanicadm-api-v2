@@ -1,6 +1,6 @@
 # Guia Kubernetes (mecanicadm)
 
-## 0. Build da Imagem Docker
+## 0. Build e Publicação da Imagem Docker
 
 Antes de iniciar, certifique-se de limpar e gerar um novo artefato da aplicação e buildar a imagem Docker para que ela
 esteja
@@ -10,9 +10,21 @@ disponível no seu ambiente:
 docker rmi -f mecanica-dm-api:latest
 ```
 
- ```bash
- docker build -t mecanica-dm-api:latest .
- ```
+```bash
+# Build da imagem
+docker build -t mecanica-dm-api:latest .
+```
+
+Para que o Kubernetes em produção ou em outros nós consiga baixar a imagem, ela deve estar em um registro:
+
+```bash
+# Substitua pelo seu username do Docker Hub
+docker tag mecanica-dm-api:latest guilhermemuchon/mecanica-dm-api:latest
+
+# Login e Push
+docker login
+docker push guilhermemuchon/mecanica-dm-api:latest
+```
 
 ## 1. Aplicar a Configuração
 

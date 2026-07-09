@@ -19,16 +19,16 @@ spec:
           command: [ 'sh', '-c', "until nc -zv postgres-db 5432; do echo waiting for postgres; sleep 2; done;" ]
       containers:
         - name: api
-          image: mecanica-dm-api:latest
-          imagePullPolicy: IfNotPresent # Se não encontrar no docker hub, busca pela imagem localmente
+          image: guilhermemuchon/mecanica-dm-api
+          imagePullPolicy: Always # Garante que o K8s baixe a versão mais nova do registro
           ports:
             - containerPort: 8080
           resources: # É necessário definir essa propriedade para o HPA saber quando escalar
             requests:
-              cpu: "100m"
+              cpu: "250m"
               memory: "256Mi"
             limits:
-              cpu: "500m"
+              cpu: "1000m"
               memory: "512Mi"
           env:
             - name: SPRING_PROFILES_ACTIVE
@@ -51,15 +51,23 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: postgres-password
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            # O K8s vai tentar 30 vezes, com intervalo de 10s (total 5 minutos)
+            # dando tempo suficiente para a app subir antes de começar a liveness
+            failureThreshold: 30
+            periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
               port: 8080
-            initialDelaySeconds: 20
+            initialDelaySeconds: 10
             periodSeconds: 5
