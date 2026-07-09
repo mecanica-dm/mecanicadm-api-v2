@@ -60,10 +60,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Set up kubectl for EKS
-        uses: aws-actions/amazon-eks-setup-kubectl@v1
-        with:
-          cluster-name: ${{ secrets.EKS_CLUSTER_NAME }}
+      - name: Update Kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
       - name: Apply Kubernetes Manifests using Kustomize
         run: |
