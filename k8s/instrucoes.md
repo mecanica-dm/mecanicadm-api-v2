@@ -31,7 +31,7 @@ docker push guilhermemuchon/mecanica-dm-api:latest
 Utilize o Kustomize para aplicar todos os manifestos de uma vez:
 
  ```bash
- kubectl apply -k ./k8s/kustomize/
+ kubectl apply -k ./k8s/
  ```
 
 ## 2. Verificar Recursos
@@ -96,5 +96,5 @@ kubectl logs -l app=postgres-db -n mecanicadm
 Se quiser recomeçar do zero:
 
 ```bash
-kubectl delete -k ./k8s/kustomize/
+kubectl delete -k ./k8s/
 ```
