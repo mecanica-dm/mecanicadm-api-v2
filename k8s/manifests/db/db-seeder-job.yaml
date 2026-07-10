@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mecanicadm-seeder
+  namespace: mecanicadm
+spec:
+  # Deleta o Job automaticamente 100 segundos após ele terminar com sucesso ou falha
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+        - name: seeder
+          image: guilhermemuchon/mecanica-dm-seeder:latest
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: postgres-user
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: postgres-password
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_HOST
+          command:
+            - sh
+            - -c
+            - |
+              until PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -d $POSTGRES_DB -tAc "SELECT 1 FROM flyway_schema_history WHERE success = true AND script = 'V08__add_indexes_for_work_order_execution_report.sql'" | grep -q 1; do
+                echo "Aguardando o Flyway concluir as migrations no Kubernetes..."
+                sleep 3
+              done
+              echo "Flyway concluído! Rodando o init.sql..."
+              PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -d $POSTGRES_DB -f /seed/init.sql
+      restartPolicy: OnFailure
