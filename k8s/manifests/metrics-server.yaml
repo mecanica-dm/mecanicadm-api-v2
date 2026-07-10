@@ -1,3 +1,4 @@
+# O HPA precisa do metrics-server para acessar o uso de memória e CPU
 # Arquivo baixado de: https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 apiVersion: v1
 kind: ServiceAccount
