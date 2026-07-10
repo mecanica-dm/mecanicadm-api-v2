@@ -80,6 +80,12 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Deve criar bean GetWorkOrderStatusUseCase")
+    void shouldCreateGetWorkOrderStatusUseCase() {
+        assertNotNull(workOrderConfiguration.getWorkOrderStatusUseCase(workOrderGateway));
+    }
+
+    @Test
     @DisplayName("Deve criar bean SoftDeleteWorkOrderUseCase")
     void shouldCreateSoftDeleteWorkOrderUseCase() {
         assertNotNull(workOrderConfiguration.softDeleteWorkOrderUseCase(workOrderGateway, workOrderMaterialItemGateway, stockMovementsGateway));

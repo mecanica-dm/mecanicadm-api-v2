@@ -26,6 +26,7 @@ import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetAllWorkOrderUseCa
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetPrintableBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderByIdUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderLaborItemByIdUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderStatusUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ManuallyAdjustWorkOrderBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RecordWorkOrderPaymentUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RemoveLaborItemFromWorkOrderUseCase;
@@ -55,6 +56,11 @@ public class WorkOrderConfiguration {
     @Bean
     public GetWorkOrderByIdUseCase getWorkOrderByIdUseCase(WorkOrderGateway gateway) {
         return new GetWorkOrderByIdUseCase(gateway);
+    }
+
+    @Bean
+    public GetWorkOrderStatusUseCase getWorkOrderStatusUseCase(WorkOrderGateway gateway) {
+        return new GetWorkOrderStatusUseCase(gateway);
     }
 
     @Bean

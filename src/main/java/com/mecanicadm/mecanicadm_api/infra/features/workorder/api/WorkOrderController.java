@@ -5,9 +5,11 @@ import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.CreateWorkOr
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.SoftDeleteWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.UpdateWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetWorkOrderByIdQuery;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetWorkOrderStatusQuery;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.CreateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.UpdateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderStatusResponse;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderOpenApi;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -29,17 +31,20 @@ public class WorkOrderController implements WorkOrderOpenApi {
     private final GetWorkOrderByIdUseCase getWorkOrderByIdUseCase;
     private final GetAllWorkOrderUseCase getAllWorkOrderUseCase;
     private final SoftDeleteWorkOrderUseCase softDeleteWorkOrderUseCase;
+    private final GetWorkOrderStatusUseCase getWorkOrderStatusUseCase;
 
     public WorkOrderController(CreateWorkOrderUseCase createWorkOrderUseCase,
                                UpdateWorkOrderUseCase updateWorkOrderUseCase,
                                GetWorkOrderByIdUseCase getWorkOrderByIdUseCase,
                                GetAllWorkOrderUseCase getAllWorkOrderUseCase,
-                               SoftDeleteWorkOrderUseCase softDeleteWorkOrderUseCase) {
+                               SoftDeleteWorkOrderUseCase softDeleteWorkOrderUseCase,
+                               GetWorkOrderStatusUseCase getWorkOrderStatusUseCase) {
         this.createWorkOrderUseCase = createWorkOrderUseCase;
         this.updateWorkOrderUseCase = updateWorkOrderUseCase;
         this.getWorkOrderByIdUseCase = getWorkOrderByIdUseCase;
         this.getAllWorkOrderUseCase = getAllWorkOrderUseCase;
         this.softDeleteWorkOrderUseCase = softDeleteWorkOrderUseCase;
+        this.getWorkOrderStatusUseCase = getWorkOrderStatusUseCase;
     }
 
     @Override
@@ -65,6 +70,13 @@ public class WorkOrderController implements WorkOrderOpenApi {
     public ResponseEntity<WorkOrderResponse> findById(@PathVariable UUID id) {
         var workOrder = getWorkOrderByIdUseCase.execute(new GetWorkOrderByIdQuery(id));
         return ResponseEntity.ok(WorkOrderResponse.from(workOrder));
+    }
+
+    @Override
+    @GetMapping("/{id}/status")
+    public ResponseEntity<WorkOrderStatusResponse> findStatus(@PathVariable UUID id) {
+        var status = getWorkOrderStatusUseCase.execute(new GetWorkOrderStatusQuery(id));
+        return ResponseEntity.ok(new WorkOrderStatusResponse(id, status));
     }
 
     @Override

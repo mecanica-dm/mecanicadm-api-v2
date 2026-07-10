@@ -2,6 +2,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderBudget;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.*;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification.WorkOrderSpecificationBuilder;
@@ -80,6 +81,11 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
     @Override
     public Optional<WorkOrder> findByIdWithItems(UUID id) {
         return jpaRepository.findById(id).map(this::toDomainWithItems);
+    }
+
+    @Override
+    public Optional<WorkOrderStatus> findStatusById(UUID id) {
+        return jpaRepository.findStatusById(id);
     }
 
     private WorkOrder toDomainWithItems(WorkOrderJpaEntity entity) {

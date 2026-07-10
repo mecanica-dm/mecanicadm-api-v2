@@ -1,5 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
@@ -11,10 +12,14 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface WorkOrderJpaRepository extends JpaRepository<WorkOrderJpaEntity, UUID>, JpaSpecificationExecutor<WorkOrderJpaEntity> {
+
+    @Query("SELECT w.status FROM WorkOrderJpaEntity w WHERE w.id = :id")
+    Optional<WorkOrderStatus> findStatusById(@Param("id") UUID id);
 
     @Query(value = "SELECT COALESCE(SUM(m.price * wmi.quantity), 0) " +
             "FROM work_order_material_items wmi " +

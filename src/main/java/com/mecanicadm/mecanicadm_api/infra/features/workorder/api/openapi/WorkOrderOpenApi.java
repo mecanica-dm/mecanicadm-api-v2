@@ -3,6 +3,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.CreateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.UpdateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,6 +34,11 @@ public interface WorkOrderOpenApi {
     @ApiResponse(responseCode = "200", description = "Ordem de serviço encontrada")
     @ApiResponse(responseCode = "404", description = "Ordem de serviço não encontrada", content = @Content)
     ResponseEntity<WorkOrderResponse> findById(UUID id);
+
+    @Operation(summary = "Consultar status da ordem de serviço", description = "Retorna a situação atual da ordem de serviço")
+    @ApiResponse(responseCode = "200", description = "Status da ordem de serviço")
+    @ApiResponse(responseCode = "404", description = "Ordem de serviço não encontrada", content = @Content)
+    ResponseEntity<WorkOrderStatusResponse> findStatus(UUID id);
 
     @Operation(summary = "Listar ordens de serviço",
             description = "Retorna uma lista paginada de ordens de serviço em aberto (Recebida, Diagnóstico, Aguardando Aprovação, Em Execução). " +

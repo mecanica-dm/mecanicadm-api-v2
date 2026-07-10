@@ -55,17 +55,77 @@ class GetAllWorkOrderUseCaseTest {
         verify(gateway).findAll(pageQueryCaptor.capture());
 
         var capturedQuery = pageQueryCaptor.getValue();
-        assertEquals(clientId, capturedQuery.filter().clientId());
-        assertEquals(licensePlate, capturedQuery.filter().licensePlate());
+        assertFilter(capturedQuery, clientId, licensePlate);
+        assertEquals(page, capturedQuery.page());
+        assertEquals(size, capturedQuery.size());
+        assertEquals(1, capturedQuery.sorts().size());
+        assertEquals(sortBy, capturedQuery.sorts().get(0).field());
+        assertEquals(direction, capturedQuery.sorts().get(0).direction());
+    }
+
+    @Test
+    @DisplayName("Deve aplicar sort padrão por status ASC e dateCreated ASC quando sortBy/direction forem nulos")
+    void shouldApplyDefaultSortWhenSortByAndDirectionAreNull() {
+        GetAllWorkOrdersQuery query = new GetAllWorkOrdersQuery(null, null, 0, 10, null, null);
+
+        WorkOrderPageResult expectedResult = new WorkOrderPageResult(List.of(mock(WorkOrder.class)), 1L);
+        when(gateway.findAll(any())).thenReturn(expectedResult);
+
+        useCase.execute(query);
+
+        verify(gateway).findAll(pageQueryCaptor.capture());
+
+        var capturedQuery = pageQueryCaptor.getValue();
+        assertEquals(2, capturedQuery.sorts().size());
+        assertEquals("status", capturedQuery.sorts().get(0).field());
+        assertEquals("ASC", capturedQuery.sorts().get(0).direction());
+        assertEquals("dateCreated", capturedQuery.sorts().get(1).field());
+        assertEquals("ASC", capturedQuery.sorts().get(1).direction());
+    }
+
+    @Test
+    @DisplayName("Deve respeitar sort explícito por status sem adicionar tiebreaker")
+    void shouldRespectExplicitStatusSortWithoutTiebreaker() {
+        GetAllWorkOrdersQuery query = new GetAllWorkOrdersQuery(null, null, 0, 10, "status", "DESC");
+
+        WorkOrderPageResult expectedResult = new WorkOrderPageResult(List.of(mock(WorkOrder.class)), 1L);
+        when(gateway.findAll(any())).thenReturn(expectedResult);
+
+        useCase.execute(query);
+
+        verify(gateway).findAll(pageQueryCaptor.capture());
+
+        var capturedQuery = pageQueryCaptor.getValue();
+        assertEquals(1, capturedQuery.sorts().size());
+        assertEquals("status", capturedQuery.sorts().get(0).field());
+        assertEquals("DESC", capturedQuery.sorts().get(0).direction());
+    }
+
+    @Test
+    @DisplayName("Deve aplicar filtro com clientId e licensePlate nulos")
+    void shouldApplyFilterWithNullClientIdAndLicensePlate() {
+        GetAllWorkOrdersQuery query = new GetAllWorkOrdersQuery(null, null, 0, 10, "dateCreated", "ASC");
+
+        WorkOrderPageResult expectedResult = new WorkOrderPageResult(List.of(mock(WorkOrder.class)), 1L);
+        when(gateway.findAll(any())).thenReturn(expectedResult);
+
+        useCase.execute(query);
+
+        verify(gateway).findAll(pageQueryCaptor.capture());
+
+        var capturedQuery = pageQueryCaptor.getValue();
+        assertNull(capturedQuery.filter().clientId());
+        assertNull(capturedQuery.filter().licensePlate());
+    }
+
+    private void assertFilter(WorkOrderPageQuery query, UUID clientId, String licensePlate) {
+        assertEquals(clientId, query.filter().clientId());
+        assertEquals(licensePlate, query.filter().licensePlate());
         assertEquals(Set.of(
                 WorkOrderStatus.IN_EXECUTION,
                 WorkOrderStatus.AWAITING_EXECUTION,
                 WorkOrderStatus.DIAGNOSED,
                 WorkOrderStatus.RECEIVED
-        ), capturedQuery.filter().statuses());
-        assertEquals(page, capturedQuery.page());
-        assertEquals(size, capturedQuery.size());
-        assertEquals(sortBy, capturedQuery.sorts().get(0).field());
-        assertEquals(direction, capturedQuery.sorts().get(0).direction());
+        ), query.filter().statuses());
     }
 }
