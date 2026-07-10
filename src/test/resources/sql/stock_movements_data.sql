@@ -11,7 +11,7 @@ VALUES ('ABC1234', 'Fusca', 'Volkswagen', 1969, '2023-01-01 09:00:00', '2023-01-
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES ('44444444-4444-4444-4444-444444444444', '55555555-5555-5555-5555-555555555555', 'ABC1234', 'Troca de oleo',
-        'OPEN', '2023-01-01 09:00:00', '2023-01-01 09:00:00');
+        3, '2023-01-01 09:00:00', '2023-01-01 09:00:00');
 
 INSERT INTO stock_movements (id, material_id, quantity, type, date_created, date_updated)
 VALUES ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 10, 'ADDITION',

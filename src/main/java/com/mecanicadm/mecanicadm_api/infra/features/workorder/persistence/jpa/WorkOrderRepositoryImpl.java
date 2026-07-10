@@ -2,11 +2,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderBudget;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageQuery;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageResult;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.*;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification.WorkOrderSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
@@ -18,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -98,13 +95,20 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
     @Override
     public WorkOrderPageResult findAll(WorkOrderPageQuery query) {
         Specification<WorkOrderJpaEntity> spec = WorkOrderSpecificationBuilder.buildFilterSpecification(query.filter());
-        Sort sort = Sort.by(Sort.Direction.fromString(query.direction()), query.sortBy());
-        Pageable pageable = PageRequest.of(query.page(), query.size(), sort);
+
+        Pageable pageable = PageRequest.of(query.page(), query.size(), buildSort(query));
 
         var page = jpaRepository.findAll(spec, pageable);
         return new WorkOrderPageResult(page.map(WorkOrderJpaMapper::toDomainLight).getContent(),
                 page.getTotalElements()
         );
+    }
+
+    private Sort buildSort(WorkOrderPageQuery query) {
+        List<Sort.Order> orders = query.sorts().stream()
+                .map(c -> new Sort.Order(Sort.Direction.fromString(c.direction()), c.field()))
+                .toList();
+        return Sort.by(orders);
     }
 
     @Override

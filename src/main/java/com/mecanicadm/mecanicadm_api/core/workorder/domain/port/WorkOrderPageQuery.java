@@ -1,9 +1,10 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.domain.port;
 
+import java.util.List;
+
 public record WorkOrderPageQuery(
         WorkOrderFilter filter,
         int page,
         int size,
-        String sortBy,
-        String direction) {
+        List<SortCriteria> sorts) {
 }

@@ -34,7 +34,9 @@ public interface WorkOrderOpenApi {
     @ApiResponse(responseCode = "404", description = "Ordem de serviço não encontrada", content = @Content)
     ResponseEntity<WorkOrderResponse> findById(UUID id);
 
-    @Operation(summary = "Listar todas as ordens de serviço", description = "Retorna uma lista paginada de ordens de serviço")
+    @Operation(summary = "Listar ordens de serviço",
+            description = "Retorna uma lista paginada de ordens de serviço em aberto (Recebida, Diagnóstico, Aguardando Aprovação, Em Execução). " +
+                    "Por padrão ordena por prioridade de status e mais antigas primeiro. Use o parâmetro sort para ordenação personalizada.")
     @ApiResponse(responseCode = "200", description = "Lista de ordens de serviço")
     ResponseEntity<Page<WorkOrderResponse>> getAll(
             UUID clientId,

@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.SortCriteria;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderFilter;
@@ -171,13 +172,40 @@ class WorkOrderRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todas as work orders paginadas com filtro")
-    void shouldFindAllWorkOrdersPaginated() {
+    @DisplayName("Deve buscar todas as work orders paginadas com filtro e sort explícito")
+    void shouldFindAllWorkOrdersPaginatedWithExplicitSort() {
         WorkOrderPageQuery query = mock(WorkOrderPageQuery.class);
         WorkOrderFilter filter = mock(WorkOrderFilter.class);
         when(query.filter()).thenReturn(filter);
-        when(query.direction()).thenReturn("ASC");
-        when(query.sortBy()).thenReturn("executionStartAt");
+        when(query.sorts()).thenReturn(List.of(new SortCriteria("executionStartAt", "ASC")));
+        when(query.page()).thenReturn(0);
+        when(query.size()).thenReturn(10);
+
+        Page<WorkOrderJpaEntity> page = new PageImpl<>(List.of(entity));
+
+        try (MockedStatic<WorkOrderSpecificationBuilder> specBuilder = mockStatic(WorkOrderSpecificationBuilder.class);
+             MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
+
+            Specification<WorkOrderJpaEntity> spec = mock(Specification.class);
+            specBuilder.when(() -> WorkOrderSpecificationBuilder.buildFilterSpecification(filter)).thenReturn(spec);
+            when(jpaRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+            mapper.when(() -> WorkOrderJpaMapper.toDomainLight(entity)).thenReturn(domain);
+
+            WorkOrderPageResult result = repository.findAll(query);
+
+            assertEquals(1, result.items().size());
+            assertEquals(1, result.totalElements());
+            verify(jpaRepository).findAll(any(Specification.class), any(Pageable.class));
+        }
+    }
+
+    @Test
+    @DisplayName("Deve buscar todas as work orders paginadas com ordenação por status")
+    void shouldFindAllWorkOrdersPaginatedWithStatusSort() {
+        WorkOrderPageQuery query = mock(WorkOrderPageQuery.class);
+        WorkOrderFilter filter = mock(WorkOrderFilter.class);
+        when(query.filter()).thenReturn(filter);
+        when(query.sorts()).thenReturn(List.of(new SortCriteria("status", "ASC"), new SortCriteria("dateCreated", "ASC")));
         when(query.page()).thenReturn(0);
         when(query.size()).thenReturn(10);
 

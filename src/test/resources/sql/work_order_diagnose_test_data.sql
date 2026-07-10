@@ -10,9 +10,9 @@ VALUES ('660e8400-e29b-41d4-a716-446655440010', 'Revisao eletrica', 150.00, now(
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440020', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de Serviço com labor para diagnosticar', 'RECEIVED', now(), now()),
+        'Ordem de Serviço com labor para diagnosticar', 3, now(), now()),
        ('660e8400-e29b-41d4-a716-446655440021', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de Serviço sem labor para validar regra', 'RECEIVED', now(), now());
+        'Ordem de Serviço sem labor para validar regra', 3, now(), now());
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status)
 VALUES ('660e8400-e29b-41d4-a716-446655440030', '660e8400-e29b-41d4-a716-446655440020',
