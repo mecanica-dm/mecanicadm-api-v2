@@ -27,7 +27,7 @@ public class WorkOrderSpecificationBuilder {
             List<Predicate> predicates = new ArrayList<>();
             addClientId(predicates, filter, root, cb);
             addVehicleId(predicates, filter, root, cb);
-            addStatuses(predicates, filter, root, cb);
+            addStatuses(predicates, filter, root);
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
@@ -45,7 +45,7 @@ public class WorkOrderSpecificationBuilder {
         }
     }
 
-    private static void addStatuses(List<Predicate> predicates, WorkOrderFilter filter, Root<WorkOrderJpaEntity> root, CriteriaBuilder cb) {
+    private static void addStatuses(List<Predicate> predicates, WorkOrderFilter filter, Root<WorkOrderJpaEntity> root) {
         if (nonNull(filter.statuses()) && !filter.statuses().isEmpty()) {
             predicates.add(root.get("status").in(filter.statuses()));
         }

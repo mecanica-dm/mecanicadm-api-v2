@@ -11,4 +11,9 @@ public class ExcludeZeroFilter {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        return ExcludeZeroFilter.class.hashCode();
+    }
 }

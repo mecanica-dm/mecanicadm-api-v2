@@ -2,7 +2,6 @@ package com.mecanicadm.mecanicadm_api.core.workorder.usecase;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
-import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.SortCriteria;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageQuery;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageResult;
@@ -116,6 +115,42 @@ class GetAllWorkOrderUseCaseTest {
         var capturedQuery = pageQueryCaptor.getValue();
         assertNull(capturedQuery.filter().clientId());
         assertNull(capturedQuery.filter().licensePlate());
+    }
+
+    @Test
+    @DisplayName("Deve aplicar sort explícito quando apenas sortBy é nulo mas direction não")
+    void shouldApplyExplicitSortWhenOnlySortByIsNull() {
+        GetAllWorkOrdersQuery query = new GetAllWorkOrdersQuery(null, null, 0, 10, null, "DESC");
+
+        WorkOrderPageResult expectedResult = new WorkOrderPageResult(List.of(mock(WorkOrder.class)), 1L);
+        when(gateway.findAll(any())).thenReturn(expectedResult);
+
+        useCase.execute(query);
+
+        verify(gateway).findAll(pageQueryCaptor.capture());
+
+        var capturedQuery = pageQueryCaptor.getValue();
+        assertEquals(1, capturedQuery.sorts().size());
+        assertEquals(null, capturedQuery.sorts().get(0).field());
+        assertEquals("DESC", capturedQuery.sorts().get(0).direction());
+    }
+
+    @Test
+    @DisplayName("Deve aplicar sort explícito quando apenas direction é nulo mas sortBy não")
+    void shouldApplyExplicitSortWhenOnlyDirectionIsNull() {
+        GetAllWorkOrdersQuery query = new GetAllWorkOrdersQuery(null, null, 0, 10, "dateCreated", null);
+
+        WorkOrderPageResult expectedResult = new WorkOrderPageResult(List.of(mock(WorkOrder.class)), 1L);
+        when(gateway.findAll(any())).thenReturn(expectedResult);
+
+        useCase.execute(query);
+
+        verify(gateway).findAll(pageQueryCaptor.capture());
+
+        var capturedQuery = pageQueryCaptor.getValue();
+        assertEquals(1, capturedQuery.sorts().size());
+        assertEquals("dateCreated", capturedQuery.sorts().get(0).field());
+        assertEquals(null, capturedQuery.sorts().get(0).direction());
     }
 
     private void assertFilter(WorkOrderPageQuery query, UUID clientId, String licensePlate) {
