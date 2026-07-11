@@ -67,7 +67,7 @@ class WorkOrderControllerTest {
         UUID workOrderId = UUID.randomUUID();
         when(createWorkOrderUseCase.execute(any())).thenReturn(workOrderId);
 
-        CreateWorkOrderRequest createRequest = new CreateWorkOrderRequest(UUID.randomUUID(), "ABC-1234", "Troca de oleo");
+        CreateWorkOrderRequest createRequest = new CreateWorkOrderRequest(UUID.randomUUID(), "ABC-1234", "Troca de oleo", null, null);
         var response = controller.create(createRequest);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

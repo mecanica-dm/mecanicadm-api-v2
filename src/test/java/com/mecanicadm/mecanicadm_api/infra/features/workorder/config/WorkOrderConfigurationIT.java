@@ -10,6 +10,8 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.AddLaborToWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.AddMaterialToWorkOrderUseCase;
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +47,10 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     private StockMovementsGateway stockMovementsGateway;
     @MockitoBean
     private PdfGenerator pdfGenerator;
+    @MockitoBean
+    private AddLaborToWorkOrderUseCase addLaborToWorkOrderUseCase;
+    @MockitoBean
+    private AddMaterialToWorkOrderUseCase addMaterialToWorkOrderUseCase;
 
     @Autowired
     private WorkOrderConfiguration workOrderConfiguration;
@@ -58,7 +64,7 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean CreateWorkOrderUseCase")
     void shouldCreateCreateWorkOrderUseCase() {
-        assertNotNull(workOrderConfiguration.createWorkOrderUseCase(workOrderGateway));
+        assertNotNull(workOrderConfiguration.createWorkOrderUseCase(workOrderGateway, addLaborToWorkOrderUseCase, addMaterialToWorkOrderUseCase));
     }
 
     @Test

@@ -44,8 +44,10 @@ import org.springframework.context.annotation.Configuration;
 public class WorkOrderConfiguration {
 
     @Bean
-    public CreateWorkOrderUseCase createWorkOrderUseCase(WorkOrderGateway gateway) {
-        return new CreateWorkOrderUseCase(gateway);
+    public CreateWorkOrderUseCase createWorkOrderUseCase(WorkOrderGateway gateway,
+                                                          AddLaborToWorkOrderUseCase addLaborToWorkOrderUseCase,
+                                                          AddMaterialToWorkOrderUseCase addMaterialToWorkOrderUseCase) {
+        return new CreateWorkOrderUseCase(gateway, addLaborToWorkOrderUseCase, addMaterialToWorkOrderUseCase);
     }
 
     @Bean

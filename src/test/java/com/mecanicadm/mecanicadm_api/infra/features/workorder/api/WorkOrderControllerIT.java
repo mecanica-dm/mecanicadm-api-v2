@@ -67,7 +67,7 @@ class WorkOrderControllerIT extends AbstractIntegrationTest {
         UUID workOrderId = UUID.randomUUID();
         when(createWorkOrderUseCase.execute(any())).thenReturn(workOrderId);
 
-        CreateWorkOrderRequest request = new CreateWorkOrderRequest(UUID.randomUUID(), "ABC-1234", "Troca de oleo");
+        CreateWorkOrderRequest request = new CreateWorkOrderRequest(UUID.randomUUID(), "ABC-1234", "Troca de oleo", null, null);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -84,7 +84,7 @@ class WorkOrderControllerIT extends AbstractIntegrationTest {
     @WithMockUser
     @DisplayName("Deve retornar 400 ao criar work order com dados invalidos")
     void shouldReturn400WhenCreateWorkOrderIsInvalid() {
-        CreateWorkOrderRequest invalidRequest = new CreateWorkOrderRequest(null, "", "");
+        CreateWorkOrderRequest invalidRequest = new CreateWorkOrderRequest(null, "", "", null, null);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())

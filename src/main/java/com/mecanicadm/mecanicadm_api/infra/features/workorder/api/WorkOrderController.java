@@ -1,7 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.*;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.CreateWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.SoftDeleteWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.UpdateWorkOrderCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.query.GetWorkOrderByIdQuery;
@@ -50,8 +49,7 @@ public class WorkOrderController implements WorkOrderOpenApi {
     @Override
     @PostMapping
     public ResponseEntity<UUID> create(@Valid @RequestBody CreateWorkOrderRequest request) {
-        UUID workOrderId = createWorkOrderUseCase.execute(
-                new CreateWorkOrderCommand(request.clientId(), request.vehicleId(), request.description()));
+        UUID workOrderId = createWorkOrderUseCase.execute(request.toCommand());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(workOrderId).toUri();
         return ResponseEntity.created(uri).body(workOrderId);

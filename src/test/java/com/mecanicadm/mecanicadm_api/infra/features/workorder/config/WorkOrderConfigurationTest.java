@@ -46,6 +46,10 @@ class WorkOrderConfigurationTest {
     private StockMovementsGateway stockMovementsGateway;
     @Mock
     private PdfGenerator pdfGenerator;
+    @Mock
+    private AddLaborToWorkOrderUseCase addLaborToWorkOrderUseCase;
+    @Mock
+    private AddMaterialToWorkOrderUseCase addMaterialToWorkOrderUseCase;
 
     private WorkOrderConfiguration configuration;
 
@@ -57,7 +61,7 @@ class WorkOrderConfigurationTest {
     @Test
     @DisplayName("Deve criar bean CreateWorkOrderUseCase")
     void shouldCreateCreateWorkOrderUseCase() {
-        assertNotNull(configuration.createWorkOrderUseCase(workOrderGateway));
+        assertNotNull(configuration.createWorkOrderUseCase(workOrderGateway, addLaborToWorkOrderUseCase, addMaterialToWorkOrderUseCase));
     }
 
     @Test
