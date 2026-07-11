@@ -12,7 +12,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
 
-COPY --from=builder /app/target/mecanica-dm-api-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /app/target/*.jar /app/app.jar
 
 RUN chown -R appuser:appgroup /app
 
