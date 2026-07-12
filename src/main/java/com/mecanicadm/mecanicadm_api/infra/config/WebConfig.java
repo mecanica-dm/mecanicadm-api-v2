@@ -25,13 +25,14 @@ public class WebConfig {
                 HttpServletResponse httpResponse = (HttpServletResponse) response;
                 String path = ((jakarta.servlet.http.HttpServletRequest) request).getRequestURI();
 
+                httpResponse.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+
                 if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
                     httpResponse.setHeader("Cache-Control", "public, max-age=3600");
                 } else {
                     httpResponse.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
                     httpResponse.setHeader("Pragma", "no-cache");
                     httpResponse.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-                    httpResponse.setHeader("Cross-Origin-Resource-Policy", "same-origin");
                     httpResponse.setHeader("Permissions-Policy", "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()");
                 }
 

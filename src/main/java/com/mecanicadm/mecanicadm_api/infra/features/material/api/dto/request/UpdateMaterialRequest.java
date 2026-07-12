@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mecanicadm.mecanicadm_api.core.material.domain.enums.MaterialType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -13,10 +14,13 @@ public record UpdateMaterialRequest(
         UUID id,
 
         @NotNull(message = "{validation.material.name.required}")
+        @Size(max = 255, message = "{validation.field.size.max}")
         String name,
 
+        @Size(max = 255, message = "{validation.field.size.max}")
         String brand,
 
+        @Size(max = 1000, message = "{validation.field.size.max}")
         String description,
 
         @NotNull(message = "{validation.material.price.required}")
