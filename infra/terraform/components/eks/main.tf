@@ -56,7 +56,7 @@ resource "aws_eks_node_group" "eks_node_group" {
     max_unavailable = var.max_unavailable
   }
 
-  instance_types = ["t3.small"]
+  instance_types = ["t3.micro"]
   capacity_type  = "ON_DEMAND"
 
   # Para AWS LABS não funciona

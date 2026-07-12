@@ -52,26 +52,7 @@ resource "aws_subnet" "private" {
   }
 }
 
-# Endereço IP público estático necessário para o NAT Gateway processar tráfego de saída
-resource "aws_eip" "nat" {
-  domain = "vpc"
 
-  tags = {
-    Name = "${var.environment}-nat-eip"
-  }
-}
-
-# Permite que os recursos que estão nas subnets privadas consigam acessar a internet, mas impede que a internet inicie uma conexão direta com nossos recursos
-resource "aws_nat_gateway" "main" {
-  # O ID do Elastic IP (EIP) que será a face pública deste gateway na internet
-  allocation_id = aws_eip.nat.id
-  # O NAT Gateway DEVE estar em uma subnet pública para ter acesso ao Internet Gateway
-  subnet_id = aws_subnet.public[0].id
-
-  tags = {
-    Name = "${var.environment}-nat-gateway"
-  }
-}
 
 resource "aws_route_table" "public" {
   # Atua como a tabela de roteamento principal para permitir acesso externo direto
@@ -89,9 +70,8 @@ resource "aws_route_table" "private" {
   # Controla o fluxo de saída dos recursos internos, garantindo que passem pelo NAT Gateway por segurança
   vpc_id = aws_vpc.main.id
   route {
-    # Direciona o tráfego de saída da rede privada para o NAT Gateway
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.main.id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
   }
   tags = {
     Name = "${var.environment}-private-rt"
