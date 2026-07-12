@@ -2,6 +2,8 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ProcessBudgetDecisionByTokenUseCase;
+import com.mecanicadm.mecanicadm_api.infra.config.SecurityHeadersFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,29 +22,34 @@ class BudgetDecisionPublicControllerTest {
     @Mock
     private ProcessBudgetDecisionByTokenUseCase processBudgetDecisionByTokenUseCase;
 
+    @Mock
+    private HttpServletRequest httpRequest;
+
     private BudgetDecisionPublicController controller;
 
     @BeforeEach
     void setUp() {
         controller = new BudgetDecisionPublicController(processBudgetDecisionByTokenUseCase);
+        when(httpRequest.getAttribute(SecurityHeadersFilter.CSP_NONCE_ATTRIBUTE)).thenReturn("test-nonce");
     }
 
     @Test
     @DisplayName("Deve retornar formulario de aprovacao com token valido")
     void shouldReturnFormPageForApproval() {
-        var response = controller.form("valid-token", "APPROVED");
+        var response = controller.form("valid-token", "APPROVED", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(MediaType.TEXT_HTML, response.getHeaders().getContentType());
         assertTrue(response.getBody().contains("Aprovar Orçamento"));
         assertTrue(response.getBody().contains("valid-token"));
+        assertTrue(response.getBody().contains("nonce=\"test-nonce\""));
         verify(processBudgetDecisionByTokenUseCase).validateToken("valid-token");
     }
 
     @Test
     @DisplayName("Deve retornar formulario de rejeicao com required")
     void shouldReturnFormPageForRejection() {
-        var response = controller.form("valid-token", "REJECTED");
+        var response = controller.form("valid-token", "REJECTED", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Rejeitar Orçamento"));
@@ -52,7 +59,7 @@ class BudgetDecisionPublicControllerTest {
     @Test
     @DisplayName("Deve retornar formulario de solicitacao de alteracoes")
     void shouldReturnFormPageForChangesRequested() {
-        var response = controller.form("valid-token", "CHANGES_REQUESTED");
+        var response = controller.form("valid-token", "CHANGES_REQUESTED", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Solicitar Alterações"));
@@ -62,7 +69,7 @@ class BudgetDecisionPublicControllerTest {
     @Test
     @DisplayName("Deve retornar formulario para acao desconhecida")
     void shouldReturnFormPageForUnknownAction() {
-        var response = controller.form("valid-token", "OTHER");
+        var response = controller.form("valid-token", "OTHER", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Resposta ao Orçamento"));
@@ -73,7 +80,7 @@ class BudgetDecisionPublicControllerTest {
     void shouldReturnErrorPageWhenTokenAlreadyUsed() {
         doThrow(WorkOrderExceptions.BudgetTokenInvalid.of("já utilizado")).when(processBudgetDecisionByTokenUseCase).validateToken("used-token");
 
-        var response = controller.form("used-token", "APPROVED");
+        var response = controller.form("used-token", "APPROVED", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Link já utilizado"));
@@ -84,7 +91,7 @@ class BudgetDecisionPublicControllerTest {
     void shouldReturnErrorPageWhenTokenNotFound() {
         doThrow(new WorkOrderExceptions.BudgetTokenNotFound()).when(processBudgetDecisionByTokenUseCase).validateToken("invalid-token");
 
-        var response = controller.form("invalid-token", "APPROVED");
+        var response = controller.form("invalid-token", "APPROVED", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Link inválido"));
@@ -93,7 +100,7 @@ class BudgetDecisionPublicControllerTest {
     @Test
     @DisplayName("Deve processar decisao com sucesso")
     void shouldProcessDecisionSuccessfully() {
-        var response = controller.decide("valid-token", "APPROVED", null);
+        var response = controller.decide("valid-token", "APPROVED", null, httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Orçamento aprovado com sucesso!"));
@@ -103,7 +110,7 @@ class BudgetDecisionPublicControllerTest {
     @Test
     @DisplayName("Deve processar rejeicao com observacao")
     void shouldProcessRejectionWithObservation() {
-        var response = controller.decide("valid-token", "REJECTED", "Valor muito alto");
+        var response = controller.decide("valid-token", "REJECTED", "Valor muito alto", httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Orçamento rejeitado"));
@@ -115,7 +122,7 @@ class BudgetDecisionPublicControllerTest {
     void shouldReturnErrorPageWhenDecideWithInvalidToken() {
         doThrow(WorkOrderExceptions.BudgetTokenInvalid.of("já utilizado")).when(processBudgetDecisionByTokenUseCase).execute(any());
 
-        var response = controller.decide("used-token", "APPROVED", null);
+        var response = controller.decide("used-token", "APPROVED", null, httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Link já utilizado"));
@@ -126,7 +133,7 @@ class BudgetDecisionPublicControllerTest {
     void shouldReturnErrorPageWhenDecideWithNotFoundToken() {
         doThrow(new WorkOrderExceptions.BudgetTokenNotFound()).when(processBudgetDecisionByTokenUseCase).execute(any());
 
-        var response = controller.decide("nonexistent-token", "APPROVED", null);
+        var response = controller.decide("nonexistent-token", "APPROVED", null, httpRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().contains("Link inválido"));

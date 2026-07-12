@@ -31,7 +31,7 @@ public final class BudgetDecisionPageRenderer {
     private BudgetDecisionPageRenderer() {
     }
 
-    public static String formPage(String title, String token, String action, String label, boolean required) {
+    public static String formPage(String title, String token, String action, String label, boolean required, String nonce) {
         return """
                 <!DOCTYPE html>
                 <html lang="pt-BR">
@@ -39,7 +39,7 @@ public final class BudgetDecisionPageRenderer {
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>%s</title>
-                    <style>
+                    <style nonce="%s">
                         %s
                         h1 { color: #333; }
                     </style>
@@ -60,10 +60,10 @@ public final class BudgetDecisionPageRenderer {
                     </div>
                 </body>
                 </html>
-                """.formatted(title, BASE_STYLE, title, token, action, label, required ? "required" : "", FOOTER);
+                """.formatted(title, nonce, BASE_STYLE, title, token, action, label, required ? "required" : "", FOOTER);
     }
 
-    public static String successPage(String action) {
+    public static String successPage(String action, String nonce) {
         String message = switch (action) {
             case "APPROVED" -> "Orçamento aprovado com sucesso!";
             case "REJECTED" -> "Orçamento rejeitado. Obrigado pela resposta.";
@@ -78,7 +78,7 @@ public final class BudgetDecisionPageRenderer {
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>Resposta Registrada</title>
-                    <style>
+                    <style nonce="%s">
                         %s
                         h1 { color: #2e7d32; }
                         .icon { color: #2e7d32; }
@@ -93,10 +93,10 @@ public final class BudgetDecisionPageRenderer {
                     </div>
                 </body>
                 </html>
-                """.formatted(BASE_STYLE, message, FOOTER);
+                """.formatted(nonce, BASE_STYLE, message, FOOTER);
     }
 
-    public static String errorPage(String title, String message) {
+    public static String errorPage(String title, String message, String nonce) {
         return """
                 <!DOCTYPE html>
                 <html lang="pt-BR">
@@ -104,7 +104,7 @@ public final class BudgetDecisionPageRenderer {
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>%s</title>
-                    <style>
+                    <style nonce="%s">
                         %s
                         h1 { color: #c62828; }
                         .icon { color: #c62828; }
@@ -119,6 +119,6 @@ public final class BudgetDecisionPageRenderer {
                     </div>
                 </body>
                 </html>
-                """.formatted(title, BASE_STYLE, title, message, FOOTER);
+                """.formatted(title, nonce, BASE_STYLE, title, message, FOOTER);
     }
 }

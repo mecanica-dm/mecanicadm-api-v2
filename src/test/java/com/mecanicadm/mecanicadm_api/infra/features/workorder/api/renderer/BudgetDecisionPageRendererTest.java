@@ -12,10 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BudgetDecisionPageRendererTest {
 
+    private static final String TEST_NONCE = "test-nonce-123";
+
     @Test
     @DisplayName("Deve renderizar pagina de formulario para aprovacao")
     void shouldRenderFormPageForApproval() {
-        String html = BudgetDecisionPageRenderer.formPage("Aprovar Orçamento", "token-123", "APPROVED", "Observações (opcional):", false);
+        String html = BudgetDecisionPageRenderer.formPage("Aprovar Orçamento", "token-123", "APPROVED", "Observações (opcional):", false, TEST_NONCE);
 
         assertNotNull(html);
         assertTrue(html.contains("<title>Aprovar Orçamento</title>"));
@@ -24,12 +26,13 @@ class BudgetDecisionPageRendererTest {
         assertTrue(html.contains("Observações (opcional):"));
         assertFalse(html.contains("required"));
         assertTrue(html.contains("MecânicaDM"));
+        assertTrue(html.contains("nonce=\"" + TEST_NONCE + "\""));
     }
 
     @Test
     @DisplayName("Deve renderizar pagina de formulario para rejeicao com required")
     void shouldRenderFormPageForRejectionWithRequired() {
-        String html = BudgetDecisionPageRenderer.formPage("Rejeitar Orçamento", "token-456", "REJECTED", "Informe o motivo da rejeição:", true);
+        String html = BudgetDecisionPageRenderer.formPage("Rejeitar Orçamento", "token-456", "REJECTED", "Informe o motivo da rejeição:", true, TEST_NONCE);
 
         assertNotNull(html);
         assertTrue(html.contains("<title>Rejeitar Orçamento</title>"));
@@ -37,12 +40,13 @@ class BudgetDecisionPageRendererTest {
         assertTrue(html.contains("value=\"REJECTED\""));
         assertTrue(html.contains("Informe o motivo da rejeição:"));
         assertTrue(html.contains("required"));
+        assertTrue(html.contains("nonce=\"" + TEST_NONCE + "\""));
     }
 
     @Test
     @DisplayName("Deve renderizar pagina de formulario para solicitacao de alteracoes")
     void shouldRenderFormPageForChangesRequested() {
-        String html = BudgetDecisionPageRenderer.formPage("Solicitar Alterações", "token-789", "CHANGES_REQUESTED", "Descreva as alterações solicitadas:", true);
+        String html = BudgetDecisionPageRenderer.formPage("Solicitar Alterações", "token-789", "CHANGES_REQUESTED", "Descreva as alterações solicitadas:", true, TEST_NONCE);
 
         assertNotNull(html);
         assertTrue(html.contains("<title>Solicitar Alterações</title>"));
@@ -50,18 +54,20 @@ class BudgetDecisionPageRendererTest {
         assertTrue(html.contains("value=\"CHANGES_REQUESTED\""));
         assertTrue(html.contains("Descreva as alterações solicitadas:"));
         assertTrue(html.contains("required"));
+        assertTrue(html.contains("nonce=\"" + TEST_NONCE + "\""));
     }
 
     @ParameterizedTest
     @MethodSource("successPageProvider")
     @DisplayName("Deve renderizar pagina de sucesso para cada acao")
     void shouldRenderSuccessPageForAction(String action, String expectedMessage) {
-        String html = BudgetDecisionPageRenderer.successPage(action);
+        String html = BudgetDecisionPageRenderer.successPage(action, TEST_NONCE);
 
         assertNotNull(html);
         assertTrue(html.contains("Resposta Registrada"));
         assertTrue(html.contains(expectedMessage));
         assertTrue(html.contains("MecânicaDM"));
+        assertTrue(html.contains("nonce=\"" + TEST_NONCE + "\""));
     }
 
     static Stream<Arguments> successPageProvider() {
@@ -75,20 +81,22 @@ class BudgetDecisionPageRendererTest {
     @Test
     @DisplayName("Deve renderizar pagina de sucesso para acao desconhecida")
     void shouldRenderSuccessPageForUnknownAction() {
-        String html = BudgetDecisionPageRenderer.successPage("UNKNOWN");
+        String html = BudgetDecisionPageRenderer.successPage("UNKNOWN", TEST_NONCE);
 
         assertNotNull(html);
         assertTrue(html.contains("Resposta registrada com sucesso!"));
+        assertTrue(html.contains("nonce=\"" + TEST_NONCE + "\""));
     }
 
     @Test
     @DisplayName("Deve renderizar pagina de erro")
     void shouldRenderErrorPage() {
-        String html = BudgetDecisionPageRenderer.errorPage("Link já utilizado", "Este link já foi utilizado.");
+        String html = BudgetDecisionPageRenderer.errorPage("Link já utilizado", "Este link já foi utilizado.", TEST_NONCE);
 
         assertNotNull(html);
         assertTrue(html.contains("<title>Link já utilizado</title>"));
         assertTrue(html.contains("Este link já foi utilizado."));
         assertTrue(html.contains("MecânicaDM"));
+        assertTrue(html.contains("nonce=\"" + TEST_NONCE + "\""));
     }
 }

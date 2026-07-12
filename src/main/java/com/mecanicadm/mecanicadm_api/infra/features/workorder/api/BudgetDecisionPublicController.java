@@ -3,8 +3,10 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 import com.mecanicadm.mecanicadm_api.core.workorder.exception.WorkOrderExceptions;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ProcessBudgetDecisionByTokenUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.ProcessBudgetDecisionByTokenCommand;
+import com.mecanicadm.mecanicadm_api.infra.config.SecurityHeadersFilter;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.BudgetDecisionPublicOpenApi;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.renderer.BudgetDecisionPageRenderer;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,17 +26,19 @@ public class BudgetDecisionPublicController implements BudgetDecisionPublicOpenA
     @Override
     @GetMapping("/{token}/form")
     public ResponseEntity<String> form(@PathVariable String token,
-                                       @RequestParam String action) {
+                                       @RequestParam String action,
+                                       HttpServletRequest request) {
+        String nonce = (String) request.getAttribute(SecurityHeadersFilter.CSP_NONCE_ATTRIBUTE);
         try {
             processBudgetDecisionByTokenUseCase.validateToken(token);
         } catch (WorkOrderExceptions.BudgetTokenInvalid e) {
             return htmlResponse(BudgetDecisionPageRenderer.errorPage(
                     "Link já utilizado",
-                    "Este link de resposta ao orçamento já foi utilizado. Caso precise alterar sua resposta, solicite um novo link à oficina."));
+                    "Este link de resposta ao orçamento já foi utilizado. Caso precise alterar sua resposta, solicite um novo link à oficina.", nonce));
         } catch (WorkOrderExceptions.BudgetTokenNotFound e) {
             return htmlResponse(BudgetDecisionPageRenderer.errorPage(
                     "Link inválido",
-                    "O link de resposta ao orçamento não foi encontrado. Verifique o link no e-mail e tente novamente."));
+                    "O link de resposta ao orçamento não foi encontrado. Verifique o link no e-mail e tente novamente.", nonce));
         }
 
         String title = switch (action) {
@@ -53,28 +57,30 @@ public class BudgetDecisionPublicController implements BudgetDecisionPublicOpenA
 
         boolean required = !ACTION_APPROVED.equals(action);
 
-        return htmlResponse(BudgetDecisionPageRenderer.formPage(title, token, action, label, required));
+        return htmlResponse(BudgetDecisionPageRenderer.formPage(title, token, action, label, required, nonce));
     }
 
     @Override
     @PostMapping("/{token}")
     public ResponseEntity<String> decide(@PathVariable String token,
                                          @RequestParam String action,
-                                         @RequestParam(required = false) String observation) {
+                                         @RequestParam(required = false) String observation,
+                                         HttpServletRequest request) {
+        String nonce = (String) request.getAttribute(SecurityHeadersFilter.CSP_NONCE_ATTRIBUTE);
         try {
             processBudgetDecisionByTokenUseCase.execute(
                     new ProcessBudgetDecisionByTokenCommand(token, action, observation));
         } catch (WorkOrderExceptions.BudgetTokenInvalid e) {
             return htmlResponse(BudgetDecisionPageRenderer.errorPage(
                     "Link já utilizado",
-                    "Este link de resposta ao orçamento já foi utilizado. Caso precise alterar sua resposta, solicite um novo link à oficina."));
+                    "Este link de resposta ao orçamento já foi utilizado. Caso precise alterar sua resposta, solicite um novo link à oficina.", nonce));
         } catch (WorkOrderExceptions.BudgetTokenNotFound e) {
             return htmlResponse(BudgetDecisionPageRenderer.errorPage(
                     "Link inválido",
-                    "O link de resposta ao orçamento não foi encontrado. Verifique o link no e-mail e tente novamente."));
+                    "O link de resposta ao orçamento não foi encontrado. Verifique o link no e-mail e tente novamente.", nonce));
         }
 
-        return htmlResponse(BudgetDecisionPageRenderer.successPage(action));
+        return htmlResponse(BudgetDecisionPageRenderer.successPage(action, nonce));
     }
 
     private ResponseEntity<String> htmlResponse(String html) {

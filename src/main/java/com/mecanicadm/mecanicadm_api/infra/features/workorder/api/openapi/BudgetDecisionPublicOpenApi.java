@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 
 @Tag(name = "Decisão de Orçamento (Público)", description = "Endpoints públicos para resposta do cliente ao orçamento via link/token")
@@ -16,7 +17,8 @@ public interface BudgetDecisionPublicOpenApi {
     @ApiResponse(responseCode = "404", description = "Token não encontrado", content = @Content)
     ResponseEntity<String> form(
             @Parameter(description = "Token de identificação do orçamento") String token,
-            @Parameter(description = "Ação desejada: APPROVED, REJECTED ou CHANGES_REQUESTED") String action);
+            @Parameter(description = "Ação desejada: APPROVED, REJECTED ou CHANGES_REQUESTED") String action,
+            HttpServletRequest request);
 
     @Operation(summary = "Processar decisão do orçamento",
             description = "Registra a decisão do cliente (aprovação, rejeição ou solicitação de alterações) sobre o orçamento")
@@ -25,5 +27,6 @@ public interface BudgetDecisionPublicOpenApi {
     ResponseEntity<String> decide(
             @Parameter(description = "Token de identificação do orçamento") String token,
             @Parameter(description = "Ação desejada: APPROVED, REJECTED ou CHANGES_REQUESTED") String action,
-            @Parameter(description = "Observação do cliente (opcional para aprovação, obrigatória para rejeição/alterações)") String observation);
+            @Parameter(description = "Observação do cliente (opcional para aprovação, obrigatória para rejeição/alterações)") String observation,
+            HttpServletRequest request);
 }
