@@ -87,7 +87,7 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 
 ### Infraestrutura provisionada
 
-![Infraestrutura provisionada](docs/assets/infra-provisionada.png)
+![Infraestrutura provisionada](docs/assets/infra-provisionada_02.png)
 
 * VPC: Virtual Private Cloud, um ambiente seguro e isolado onde podemos rodar os nossos recursos.  
 * Internet Gateway: Necessário para comunicação da VPC com a internet.
