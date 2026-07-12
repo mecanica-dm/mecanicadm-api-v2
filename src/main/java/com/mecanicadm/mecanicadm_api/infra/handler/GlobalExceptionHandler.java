@@ -15,9 +15,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -120,6 +123,33 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put(ERROR_FIELD_NAME, message);
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(response);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNoHandlerFound(NoHandlerFoundException ex, Locale locale) {
+        LOGGER.warn("Rota nao encontrada: {} {}", ex.getHttpMethod(), ex.getRequestURL());
+        String message = messageSource.getMessage("error.route.not.found", null, "Recurso não encontrado.", locale);
+        Map<String, String> response = new HashMap<>();
+        response.put(ERROR_FIELD_NAME, message);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, Locale locale) {
+        assert ex.getRequiredType() != null;
+        LOGGER.warn("Parametro invalido: {} = {} (esperado: {})", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName());
+        Map<String, String> errors = new HashMap<>();
+        String errorMessage = messageSource.getMessage("error.parameter.invalid", null, "Parâmetro inválido.", locale);
+        errors.put(ex.getName(), errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex, Locale locale) {
+        String message = messageSource.getMessage("error.method.not.supported", null, "Método HTTP não suportado.", locale);
+        Map<String, String> response = new HashMap<>();
+        response.put(ERROR_FIELD_NAME, message);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
     }
 
     @ExceptionHandler(Exception.class)
