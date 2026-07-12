@@ -7,6 +7,7 @@ import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.*;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification.WorkOrderSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
+import com.mecanicadm.mecanicadm_api.shared.validation.SortValidator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,12 +18,15 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static java.util.Objects.isNull;
 
 @Repository
 public class WorkOrderRepositoryImpl implements WorkOrderGateway {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("status", "description", "dateCreated", "updatedAt");
 
     private final WorkOrderJpaRepository jpaRepository;
     private final WorkOrderLaborItemJpaRepository laborItemJpaRepository;
@@ -111,10 +115,10 @@ public class WorkOrderRepositoryImpl implements WorkOrderGateway {
     }
 
     private Sort buildSort(WorkOrderPageQuery query) {
-        List<Sort.Order> orders = query.sorts().stream()
-                .map(c -> new Sort.Order(Sort.Direction.fromString(c.direction()), c.field()))
+        var sortFields = query.sorts().stream()
+                .map(c -> new SortValidator.SortField(c.field(), c.direction()))
                 .toList();
-        return Sort.by(orders);
+        return SortValidator.safeSort(sortFields, ALLOWED_SORT_FIELDS, "dateCreated");
     }
 
     @Override

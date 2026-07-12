@@ -7,6 +7,7 @@ import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborPageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.entity.LaborJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.labor.persistence.jpa.specification.LaborSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
+import com.mecanicadm.mecanicadm_api.shared.validation.SortValidator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,8 @@ import static java.util.Objects.isNull;
 
 @Repository
 public class LaborRepositoryImpl implements LaborGateway {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("name", "price", "dateCreated");
 
     private final LaborJpaRepository jpaRepository;
 
@@ -56,7 +59,7 @@ public class LaborRepositoryImpl implements LaborGateway {
     @Override
     public LaborPageResult findAll(LaborPageQuery query) {
         Specification<LaborJpaEntity> spec = LaborSpecificationBuilder.buildFilterSpecification(query.filter());
-        Sort sort = Sort.by(Sort.Direction.fromString(query.direction()), query.sortBy());
+        Sort sort = SortValidator.safeSort(query.sortBy(), query.direction(), ALLOWED_SORT_FIELDS, "name");
         Pageable pageable = PageRequest.of(query.page(), query.size(), sort);
         var page = jpaRepository.findAll(spec, pageable);
 

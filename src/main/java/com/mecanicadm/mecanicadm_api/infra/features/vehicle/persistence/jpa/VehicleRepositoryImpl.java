@@ -7,6 +7,7 @@ import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehiclePageResult;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.persistence.entity.VehicleJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.vehicle.persistence.jpa.specification.VehicleSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
+import com.mecanicadm.mecanicadm_api.shared.validation.SortValidator;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,11 +15,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Objects.isNull;
 
 @Repository
 public class VehicleRepositoryImpl implements VehicleGateway {
+
+    private static final Set<String> ALLOWED_SORT_FIELDS = Set.of("licensePlate", "model", "brand", "modelYear", "dateCreated");
 
     private final VehicleJpaRepository jpaRepository;
 
@@ -59,7 +63,7 @@ public class VehicleRepositoryImpl implements VehicleGateway {
     @Override
     public VehiclePageResult findAll(VehiclePageQuery query) {
         Specification<VehicleJpaEntity> spec = VehicleSpecificationBuilder.buildFilterSpecification(query.filter());
-        Sort sort = Sort.by(Sort.Direction.fromString(query.direction()), query.sortBy());
+        Sort sort = SortValidator.safeSort(query.sortBy(), query.direction(), ALLOWED_SORT_FIELDS, "licensePlate");
         Pageable pageable = PageRequest.of(query.page(), query.size(), sort);
 
         var page = jpaRepository.findAll(spec, pageable);

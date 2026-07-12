@@ -26,6 +26,7 @@ public class WebConfig {
                 String path = ((jakarta.servlet.http.HttpServletRequest) request).getRequestURI();
 
                 httpResponse.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+                httpResponse.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'");
 
                 if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
                     httpResponse.setHeader("Cache-Control", "public, max-age=3600");
