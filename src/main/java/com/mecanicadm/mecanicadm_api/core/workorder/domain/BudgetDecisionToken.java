@@ -1,6 +1,7 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.domain;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 public class BudgetDecisionToken {
@@ -25,7 +26,7 @@ public class BudgetDecisionToken {
                 workOrderId,
                 UUID.randomUUID().toString(),
                 false,
-                LocalDateTime.now()
+                LocalDateTime.now(ZoneOffset.UTC)
         );
     }
 
@@ -38,7 +39,7 @@ public class BudgetDecisionToken {
     }
 
     public boolean isExpired() {
-        return createdAt.plusHours(24).isBefore(LocalDateTime.now());
+        return createdAt.plusHours(24).isBefore(LocalDateTime.now(ZoneOffset.UTC));
     }
 
     public boolean isValid() {

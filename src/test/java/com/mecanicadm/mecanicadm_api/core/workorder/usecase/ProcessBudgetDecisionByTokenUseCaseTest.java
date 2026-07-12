@@ -153,4 +153,52 @@ class ProcessBudgetDecisionByTokenUseCaseTest {
         assertEquals("expirado", ex.getArgs()[0]);
         verify(decideWorkOrderBudgetUseCase, never()).execute(any());
     }
+
+    @Test
+    @DisplayName("Deve validar token valido com sucesso")
+    void shouldValidateValidTokenSuccessfully() {
+        UUID workOrderId = UUID.randomUUID();
+        BudgetDecisionToken token = BudgetDecisionToken.restore(
+                UUID.randomUUID(), workOrderId, "valid-token", false, LocalDateTime.now());
+
+        when(tokenGateway.findByToken("valid-token")).thenReturn(Optional.of(token));
+
+        assertDoesNotThrow(() -> useCase.validateToken("valid-token"));
+        verify(tokenGateway).findByToken("valid-token");
+    }
+
+    @Test
+    @DisplayName("Deve lancar excecao ao validar token nao encontrado")
+    void shouldThrowExceptionWhenValidateTokenNotFound() {
+        when(tokenGateway.findByToken("missing-token")).thenReturn(Optional.empty());
+
+        assertThrows(WorkOrderExceptions.BudgetTokenNotFound.class,
+                () -> useCase.validateToken("missing-token"));
+    }
+
+    @Test
+    @DisplayName("Deve lancar excecao ao validar token ja utilizado")
+    void shouldThrowExceptionWhenValidateTokenAlreadyUsed() {
+        BudgetDecisionToken token = BudgetDecisionToken.restore(
+                UUID.randomUUID(), UUID.randomUUID(), "used-token", true, LocalDateTime.now().minusHours(1));
+
+        when(tokenGateway.findByToken("used-token")).thenReturn(Optional.of(token));
+
+        WorkOrderExceptions.BudgetTokenInvalid ex = assertThrows(WorkOrderExceptions.BudgetTokenInvalid.class,
+                () -> useCase.validateToken("used-token"));
+        assertEquals("já utilizado", ex.getArgs()[0]);
+    }
+
+    @Test
+    @DisplayName("Deve lancar excecao ao validar token expirado")
+    void shouldThrowExceptionWhenValidateTokenExpired() {
+        BudgetDecisionToken token = BudgetDecisionToken.restore(
+                UUID.randomUUID(), UUID.randomUUID(), "expired-token", false, LocalDateTime.now().minusHours(25));
+
+        when(tokenGateway.findByToken("expired-token")).thenReturn(Optional.of(token));
+
+        WorkOrderExceptions.BudgetTokenInvalid ex = assertThrows(WorkOrderExceptions.BudgetTokenInvalid.class,
+                () -> useCase.validateToken("expired-token"));
+        assertEquals("expirado", ex.getArgs()[0]);
+    }
 }

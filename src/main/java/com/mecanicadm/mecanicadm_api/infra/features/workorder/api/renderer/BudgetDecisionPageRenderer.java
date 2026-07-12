@@ -23,6 +23,11 @@ public final class BudgetDecisionPageRenderer {
             .text-center { text-align: center; }
             form { width: 100%%; display: flex; flex-direction: column; gap: 4px; }""";
 
+    private static final String FOOTER = """
+            <div class="footer">
+                <p>MecânicaDM - Sistema de Gestão de Oficina Mecânica</p>
+            </div>""";
+
     private BudgetDecisionPageRenderer() {
     }
 
@@ -55,7 +60,7 @@ public final class BudgetDecisionPageRenderer {
                     </div>
                 </body>
                 </html>
-                """.formatted(title, BASE_STYLE, title, token, action, label, required ? "required" : "", footer());
+                """.formatted(title, BASE_STYLE, title, token, action, label, required ? "required" : "", FOOTER);
     }
 
     public static String successPage(String action) {
@@ -88,7 +93,7 @@ public final class BudgetDecisionPageRenderer {
                     </div>
                 </body>
                 </html>
-                """.formatted(BASE_STYLE, message, footer());
+                """.formatted(BASE_STYLE, message, FOOTER);
     }
 
     public static String errorPage(String title, String message) {
@@ -114,13 +119,6 @@ public final class BudgetDecisionPageRenderer {
                     </div>
                 </body>
                 </html>
-                """.formatted(title, BASE_STYLE, title, message, footer());
-    }
-
-    private static String footer() {
-        return """
-                <div class="footer">
-                    <p>MecânicaDM - Sistema de Gestão de Oficina Mecânica</p>
-                </div>""";
+                """.formatted(title, BASE_STYLE, title, message, FOOTER);
     }
 }

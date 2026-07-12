@@ -22,6 +22,7 @@ import java.util.UUID;
 
 public class SendWorkOrderBudgetUseCase implements VoidUseCase<SendWorkOrderBudgetCommand> {
     private static final Logger logger = LoggerFactory.getLogger(SendWorkOrderBudgetUseCase.class);
+    private static final String BUDGET_DECISION_PATH = "/budget-decision/";
 
     private final WorkOrderGateway gateway;
     private final BudgetDecisionTokenGateway tokenGateway;
@@ -83,9 +84,9 @@ public class SendWorkOrderBudgetUseCase implements VoidUseCase<SendWorkOrderBudg
     }
 
     private String buildEmailHtml(WorkOrder workOrder, BigDecimal totalPrice, String token, String baseUrl) {
-        String approveUrl = baseUrl + "/budget-decision/" + token + "/form?action=APPROVED";
-        String rejectUrl = baseUrl + "/budget-decision/" + token + "/form?action=REJECTED";
-        String changesUrl = baseUrl + "/budget-decision/" + token + "/form?action=CHANGES_REQUESTED";
+        String approveUrl = baseUrl + BUDGET_DECISION_PATH + token + "/form?action=APPROVED";
+        String rejectUrl = baseUrl + BUDGET_DECISION_PATH + token + "/form?action=REJECTED";
+        String changesUrl = baseUrl + BUDGET_DECISION_PATH + token + "/form?action=CHANGES_REQUESTED";
 
         return """
                 <!DOCTYPE html>

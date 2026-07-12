@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/budget-decision")
 public class BudgetDecisionPublicController implements BudgetDecisionPublicOpenApi {
 
+    private static final String ACTION_APPROVED = "APPROVED";
+
     private final ProcessBudgetDecisionByTokenUseCase processBudgetDecisionByTokenUseCase;
 
     public BudgetDecisionPublicController(ProcessBudgetDecisionByTokenUseCase processBudgetDecisionByTokenUseCase) {
@@ -38,18 +40,18 @@ public class BudgetDecisionPublicController implements BudgetDecisionPublicOpenA
         String title = switch (action) {
             case "REJECTED" -> "Rejeitar Orçamento";
             case "CHANGES_REQUESTED" -> "Solicitar Alterações";
-            case "APPROVED" -> "Aprovar Orçamento";
+            case ACTION_APPROVED -> "Aprovar Orçamento";
             default -> "Resposta ao Orçamento";
         };
 
         String label = switch (action) {
             case "REJECTED" -> "Informe o motivo da rejeição:";
             case "CHANGES_REQUESTED" -> "Descreva as alterações solicitadas:";
-            case "APPROVED" -> "Observações (opcional):";
+            case ACTION_APPROVED -> "Observações (opcional):";
             default -> "Observações:";
         };
 
-        boolean required = !"APPROVED".equals(action);
+        boolean required = !ACTION_APPROVED.equals(action);
 
         return htmlResponse(BudgetDecisionPageRenderer.formPage(title, token, action, label, required));
     }
