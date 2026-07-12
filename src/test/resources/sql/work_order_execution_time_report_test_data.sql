@@ -12,11 +12,11 @@ VALUES ('960e8400-e29b-41d4-a716-446655440011', 'Mao de obra 1', 100.00, now(), 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at,
                          date_created, date_updated, deleted_at)
 VALUES ('960e8400-e29b-41d4-a716-446655440101', '960e8400-e29b-41d4-a716-446655440001', 'REL-1234', 'OS rapida',
-        'EXECUTION_COMPLETED', TIMESTAMP '2026-01-10 08:00:00', TIMESTAMP '2026-01-10 09:00:00', now(), now(), null),
+        4, TIMESTAMP '2026-01-10 08:00:00', TIMESTAMP '2026-01-10 09:00:00', now(), now(), null),
        ('960e8400-e29b-41d4-a716-446655440102', '960e8400-e29b-41d4-a716-446655440001', 'REL-1234', 'OS lenta',
-        'EXECUTION_COMPLETED', TIMESTAMP '2026-01-12 08:00:00', TIMESTAMP '2026-01-12 12:00:00', now(), now(), null),
+        4, TIMESTAMP '2026-01-12 08:00:00', TIMESTAMP '2026-01-12 12:00:00', now(), now(), null),
        ('960e8400-e29b-41d4-a716-446655440103', '960e8400-e29b-41d4-a716-446655440001', 'REL-1234', 'OS em andamento',
-        'IN_EXECUTION', TIMESTAMP '2026-01-15 08:00:00', null, now(), now(), null);
+        0, TIMESTAMP '2026-01-15 08:00:00', null, now(), now(), null);
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status, execution_start_at, execution_end_at)
 VALUES ('960e8400-e29b-41d4-a716-446655440201', '960e8400-e29b-41d4-a716-446655440101',

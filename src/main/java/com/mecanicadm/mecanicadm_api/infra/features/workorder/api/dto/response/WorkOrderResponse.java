@@ -3,6 +3,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
+import com.mecanicadm.mecanicadm_api.infra.config.jackson.ExcludeZeroFilter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ public record WorkOrderResponse(
         WorkOrderStatus status,
         LocalDateTime executionStartAt,
         LocalDateTime executionEndAt,
+        @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = ExcludeZeroFilter.class)
         Long totalExecutionTimeInMinutes,
         List<WorkOrderLaborItemResponse> laborItems,
         List<WorkOrderMaterialItemResponse> materialItems,

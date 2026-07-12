@@ -2,6 +2,7 @@ package com.mecanicadm.mecanicadm_api.core.workorder.domain.port;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderBudget;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ public interface WorkOrderGateway {
     Optional<WorkOrder> findById(UUID id);
 
     Optional<WorkOrder> findByIdWithItems(UUID id);
+
+    Optional<WorkOrderStatus> findStatusById(UUID id);
 
     WorkOrderPageResult findAll(WorkOrderPageQuery query);
 

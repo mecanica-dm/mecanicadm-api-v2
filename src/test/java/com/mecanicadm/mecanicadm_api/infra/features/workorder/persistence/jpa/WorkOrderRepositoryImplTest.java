@@ -1,11 +1,15 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrderBudget;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.SortCriteria;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionDurationProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderExecutionSummaryProjection;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderFilter;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageQuery;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageResult;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderBudgetJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.entity.WorkOrderJpaEntity;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa.specification.WorkOrderSpecificationBuilder;
 import com.mecanicadm.mecanicadm_api.shared.exception.TechnicalException;
@@ -171,13 +175,40 @@ class WorkOrderRepositoryImplTest {
     }
 
     @Test
-    @DisplayName("Deve buscar todas as work orders paginadas com filtro")
-    void shouldFindAllWorkOrdersPaginated() {
+    @DisplayName("Deve buscar todas as work orders paginadas com filtro e sort explícito")
+    void shouldFindAllWorkOrdersPaginatedWithExplicitSort() {
         WorkOrderPageQuery query = mock(WorkOrderPageQuery.class);
         WorkOrderFilter filter = mock(WorkOrderFilter.class);
         when(query.filter()).thenReturn(filter);
-        when(query.direction()).thenReturn("ASC");
-        when(query.sortBy()).thenReturn("executionStartAt");
+        when(query.sorts()).thenReturn(List.of(new SortCriteria("executionStartAt", "ASC")));
+        when(query.page()).thenReturn(0);
+        when(query.size()).thenReturn(10);
+
+        Page<WorkOrderJpaEntity> page = new PageImpl<>(List.of(entity));
+
+        try (MockedStatic<WorkOrderSpecificationBuilder> specBuilder = mockStatic(WorkOrderSpecificationBuilder.class);
+             MockedStatic<WorkOrderJpaMapper> mapper = mockStatic(WorkOrderJpaMapper.class)) {
+
+            Specification<WorkOrderJpaEntity> spec = mock(Specification.class);
+            specBuilder.when(() -> WorkOrderSpecificationBuilder.buildFilterSpecification(filter)).thenReturn(spec);
+            when(jpaRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+            mapper.when(() -> WorkOrderJpaMapper.toDomainLight(entity)).thenReturn(domain);
+
+            WorkOrderPageResult result = repository.findAll(query);
+
+            assertEquals(1, result.items().size());
+            assertEquals(1, result.totalElements());
+            verify(jpaRepository).findAll(any(Specification.class), any(Pageable.class));
+        }
+    }
+
+    @Test
+    @DisplayName("Deve buscar todas as work orders paginadas com ordenação por status")
+    void shouldFindAllWorkOrdersPaginatedWithStatusSort() {
+        WorkOrderPageQuery query = mock(WorkOrderPageQuery.class);
+        WorkOrderFilter filter = mock(WorkOrderFilter.class);
+        when(query.filter()).thenReturn(filter);
+        when(query.sorts()).thenReturn(List.of(new SortCriteria("status", "ASC"), new SortCriteria("dateCreated", "ASC")));
         when(query.page()).thenReturn(0);
         when(query.size()).thenReturn(10);
 
@@ -274,5 +305,72 @@ class WorkOrderRepositoryImplTest {
 
         assertEquals(45.0, result);
         verify(jpaRepository).getAverageLaborExecutionMinutes(initial, finalExclusive);
+    }
+
+    @Test
+    @DisplayName("Deve salvar budget com sucesso")
+    void shouldSaveBudgetSuccessfully() {
+        WorkOrderBudget budget = mock(WorkOrderBudget.class);
+        WorkOrderBudgetJpaEntity budgetEntity = mock(WorkOrderBudgetJpaEntity.class);
+
+        try (MockedStatic<WorkOrderBudgetJpaMapper> mapper = mockStatic(WorkOrderBudgetJpaMapper.class)) {
+            mapper.when(() -> WorkOrderBudgetJpaMapper.toEntity(budget)).thenReturn(budgetEntity);
+
+            repository.saveBudget(budget);
+
+            verify(budgetJpaRepository).save(budgetEntity);
+        }
+    }
+
+    @Test
+    @DisplayName("Deve lancar excecao ao salvar budget nulo")
+    void shouldThrowExceptionWhenSavingNullBudget() {
+        assertThrows(TechnicalException.class, () -> repository.saveBudget(null));
+        verifyNoInteractions(budgetJpaRepository);
+    }
+
+    @Test
+    @DisplayName("Deve verificar existencia por ID")
+    void shouldCheckExistsById() {
+        when(jpaRepository.existsById(id)).thenReturn(true);
+
+        boolean result = repository.existsById(id);
+
+        assertTrue(result);
+        verify(jpaRepository).existsById(id);
+    }
+
+    @Test
+    @DisplayName("Deve retornar falso quando nao existe por ID")
+    void shouldReturnFalseWhenNotExistsById() {
+        when(jpaRepository.existsById(id)).thenReturn(false);
+
+        boolean result = repository.existsById(id);
+
+        assertFalse(result);
+        verify(jpaRepository).existsById(id);
+    }
+
+    @Test
+    @DisplayName("Deve buscar status por ID")
+    void shouldFindStatusById() {
+        when(jpaRepository.findStatusById(id)).thenReturn(Optional.of(WorkOrderStatus.RECEIVED));
+
+        Optional<WorkOrderStatus> result = repository.findStatusById(id);
+
+        assertTrue(result.isPresent());
+        assertEquals(WorkOrderStatus.RECEIVED, result.get());
+        verify(jpaRepository).findStatusById(id);
+    }
+
+    @Test
+    @DisplayName("Deve retornar vazio ao buscar status por ID inexistente")
+    void shouldReturnEmptyWhenFindStatusByIdNotFound() {
+        when(jpaRepository.findStatusById(id)).thenReturn(Optional.empty());
+
+        Optional<WorkOrderStatus> result = repository.findStatusById(id);
+
+        assertTrue(result.isEmpty());
+        verify(jpaRepository).findStatusById(id);
     }
 }

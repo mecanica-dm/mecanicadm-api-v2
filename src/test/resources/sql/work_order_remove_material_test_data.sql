@@ -11,7 +11,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440097', 'Óleo do Motor', 'Brand X', 'Ó
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440412', '660e8400-e29b-41d4-a716-446655440098', 'ADD-MAT',
-        'Ordem de serviço para adicionar material', 'RECEIVED', '2023-01-01 10:00:00', '2023-01-01 10:00:00');
+        'Ordem de serviço para adicionar material', 3, '2023-01-01 10:00:00', '2023-01-01 10:00:00');
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity)
 VALUES ('660e8400-e29b-41d4-a716-446655440099', '660e8400-e29b-41d4-a716-446655440412',

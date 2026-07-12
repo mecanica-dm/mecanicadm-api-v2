@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS work_orders (
     client_id UUID NOT NULL,
     vehicle_id VARCHAR(255) NOT NULL,
     description TEXT,
-    status VARCHAR(50) NOT NULL,
+    status INTEGER NOT NULL,
     execution_start_at TIMESTAMP,
     execution_end_at TIMESTAMP,
     date_created TIMESTAMP NOT NULL,

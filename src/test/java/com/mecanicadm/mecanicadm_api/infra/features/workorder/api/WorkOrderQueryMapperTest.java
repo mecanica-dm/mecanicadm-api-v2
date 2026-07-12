@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class WorkOrderQueryMapperTest {
 
@@ -31,16 +31,16 @@ class WorkOrderQueryMapperTest {
     }
 
     @Test
-    @DisplayName("Deve usar valores padrão para sort quando não especificado")
-    void shouldUseDefaultSortWhenNotProvided() {
+    @DisplayName("Deve retornar sort nulo quando não especificado")
+    void shouldReturnNullSortWhenNotProvided() {
         var pageable = PageRequest.of(1, 10);
 
         var query = WorkOrderQueryMapper.toQuery(null, null, pageable);
 
         assertEquals(1, query.page());
         assertEquals(10, query.size());
-        assertEquals("executionStartAt", query.sortBy());
-        assertEquals("DESC", query.direction());
+        assertNull(query.sortBy());
+        assertNull(query.direction());
     }
 
     @Test

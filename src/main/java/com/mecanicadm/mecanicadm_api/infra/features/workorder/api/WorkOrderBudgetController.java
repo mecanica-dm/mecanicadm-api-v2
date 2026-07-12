@@ -1,10 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.CalculateWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.DecideWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetPrintableBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ManuallyAdjustWorkOrderBudgetUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.SendWorkOrderBudgetUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.*;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.CalculateWorkOrderBudgetCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.DecideWorkOrderBudgetCommand;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.command.ManuallyAdjustWorkOrderBudgetCommand;
@@ -15,14 +11,9 @@ import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.De
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.ManuallyAdjustWorkOrderBudgetRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi.WorkOrderBudgetOpenApi;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -35,6 +26,9 @@ public class WorkOrderBudgetController implements WorkOrderBudgetOpenApi {
     private final DecideWorkOrderBudgetUseCase decideWorkOrderBudgetUseCase;
     private final CalculateWorkOrderBudgetUseCase calculateWorkOrderBudgetUseCase;
     private final GetPrintableBudgetUseCase getPrintableBudgetUseCase;
+
+    @Value("${app.budget.base-url}")
+    private String baseUrl;
 
     public WorkOrderBudgetController(SendWorkOrderBudgetUseCase sendWorkOrderBudgetUseCase,
                                      ManuallyAdjustWorkOrderBudgetUseCase manuallyAdjustWorkOrderBudgetUseCase,
@@ -51,7 +45,7 @@ public class WorkOrderBudgetController implements WorkOrderBudgetOpenApi {
     @Override
     @PostMapping("/send")
     public ResponseEntity<Void> sendBudget(@PathVariable UUID workOrderId) {
-        sendWorkOrderBudgetUseCase.execute(new SendWorkOrderBudgetCommand(workOrderId));
+        sendWorkOrderBudgetUseCase.execute(new SendWorkOrderBudgetCommand(workOrderId, baseUrl));
         return ResponseEntity.noContent().build();
     }
 
@@ -72,7 +66,7 @@ public class WorkOrderBudgetController implements WorkOrderBudgetOpenApi {
     @Override
     @PostMapping("/decision")
     public ResponseEntity<Void> decideBudget(@PathVariable UUID workOrderId, @Valid @RequestBody DecideWorkOrderBudgetRequest request) {
-        decideWorkOrderBudgetUseCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, request.decision(), request.rejectionReason()));
+        decideWorkOrderBudgetUseCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, request.decision(), request.observation()));
         return ResponseEntity.noContent().build();
     }
 

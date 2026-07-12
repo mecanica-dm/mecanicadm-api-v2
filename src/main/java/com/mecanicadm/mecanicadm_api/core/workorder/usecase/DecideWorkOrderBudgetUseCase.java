@@ -36,26 +36,26 @@ public class DecideWorkOrderBudgetUseCase implements VoidUseCase<DecideWorkOrder
     private void processDecision(WorkOrder workOrder, WorkOrderBudget budget, DecideWorkOrderBudgetCommand cmd) {
         switch (cmd.decision()) {
             case APPROVED -> {
-                budget.approve();
+                budget.approve(cmd.observation());
                 workOrder.markAsAwaitingExecution();
             }
             case REJECTED -> {
-                validateRejectionReason(cmd.rejectionReason());
-                budget.reject(cmd.rejectionReason(), false);
+                validateObservation(cmd.observation());
+                budget.reject(cmd.observation(), false);
                 workOrder.cancel();
             }
             case CHANGES_REQUESTED -> {
-                validateRejectionReason(cmd.rejectionReason());
-                budget.reject(cmd.rejectionReason(), true);
+                validateObservation(cmd.observation());
+                budget.reject(cmd.observation(), true);
                 workOrder.markAsChangesRequested();
             }
             default -> throw new WorkOrderExceptions.BudgetDecisionInvalid(cmd.decision().name());
         }
     }
 
-    private void validateRejectionReason(String reason) {
-        if (!StringUtils.hasText(reason)) {
-            throw new WorkOrderExceptions.BudgetRejectionReasonRequired();
+    private void validateObservation(String observation) {
+        if (!StringUtils.hasText(observation)) {
+            throw new WorkOrderExceptions.BudgetObservationRequired();
         }
     }
 }

@@ -33,7 +33,7 @@ class WorkOrderExceptionsTest {
         assertException(new WorkOrderExceptions.VehicleRequired(), 400, "work.order.vehicle.required");
         assertException(new WorkOrderExceptions.BudgetNotFound(), 404, "work.order.budget.not.found");
         assertException(new WorkOrderExceptions.BudgetDecisionInvalid("INVALID_DECISION"), 400, "work.order.budget.decision.invalid");
-        assertException(new WorkOrderExceptions.BudgetRejectionReasonRequired(), 400, "work.order.budget.rejection.reason.required");
+        assertException(new WorkOrderExceptions.BudgetObservationRequired(), 400, "work.order.budget.observation.required");
         assertException(new WorkOrderExceptions.BudgetNotWaitingDecision(), 400, "work.order.budget.not.waiting.decision");
         assertException(new WorkOrderExceptions.InvalidLaborStatusTransition("FROM", "TO"), 400, "work.order.labor.status.transition.invalid");
         assertException(new WorkOrderExceptions.LaborCannotStartIfNotInExecution(), 400, "work.order.labor.start.not.in.execution");

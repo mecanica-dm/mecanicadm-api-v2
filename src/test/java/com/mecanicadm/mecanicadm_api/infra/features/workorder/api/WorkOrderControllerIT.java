@@ -3,11 +3,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.WorkOrder;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.enums.WorkOrderStatus;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderPageResult;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.CreateWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetAllWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderByIdUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.SoftDeleteWorkOrderUseCase;
-import com.mecanicadm.mecanicadm_api.core.workorder.usecase.UpdateWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.*;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.CreateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.UpdateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.testutils.AbstractIntegrationTest;
@@ -56,6 +52,9 @@ class WorkOrderControllerIT extends AbstractIntegrationTest {
     @MockitoBean
     private SoftDeleteWorkOrderUseCase softDeleteWorkOrderUseCase;
 
+    @MockitoBean
+    private GetWorkOrderStatusUseCase getWorkOrderStatusUseCase;
+
     @BeforeEach
     void setUp() {
         RestAssuredMockMvc.mockMvc(mockMvc);
@@ -68,7 +67,7 @@ class WorkOrderControllerIT extends AbstractIntegrationTest {
         UUID workOrderId = UUID.randomUUID();
         when(createWorkOrderUseCase.execute(any())).thenReturn(workOrderId);
 
-        CreateWorkOrderRequest request = new CreateWorkOrderRequest(UUID.randomUUID(), "ABC-1234", "Troca de oleo");
+        CreateWorkOrderRequest request = new CreateWorkOrderRequest(UUID.randomUUID(), "ABC-1234", "Troca de oleo", null, null);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -85,7 +84,7 @@ class WorkOrderControllerIT extends AbstractIntegrationTest {
     @WithMockUser
     @DisplayName("Deve retornar 400 ao criar work order com dados invalidos")
     void shouldReturn400WhenCreateWorkOrderIsInvalid() {
-        CreateWorkOrderRequest invalidRequest = new CreateWorkOrderRequest(null, "", "");
+        CreateWorkOrderRequest invalidRequest = new CreateWorkOrderRequest(null, "", "", null, null);
 
         RestAssuredMockMvc.given()
                 .postProcessors(csrf())
@@ -163,6 +162,22 @@ class WorkOrderControllerIT extends AbstractIntegrationTest {
                 .statusCode(HttpStatus.OK.value())
                 .body("content[0].description", equalTo("Troca de oleo"))
                 .body("page.totalElements", equalTo(1));
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("Deve consultar status da work order e retornar 200 OK")
+    void shouldFindStatusAndReturn200() {
+        UUID workOrderId = UUID.randomUUID();
+        when(getWorkOrderStatusUseCase.execute(any())).thenReturn(WorkOrderStatus.DIAGNOSED);
+
+        RestAssuredMockMvc.given()
+                .when()
+                .get("/work-orders/{id}/status", workOrderId)
+                .then()
+                .statusCode(HttpStatus.OK.value())
+                .body("id", equalTo(workOrderId.toString()))
+                .body("status", equalTo("DIAGNOSED"));
     }
 
     @Test
