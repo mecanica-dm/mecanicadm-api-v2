@@ -69,8 +69,11 @@ public class OpenApiConfig {
                 parameter.setDescription("Número de itens por página");
                 parameter.setExample(20);
             }
-            case "sort" ->
-                    parameter.setDescription("Critério de ordenação no formato: propriedade(,asc|desc). Exemplo: name,asc");
+            case "sort" -> {
+                parameter.setDescription("Critério de ordenação no formato: propriedade,asc ou propriedade,desc. Exemplo: name,asc");
+                parameter.setSchema(new StringSchema());
+                parameter.setExplode(false);
+            }
 
             default -> {
                 // No action
