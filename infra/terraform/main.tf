@@ -29,7 +29,7 @@ resource "time_sleep" "wait_for_eks" {
   create_duration = "30s"
 }
 
-# Kube: Fazemos oS deploys dos manifestos
+# Kube: Fazemos os deploys dos manifestos
 resource "kubectl_manifest" "k8s_resources" {
   for_each = fileset("${path.module}/../../k8s/manifests", "**/*.yaml")
 
