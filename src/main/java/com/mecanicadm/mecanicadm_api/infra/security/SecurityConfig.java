@@ -61,12 +61,15 @@ public class SecurityConfig {
     @Bean
     @Profile("ci")
     public SecurityFilterChain securityFilterChainCI(HttpSecurity http) throws Exception {
-        http
+        return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives("default-src 'self'; style-src 'self' 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'"))
+                )
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
-                );
-        return http.build();
+                ).build();
     }
 
     @Bean

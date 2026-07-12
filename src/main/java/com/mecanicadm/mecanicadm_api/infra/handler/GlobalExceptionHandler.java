@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -110,6 +111,15 @@ public class GlobalExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put(ERROR_FIELD_NAME, message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, Locale locale) {
+        LOGGER.warn("Media type nao suportado: {}", ex.getContentType());
+        String message = messageSource.getMessage("error.request.body.invalid", null, "Requisição inválida. Verifique os dados enviados.", locale);
+        Map<String, String> response = new HashMap<>();
+        response.put(ERROR_FIELD_NAME, message);
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(response);
     }
 
     @ExceptionHandler(Exception.class)
