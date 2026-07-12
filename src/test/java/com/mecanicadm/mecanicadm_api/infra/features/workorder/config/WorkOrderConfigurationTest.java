@@ -7,10 +7,12 @@ import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMoveme
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.SoftDeleteStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.BudgetDecisionTokenGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.*;
+import com.mecanicadm.mecanicadm_api.core.shared.domain.port.EmailService;
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,6 +52,12 @@ class WorkOrderConfigurationTest {
     private AddLaborToWorkOrderUseCase addLaborToWorkOrderUseCase;
     @Mock
     private AddMaterialToWorkOrderUseCase addMaterialToWorkOrderUseCase;
+    @Mock
+    private BudgetDecisionTokenGateway budgetDecisionTokenGateway;
+    @Mock
+    private EmailService emailService;
+    @Mock
+    private DecideWorkOrderBudgetUseCase decideWorkOrderBudgetUseCase;
 
     private WorkOrderConfiguration configuration;
 
@@ -199,7 +207,13 @@ class WorkOrderConfigurationTest {
     @Test
     @DisplayName("Deve criar bean SendWorkOrderBudgetUseCase")
     void shouldCreateSendWorkOrderBudgetUseCase() {
-        assertNotNull(configuration.sendWorkOrderBudgetUseCase(workOrderGateway));
+        assertNotNull(configuration.sendWorkOrderBudgetUseCase(workOrderGateway, budgetDecisionTokenGateway, clientGateway, emailService, configuration.getPrintableBudgetUseCase(workOrderGateway, clientGateway, vehicleGateway, laborGateway, materialGateway, pdfGenerator)));
+    }
+
+    @Test
+    @DisplayName("Deve criar bean ProcessBudgetDecisionByTokenUseCase")
+    void shouldCreateProcessBudgetDecisionByTokenUseCase() {
+        assertNotNull(configuration.processBudgetDecisionByTokenUseCase(budgetDecisionTokenGateway, decideWorkOrderBudgetUseCase));
     }
 
     @Test

@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/work-orders").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/budget-decision/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception

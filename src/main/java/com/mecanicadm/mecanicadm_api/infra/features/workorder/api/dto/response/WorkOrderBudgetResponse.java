@@ -8,13 +8,13 @@ import java.math.BigDecimal;
 public record WorkOrderBudgetResponse(
         BigDecimal totalPrice,
         WorkOrderBudgetStatus status,
-        String rejectionReason
+        String observation
 ) {
     public static WorkOrderBudgetResponse from(WorkOrderBudget budget) {
         return new WorkOrderBudgetResponse(
                 budget.getTotalPrice(),
                 budget.getStatus(),
-                budget.getRejectionReason()
+                budget.getObservation()
         );
     }
 }

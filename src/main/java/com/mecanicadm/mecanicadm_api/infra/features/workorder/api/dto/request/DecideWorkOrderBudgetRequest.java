@@ -7,6 +7,6 @@ public record DecideWorkOrderBudgetRequest(
         @NotNull(message = "{validation.work.order.budget.decision.required}")
         WorkOrderBudgetStatus decision,
 
-        String rejectionReason
+        String observation
 ) {
 }

@@ -16,7 +16,7 @@ public class WorkOrderBudget {
 
     private WorkOrderBudgetStatus status;
 
-    private String rejectionReason;
+    private String observation;
 
     protected WorkOrderBudget() {
     }
@@ -28,11 +28,11 @@ public class WorkOrderBudget {
         validate();
     }
 
-    private WorkOrderBudget(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String rejectionReason) {
+    private WorkOrderBudget(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String observation) {
         this.workOrderId = workOrderId;
         this.totalPrice = totalPrice;
         this.status = status;
-        this.rejectionReason = rejectionReason;
+        this.observation = observation;
         validate();
     }
 
@@ -40,14 +40,14 @@ public class WorkOrderBudget {
         return new WorkOrderBudget(workOrder, totalPrice);
     }
 
-    public static WorkOrderBudget restore(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String rejectionReason) {
-        return new WorkOrderBudget(workOrderId, totalPrice, status, rejectionReason);
+    public static WorkOrderBudget restore(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String observation) {
+        return new WorkOrderBudget(workOrderId, totalPrice, status, observation);
     }
 
     public void updateTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = requireNonNull(totalPrice);
         this.status = WorkOrderBudgetStatus.PENDING;
-        this.rejectionReason = null;
+        this.observation = null;
         validate();
     }
 
@@ -55,12 +55,13 @@ public class WorkOrderBudget {
         this.status = WorkOrderBudgetStatus.WAITING_DECISION;
     }
 
-    public void approve() {
+    public void approve(String note) {
+        this.observation = note;
         this.status = WorkOrderBudgetStatus.APPROVED;
     }
 
     public void reject(String reason, boolean needsRevision) {
-        this.rejectionReason = requireNonNull(reason);
+        this.observation = requireNonNull(reason);
         this.status = needsRevision ? WorkOrderBudgetStatus.CHANGES_REQUESTED : WorkOrderBudgetStatus.REJECTED;
     }
 
@@ -85,7 +86,7 @@ public class WorkOrderBudget {
         return status;
     }
 
-    public String getRejectionReason() {
-        return rejectionReason;
+    public String getObservation() {
+        return observation;
     }
 }

@@ -85,9 +85,9 @@ public class WorkOrderExceptions {
         }
     }
 
-    public static class BudgetRejectionReasonRequired extends DomainExceptionCore {
-        public BudgetRejectionReasonRequired() {
-            super("work.order.budget.rejection.reason.required", 400);
+    public static class BudgetObservationRequired extends DomainExceptionCore {
+        public BudgetObservationRequired() {
+            super("work.order.budget.observation.required", 400);
         }
     }
 
@@ -130,6 +130,21 @@ public class WorkOrderExceptions {
     public static class WorkOrderIdRequired extends DomainExceptionCore {
         public WorkOrderIdRequired() {
             super("work.order.id.required", 400);
+        }
+    }
+
+    public static class BudgetTokenNotFound extends DomainExceptionCore {
+        public BudgetTokenNotFound() {
+            super("work.order.budget.token.not.found", 404);
+        }
+    }
+
+    public static class BudgetTokenInvalid extends DomainExceptionCore {
+        private BudgetTokenInvalid(String detail) {
+            super("work.order.budget.token.invalid", 400, detail);
+        }
+        public static BudgetTokenInvalid of(String detail) {
+            return new BudgetTokenInvalid(detail);
         }
     }
 }

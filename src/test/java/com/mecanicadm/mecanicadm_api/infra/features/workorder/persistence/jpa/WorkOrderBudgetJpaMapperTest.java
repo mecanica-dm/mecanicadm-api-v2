@@ -24,12 +24,12 @@ class WorkOrderBudgetJpaMapperTest {
         assertEquals(workOrderId, domain.getWorkOrderId());
         assertEquals(new BigDecimal("350.00"), domain.getTotalPrice());
         assertEquals(WorkOrderBudgetStatus.APPROVED, domain.getStatus());
-        assertNull(domain.getRejectionReason());
+        assertNull(domain.getObservation());
     }
 
     @Test
-    @DisplayName("Deve mapear JpaEntity para domínio com rejectionReason")
-    void shouldMapToDomainWithRejectionReason() {
+    @DisplayName("Deve mapear JpaEntity para domínio com observation")
+    void shouldMapToDomainWithObservation() {
         var workOrderId = UUID.randomUUID();
         var entity = new WorkOrderBudgetJpaEntity(workOrderId, new BigDecimal("200.00"), WorkOrderBudgetStatus.REJECTED, "Preço muito alto");
 
@@ -38,7 +38,7 @@ class WorkOrderBudgetJpaMapperTest {
         assertEquals(workOrderId, domain.getWorkOrderId());
         assertEquals(new BigDecimal("200.00"), domain.getTotalPrice());
         assertEquals(WorkOrderBudgetStatus.REJECTED, domain.getStatus());
-        assertEquals("Preço muito alto", domain.getRejectionReason());
+        assertEquals("Preço muito alto", domain.getObservation());
     }
 
     @Test
@@ -52,12 +52,12 @@ class WorkOrderBudgetJpaMapperTest {
         assertEquals(workOrderId, entity.getWorkOrderId());
         assertEquals(new BigDecimal("400.00"), entity.getTotalPrice());
         assertEquals(WorkOrderBudgetStatus.PENDING, entity.getStatus());
-        assertNull(entity.getRejectionReason());
+        assertNull(entity.getObservation());
     }
 
     @Test
-    @DisplayName("Deve mapear domínio para JpaEntity com rejectionReason")
-    void shouldMapToEntityWithRejectionReason() {
+    @DisplayName("Deve mapear domínio para JpaEntity com observation")
+    void shouldMapToEntityWithObservation() {
         var workOrderId = UUID.randomUUID();
         var domain = WorkOrderBudget.restore(workOrderId, new BigDecimal("150.00"), WorkOrderBudgetStatus.CHANGES_REQUESTED, "Solicitar reajuste");
 
@@ -66,7 +66,7 @@ class WorkOrderBudgetJpaMapperTest {
         assertEquals(workOrderId, entity.getWorkOrderId());
         assertEquals(new BigDecimal("150.00"), entity.getTotalPrice());
         assertEquals(WorkOrderBudgetStatus.CHANGES_REQUESTED, entity.getStatus());
-        assertEquals("Solicitar reajuste", entity.getRejectionReason());
+        assertEquals("Solicitar reajuste", entity.getObservation());
     }
 
     @Test

@@ -18,7 +18,7 @@ INSERT INTO materials (id, name, brand, description, price, type, date_created, 
 VALUES ('660e8400-e29b-41d4-a716-446655440402', 'Óleo de Motor 5W30', 'Castrol', 'Óleo sintético para motor', 50.00,
         'CONSUMABLE', now(), now(), null);
 
-INSERT INTO work_order_budgets (work_order_id, total_price, status, rejection_reason)
+INSERT INTO work_order_budgets (work_order_id, total_price, status, observation)
 VALUES ('660e8400-e29b-41d4-a716-446655440400', 150.00, 'APPROVED', null);
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity)

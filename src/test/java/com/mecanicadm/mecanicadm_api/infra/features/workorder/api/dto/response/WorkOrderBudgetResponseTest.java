@@ -23,12 +23,12 @@ class WorkOrderBudgetResponseTest {
 
         assertEquals(new BigDecimal("350.00"), response.totalPrice());
         assertEquals(WorkOrderBudgetStatus.APPROVED, response.status());
-        assertNull(response.rejectionReason());
+        assertNull(response.observation());
     }
 
     @Test
-    @DisplayName("Deve criar WorkOrderBudgetResponse com rejectionReason")
-    void shouldCreateBudgetResponseWithRejectionReason() {
+    @DisplayName("Deve criar WorkOrderBudgetResponse com observation")
+    void shouldCreateBudgetResponseWithObservation() {
         var workOrderId = UUID.randomUUID();
         var budget = WorkOrderBudget.restore(workOrderId, new BigDecimal("200.00"), WorkOrderBudgetStatus.REJECTED, "Cliente recusou");
 
@@ -36,6 +36,6 @@ class WorkOrderBudgetResponseTest {
 
         assertEquals(new BigDecimal("200.00"), response.totalPrice());
         assertEquals(WorkOrderBudgetStatus.REJECTED, response.status());
-        assertEquals("Cliente recusou", response.rejectionReason());
+        assertEquals("Cliente recusou", response.observation());
     }
 }
