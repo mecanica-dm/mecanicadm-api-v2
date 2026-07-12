@@ -3,10 +3,12 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.config;
 import com.mecanicadm.mecanicadm_api.core.client.domain.port.ClientGateway;
 import com.mecanicadm.mecanicadm_api.core.labor.domain.port.LaborGateway;
 import com.mecanicadm.mecanicadm_api.core.material.domain.port.MaterialGateway;
+import com.mecanicadm.mecanicadm_api.core.shared.domain.port.EmailService;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.domain.port.StockMovementsGateway;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.DeductStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.stockmovements.usecase.SoftDeleteStockUseCase;
 import com.mecanicadm.mecanicadm_api.core.vehicle.domain.port.VehicleGateway;
+import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.BudgetDecisionTokenGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderLaborItemGateway;
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.port.WorkOrderMaterialItemGateway;
@@ -26,10 +28,12 @@ import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetAllWorkOrderUseCa
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetPrintableBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderByIdUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderLaborItemByIdUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.GetWorkOrderStatusUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ManuallyAdjustWorkOrderBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RecordWorkOrderPaymentUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RemoveLaborItemFromWorkOrderUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.RemoveMaterialItemFromWorkOrderUseCase;
+import com.mecanicadm.mecanicadm_api.core.workorder.usecase.ProcessBudgetDecisionByTokenUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.SendWorkOrderBudgetUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.SoftDeleteWorkOrderUseCase;
 import com.mecanicadm.mecanicadm_api.core.workorder.usecase.StartLaborExecutionUseCase;
@@ -38,13 +42,16 @@ import com.mecanicadm.mecanicadm_api.core.workorder.usecase.UpdateWorkOrderUseCa
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class WorkOrderConfiguration {
 
     @Bean
-    public CreateWorkOrderUseCase createWorkOrderUseCase(WorkOrderGateway gateway) {
-        return new CreateWorkOrderUseCase(gateway);
+    public CreateWorkOrderUseCase createWorkOrderUseCase(WorkOrderGateway gateway,
+                                                          AddLaborToWorkOrderUseCase addLaborToWorkOrderUseCase,
+                                                          AddMaterialToWorkOrderUseCase addMaterialToWorkOrderUseCase) {
+        return new CreateWorkOrderUseCase(gateway, addLaborToWorkOrderUseCase, addMaterialToWorkOrderUseCase);
     }
 
     @Bean
@@ -55,6 +62,11 @@ public class WorkOrderConfiguration {
     @Bean
     public GetWorkOrderByIdUseCase getWorkOrderByIdUseCase(WorkOrderGateway gateway) {
         return new GetWorkOrderByIdUseCase(gateway);
+    }
+
+    @Bean
+    public GetWorkOrderStatusUseCase getWorkOrderStatusUseCase(WorkOrderGateway gateway) {
+        return new GetWorkOrderStatusUseCase(gateway);
     }
 
     @Bean
@@ -171,8 +183,19 @@ public class WorkOrderConfiguration {
     }
 
     @Bean
-    public SendWorkOrderBudgetUseCase sendWorkOrderBudgetUseCase(WorkOrderGateway gateway) {
-        return new SendWorkOrderBudgetUseCase(gateway);
+    public SendWorkOrderBudgetUseCase sendWorkOrderBudgetUseCase(WorkOrderGateway gateway,
+                                                               BudgetDecisionTokenGateway tokenGateway,
+                                                               ClientGateway clientGateway,
+                                                               EmailService emailService,
+                                                               GetPrintableBudgetUseCase getPrintableBudgetUseCase,
+                                                               @Value("${app.budget.decision-path:/budget-decision/}") String budgetDecisionPath) {
+        return new SendWorkOrderBudgetUseCase(gateway, tokenGateway, clientGateway, emailService, getPrintableBudgetUseCase, budgetDecisionPath);
+    }
+
+    @Bean
+    public ProcessBudgetDecisionByTokenUseCase processBudgetDecisionByTokenUseCase(BudgetDecisionTokenGateway tokenGateway,
+                                                                                   DecideWorkOrderBudgetUseCase decideWorkOrderBudgetUseCase) {
+        return new ProcessBudgetDecisionByTokenUseCase(tokenGateway, decideWorkOrderBudgetUseCase);
     }
 
     @Bean

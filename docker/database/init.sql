@@ -95,7 +95,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at, date_created, date_updated)
 VALUES
-('aa11aa11-1111-4aa1-8a11-aaaaaaaa1111', '150b06cf-68b6-455a-94dc-215c9a0f443b', 'ABC-1234', 'Troca de óleo completa e verificação geral', 'EXECUTION_COMPLETED', now() - interval '2 hours', now() - interval '30 minutes', now() - interval '3 hours', now() - interval '30 minutes')
+('aa11aa11-1111-4aa1-8a11-aaaaaaaa1111', '150b06cf-68b6-455a-94dc-215c9a0f443b', 'ABC-1234', 'Troca de óleo completa e verificação geral', 4, now() - interval '2 hours', now() - interval '30 minutes', now() - interval '3 hours', now() - interval '30 minutes')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity) VALUES
@@ -121,7 +121,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, date_created, date_updated)
 VALUES
-('bb22bb22-2222-4bb2-8b22-bbbbbbbbbbbb', 'd9426f21-70ab-48d6-847e-4054a3a6b2b7', 'DEF-5678', 'Alinhamento e balanceamento', 'IN_EXECUTION', now() - interval '1 hours', now() - interval '1 hours', now())
+('bb22bb22-2222-4bb2-8b22-bbbbbbbbbbbb', 'd9426f21-70ab-48d6-847e-4054a3a6b2b7', 'DEF-5678', 'Alinhamento e balanceamento', 0, now() - interval '1 hours', now() - interval '1 hours', now())
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status, execution_start_at) VALUES
@@ -133,7 +133,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES
-('cc33cc33-3333-4cc3-8c33-cccccccccccc', '4f74d0a8-b649-43c1-a20c-843de26f74a0', 'GHI-9012', 'Diagnóstico de ruído ao frear (possível troca de pastilhas)', 'RECEIVED', now() - interval '3 days', now() - interval '3 days')
+('cc33cc33-3333-4cc3-8c33-cccccccccccc', '4f74d0a8-b649-43c1-a20c-843de26f74a0', 'GHI-9012', 'Diagnóstico de ruído ao frear (possível troca de pastilhas)', 3, now() - interval '3 days', now() - interval '3 days')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity) VALUES
@@ -157,7 +157,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES
-('dd44dd44-4444-4dd4-8d44-dddddddddddd', '6b9cc8de-31a2-4759-9f4a-25091c5c56d1', 'JKL-3456', 'Serviço de revisão e limpeza de carbono', 'AWAITING_EXECUTION', now() - interval '4 days', now() - interval '4 days')
+('dd44dd44-4444-4dd4-8d44-dddddddddddd', '6b9cc8de-31a2-4759-9f4a-25091c5c56d1', 'JKL-3456', 'Serviço de revisão e limpeza de carbono', 1, now() - interval '4 days', now() - interval '4 days')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status) VALUES
@@ -181,7 +181,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES
-('ee55ee55-5555-4ee5-8e55-eeeeeeeeeeee', '8b3f81e5-e118-4e31-8979-994cba5256e4', 'PQR-2345', 'Reparo e substituição de palhetas e inspeção', 'RECEIVED', now() - interval '2 days', now() - interval '2 days')
+('ee55ee55-5555-4ee5-8e55-eeeeeeeeeeee', '8b3f81e5-e118-4e31-8979-994cba5256e4', 'PQR-2345', 'Reparo e substituição de palhetas e inspeção', 3, now() - interval '2 days', now() - interval '2 days')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity) VALUES
@@ -206,7 +206,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at, date_created, date_updated)
 VALUES
-('ff66ff66-6666-4ff6-8f66-ffffffff6666', '8b3f81e5-e118-4e31-8979-994cba5256e4', 'PQR-2345', 'Substituição de pastilhas de freio e teste de frenagem', 'EXECUTION_COMPLETED', now() - interval '14 days', now() - interval '10 days', now() - interval '14 days', now() - interval '10 days')
+('ff66ff66-6666-4ff6-8f66-ffffffff6666', '8b3f81e5-e118-4e31-8979-994cba5256e4', 'PQR-2345', 'Substituição de pastilhas de freio e teste de frenagem', 4, now() - interval '14 days', now() - interval '10 days', now() - interval '14 days', now() - interval '10 days')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity) VALUES
@@ -230,7 +230,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at, date_created, date_updated)
 VALUES
-('66776677-7777-4667-8677-666666667777', '4f74d0a8-b649-43c1-a20c-843de26f74a0', 'GHI-9012', 'Revisão completa e limpeza de carbono', 'EXECUTION_COMPLETED', now() - interval '3 hours', now() - interval '2 hours', now() - interval '4 hours', now() - interval '2 hours')
+('66776677-7777-4667-8677-666666667777', '4f74d0a8-b649-43c1-a20c-843de26f74a0', 'GHI-9012', 'Revisão completa e limpeza de carbono', 4, now() - interval '3 hours', now() - interval '2 hours', now() - interval '4 hours', now() - interval '2 hours')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity) VALUES
@@ -256,7 +256,7 @@ ON CONFLICT DO NOTHING;
 -- =========================================
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at, date_created, date_updated)
 VALUES
-('88886688-8888-4888-8888-888888888888', 'd9426f21-70ab-48d6-847e-4054a3a6b2b7', 'DEF-5678', 'Troca de óleo e filtro, verificação de vazamentos', 'EXECUTION_COMPLETED', now() - interval '1 day', now() - interval '23 hours', now() - interval '1 day', now() - interval '23 hours')
+('88886688-8888-4888-8888-888888888888', 'd9426f21-70ab-48d6-847e-4054a3a6b2b7', 'DEF-5678', 'Troca de óleo e filtro, verificação de vazamentos', 4, now() - interval '1 day', now() - interval '23 hours', now() - interval '1 day', now() - interval '23 hours')
 ON CONFLICT DO NOTHING;
 
 INSERT INTO work_order_material_items (id, work_order_id, material_id, quantity) VALUES

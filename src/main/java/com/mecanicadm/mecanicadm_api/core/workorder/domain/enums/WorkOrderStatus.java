@@ -1,10 +1,10 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.domain.enums;
 
 public enum WorkOrderStatus {
-    RECEIVED,
-    DIAGNOSED,
-    AWAITING_EXECUTION,
     IN_EXECUTION,
+    AWAITING_EXECUTION,
+    DIAGNOSED,
+    RECEIVED,
     EXECUTION_COMPLETED,
     PAID,
     DELIVERED,

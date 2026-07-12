@@ -7,6 +7,6 @@ VALUES ('UPD-1234', 'Civic', 'Honda', 2020, now(), now(), null);
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated, deleted_at)
 VALUES ('660e8400-e29b-41d4-a716-446655440200', '660e8400-e29b-41d4-a716-446655440100', 'UPD-1234',
-        'Descrição original', 'RECEIVED', now(), now(), null),
+        'Descrição original', 3, now(), now(), null),
        ('660e8400-e29b-41d4-a716-446655440201', '660e8400-e29b-41d4-a716-446655440100', 'UPD-1234',
-        'Descrição Ordem de serviço diagnosticada', 'DIAGNOSED', now(), now(), null);
+        'Descrição Ordem de serviço diagnosticada', 2, now(), now(), null);

@@ -21,17 +21,17 @@ public class WorkOrderBudgetJpaEntity {
     @Column(name = "status", nullable = false)
     private WorkOrderBudgetStatus status;
 
-    @Column(name = "rejection_reason")
-    private String rejectionReason;
+    @Column(name = "observation")
+    private String observation;
 
     protected WorkOrderBudgetJpaEntity() {
     }
 
-    public WorkOrderBudgetJpaEntity(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String rejectionReason) {
+    public WorkOrderBudgetJpaEntity(UUID workOrderId, BigDecimal totalPrice, WorkOrderBudgetStatus status, String observation) {
         this.workOrderId = workOrderId;
         this.totalPrice = totalPrice;
         this.status = status;
-        this.rejectionReason = rejectionReason;
+        this.observation = observation;
     }
 
     public UUID getWorkOrderId() {
@@ -46,7 +46,7 @@ public class WorkOrderBudgetJpaEntity {
         return status;
     }
 
-    public String getRejectionReason() {
-        return rejectionReason;
+    public String getObservation() {
+        return observation;
     }
 }

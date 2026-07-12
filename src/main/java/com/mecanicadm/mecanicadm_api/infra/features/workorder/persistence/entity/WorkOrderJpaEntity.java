@@ -27,7 +27,7 @@ public class WorkOrderJpaEntity extends AuditEntity {
     @Column(name = "description")
     private String description;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "status", nullable = false)
     private WorkOrderStatus status;
 

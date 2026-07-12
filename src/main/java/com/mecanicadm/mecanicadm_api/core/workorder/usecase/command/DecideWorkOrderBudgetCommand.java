@@ -7,6 +7,6 @@ import java.util.UUID;
 public record DecideWorkOrderBudgetCommand(
         UUID workOrderId,
         WorkOrderBudgetStatus decision,
-        String rejectionReason
+        String observation
 ) {
 }

@@ -10,7 +10,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440020', 'Troca de Oleo', 100.00, now(), 
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440090', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de serviço para iniciar', 'AWAITING_EXECUTION', now(), now());
+        'Ordem de serviço para iniciar', 1, now(), now());
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status)
 VALUES ('660e8400-e29b-41d4-a716-446655440085', '660e8400-e29b-41d4-a716-446655440090',
@@ -18,7 +18,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440085', '660e8400-e29b-41d4-a716-4466554
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440091', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de serviço em execução com labor pendente', 'IN_EXECUTION', now(), now(), now());
+        'Ordem de serviço em execução com labor pendente', 0, now(), now(), now());
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status)
 VALUES ('660e8400-e29b-41d4-a716-446655440086', '660e8400-e29b-41d4-a716-446655440091',
@@ -26,7 +26,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440086', '660e8400-e29b-41d4-a716-4466554
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440092', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de serviço com labor rodando', 'IN_EXECUTION', now(), now(), now());
+        'Ordem de serviço com labor rodando', 0, now(), now(), now());
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status, execution_start_at)
 VALUES ('660e8400-e29b-41d4-a716-446655440087', '660e8400-e29b-41d4-a716-446655440092',
@@ -34,7 +34,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440087', '660e8400-e29b-41d4-a716-4466554
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440093', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de serviço pronta para finalizar', 'IN_EXECUTION', now(), now(), now());
+        'Ordem de serviço pronta para finalizar', 0, now(), now(), now());
 
 INSERT INTO work_order_labor_items (id, work_order_id, labor_id, status, execution_start_at, execution_end_at)
 VALUES ('660e8400-e29b-41d4-a716-446655440088', '660e8400-e29b-41d4-a716-446655440093',
@@ -43,9 +43,9 @@ VALUES ('660e8400-e29b-41d4-a716-446655440088', '660e8400-e29b-41d4-a716-4466554
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at,
                          date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440094', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de serviço pronta para pagamento', 'EXECUTION_COMPLETED', now(), now(), now(), now());
+        'Ordem de serviço pronta para pagamento', 4, now(), now(), now(), now());
 
 INSERT INTO work_orders (id, client_id, vehicle_id, description, status, execution_start_at, execution_end_at,
                          date_created, date_updated)
 VALUES ('660e8400-e29b-41d4-a716-446655440095', '660e8400-e29b-41d4-a716-446655440001', 'ZZZ-9999',
-        'Ordem de serviço paga pronta para retirada', 'PAID', now(), now(), now(), now());
+        'Ordem de serviço paga pronta para retirada', 5, now(), now(), now(), now());

@@ -1,10 +1,13 @@
 package com.mecanicadm.mecanicadm_api.core.workorder.usecase.command;
 
+import java.util.List;
 import java.util.UUID;
 
 public record CreateWorkOrderCommand(
         UUID clientId,
         String vehicleId,
-        String description
+        String description,
+        List<UUID> laborIds,
+        List<CreateWorkOrderMaterialItemCommand> materialItems
 ) {
 }

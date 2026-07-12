@@ -3,6 +3,7 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.openapi;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.CreateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.request.UpdateWorkOrderRequest;
 import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderResponse;
+import com.mecanicadm.mecanicadm_api.infra.features.workorder.api.dto.response.WorkOrderStatusResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,7 +35,14 @@ public interface WorkOrderOpenApi {
     @ApiResponse(responseCode = "404", description = "Ordem de serviço não encontrada", content = @Content)
     ResponseEntity<WorkOrderResponse> findById(UUID id);
 
-    @Operation(summary = "Listar todas as ordens de serviço", description = "Retorna uma lista paginada de ordens de serviço")
+    @Operation(summary = "Consultar status da ordem de serviço", description = "Retorna a situação atual da ordem de serviço")
+    @ApiResponse(responseCode = "200", description = "Status da ordem de serviço")
+    @ApiResponse(responseCode = "404", description = "Ordem de serviço não encontrada", content = @Content)
+    ResponseEntity<WorkOrderStatusResponse> findStatus(UUID id);
+
+    @Operation(summary = "Listar ordens de serviço",
+            description = "Retorna uma lista paginada de ordens de serviço em aberto (Recebida, Diagnóstico, Aguardando Aprovação, Em Execução). " +
+                    "Por padrão ordena por prioridade de status e mais antigas primeiro. Use o parâmetro sort para ordenação personalizada.")
     @ApiResponse(responseCode = "200", description = "Lista de ordens de serviço")
     ResponseEntity<Page<WorkOrderResponse>> getAll(
             UUID clientId,

@@ -22,8 +22,8 @@ public class WorkOrderQueryMapper {
                 licensePlate,
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
-                sort.map(Sort.Order::getProperty).orElse("executionStartAt"),
-                sort.map(Sort.Order::getDirection).map(Enum::name).orElse("DESC")
+                sort.map(Sort.Order::getProperty).orElse(null),
+                sort.map(Sort.Order::getDirection).map(Enum::name).orElse(null)
         );
     }
 

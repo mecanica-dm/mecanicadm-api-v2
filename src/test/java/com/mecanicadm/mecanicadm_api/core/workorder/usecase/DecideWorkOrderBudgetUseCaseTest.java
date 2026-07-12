@@ -46,7 +46,7 @@ class DecideWorkOrderBudgetUseCaseTest {
 
         useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.APPROVED, null));
 
-        verify(budget).approve();
+        verify(budget).approve(null);
         verify(gateway).saveBudget(budget);
         verify(gateway).update(workOrder);
     }
@@ -103,7 +103,7 @@ class DecideWorkOrderBudgetUseCaseTest {
         WorkOrder workOrder = mockWorkOrderWithBudget(WorkOrderBudgetStatus.WAITING_DECISION);
         when(gateway.findById(workOrderId)).thenReturn(Optional.of(workOrder));
 
-        assertThrows(WorkOrderExceptions.BudgetRejectionReasonRequired.class,
+        assertThrows(WorkOrderExceptions.BudgetObservationRequired.class,
                 () -> useCase.execute(new DecideWorkOrderBudgetCommand(workOrderId, WorkOrderBudgetStatus.REJECTED, "")));
 
         verify(gateway, never()).create(any());
