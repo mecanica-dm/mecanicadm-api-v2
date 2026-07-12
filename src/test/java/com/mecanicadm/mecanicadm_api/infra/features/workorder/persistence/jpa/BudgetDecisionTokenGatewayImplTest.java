@@ -1,7 +1,6 @@
 package com.mecanicadm.mecanicadm_api.infra.features.workorder.persistence.jpa;
 
 import com.mecanicadm.mecanicadm_api.core.workorder.domain.BudgetDecisionToken;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

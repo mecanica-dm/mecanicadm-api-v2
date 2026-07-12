@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -44,7 +43,6 @@ class SendWorkOrderBudgetUseCaseTest {
     @Mock
     private GetPrintableBudgetUseCase getPrintableBudgetUseCase;
 
-    @InjectMocks
     private SendWorkOrderBudgetUseCase useCase;
 
     private UUID workOrderId;
@@ -53,6 +51,8 @@ class SendWorkOrderBudgetUseCaseTest {
 
     @BeforeEach
     void setUp() {
+        useCase = new SendWorkOrderBudgetUseCase(gateway, tokenGateway, clientGateway, emailService, getPrintableBudgetUseCase, "/budget-decision/");
+
         workOrderId = UUID.randomUUID();
         clientId = UUID.randomUUID();
         workOrder = WorkOrder.restore(

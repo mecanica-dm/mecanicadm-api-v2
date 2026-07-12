@@ -42,6 +42,7 @@ import com.mecanicadm.mecanicadm_api.core.workorder.usecase.UpdateWorkOrderUseCa
 import com.mecanicadm.mecanicadm_api.infra.pdf.PdfGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class WorkOrderConfiguration {
@@ -186,8 +187,9 @@ public class WorkOrderConfiguration {
                                                                BudgetDecisionTokenGateway tokenGateway,
                                                                ClientGateway clientGateway,
                                                                EmailService emailService,
-                                                               GetPrintableBudgetUseCase getPrintableBudgetUseCase) {
-        return new SendWorkOrderBudgetUseCase(gateway, tokenGateway, clientGateway, emailService, getPrintableBudgetUseCase);
+                                                               GetPrintableBudgetUseCase getPrintableBudgetUseCase,
+                                                               @Value("${app.budget.decision-path:/budget-decision/}") String budgetDecisionPath) {
+        return new SendWorkOrderBudgetUseCase(gateway, tokenGateway, clientGateway, emailService, getPrintableBudgetUseCase, budgetDecisionPath);
     }
 
     @Bean

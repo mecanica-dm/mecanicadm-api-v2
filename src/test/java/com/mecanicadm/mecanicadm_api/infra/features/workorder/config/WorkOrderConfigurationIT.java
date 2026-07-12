@@ -211,7 +211,7 @@ class WorkOrderConfigurationIT extends AbstractIntegrationTest {
     @Test
     @DisplayName("Deve criar bean SendWorkOrderBudgetUseCase")
     void shouldCreateSendWorkOrderBudgetUseCase() {
-        assertNotNull(workOrderConfiguration.sendWorkOrderBudgetUseCase(workOrderGateway, budgetDecisionTokenGateway, clientGateway, emailService, workOrderConfiguration.getPrintableBudgetUseCase(workOrderGateway, clientGateway, vehicleGateway, laborGateway, materialGateway, pdfGenerator)));
+        assertNotNull(workOrderConfiguration.sendWorkOrderBudgetUseCase(workOrderGateway, budgetDecisionTokenGateway, clientGateway, emailService, workOrderConfiguration.getPrintableBudgetUseCase(workOrderGateway, clientGateway, vehicleGateway, laborGateway, materialGateway, pdfGenerator), "/budget-decision/"));
     }
 
     @Test

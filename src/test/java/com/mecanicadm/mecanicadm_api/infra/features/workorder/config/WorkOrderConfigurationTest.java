@@ -207,7 +207,7 @@ class WorkOrderConfigurationTest {
     @Test
     @DisplayName("Deve criar bean SendWorkOrderBudgetUseCase")
     void shouldCreateSendWorkOrderBudgetUseCase() {
-        assertNotNull(configuration.sendWorkOrderBudgetUseCase(workOrderGateway, budgetDecisionTokenGateway, clientGateway, emailService, configuration.getPrintableBudgetUseCase(workOrderGateway, clientGateway, vehicleGateway, laborGateway, materialGateway, pdfGenerator)));
+        assertNotNull(configuration.sendWorkOrderBudgetUseCase(workOrderGateway, budgetDecisionTokenGateway, clientGateway, emailService, configuration.getPrintableBudgetUseCase(workOrderGateway, clientGateway, vehicleGateway, laborGateway, materialGateway, pdfGenerator), "/budget-decision/"));
     }
 
     @Test

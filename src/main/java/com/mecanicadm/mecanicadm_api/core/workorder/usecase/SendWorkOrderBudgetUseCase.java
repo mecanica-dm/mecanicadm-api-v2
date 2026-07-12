@@ -22,24 +22,26 @@ import java.util.UUID;
 
 public class SendWorkOrderBudgetUseCase implements VoidUseCase<SendWorkOrderBudgetCommand> {
     private static final Logger logger = LoggerFactory.getLogger(SendWorkOrderBudgetUseCase.class);
-    private static final String BUDGET_DECISION_PATH = "/budget-decision/";
 
     private final WorkOrderGateway gateway;
     private final BudgetDecisionTokenGateway tokenGateway;
     private final ClientGateway clientGateway;
     private final EmailService emailService;
     private final GetPrintableBudgetUseCase getPrintableBudgetUseCase;
+    private final String budgetDecisionPath;
 
     public SendWorkOrderBudgetUseCase(WorkOrderGateway gateway,
                                       BudgetDecisionTokenGateway tokenGateway,
                                       ClientGateway clientGateway,
                                       EmailService emailService,
-                                      GetPrintableBudgetUseCase getPrintableBudgetUseCase) {
+                                      GetPrintableBudgetUseCase getPrintableBudgetUseCase,
+                                      String budgetDecisionPath) {
         this.gateway = gateway;
         this.tokenGateway = tokenGateway;
         this.clientGateway = clientGateway;
         this.emailService = emailService;
         this.getPrintableBudgetUseCase = getPrintableBudgetUseCase;
+        this.budgetDecisionPath = budgetDecisionPath;
     }
 
     public void execute(SendWorkOrderBudgetCommand cmd) {
@@ -84,9 +86,9 @@ public class SendWorkOrderBudgetUseCase implements VoidUseCase<SendWorkOrderBudg
     }
 
     private String buildEmailHtml(WorkOrder workOrder, BigDecimal totalPrice, String token, String baseUrl) {
-        String approveUrl = baseUrl + BUDGET_DECISION_PATH + token + "/form?action=APPROVED";
-        String rejectUrl = baseUrl + BUDGET_DECISION_PATH + token + "/form?action=REJECTED";
-        String changesUrl = baseUrl + BUDGET_DECISION_PATH + token + "/form?action=CHANGES_REQUESTED";
+        String approveUrl = baseUrl + budgetDecisionPath + token + "/form?action=APPROVED";
+        String rejectUrl = baseUrl + budgetDecisionPath + token + "/form?action=REJECTED";
+        String changesUrl = baseUrl + budgetDecisionPath + token + "/form?action=CHANGES_REQUESTED";
 
         return """
                 <!DOCTYPE html>

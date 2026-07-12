@@ -2,6 +2,11 @@ package com.mecanicadm.mecanicadm_api.infra.features.workorder.api.renderer;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,33 +52,24 @@ class BudgetDecisionPageRendererTest {
         assertTrue(html.contains("required"));
     }
 
-    @Test
-    @DisplayName("Deve renderizar pagina de sucesso para aprovacao")
-    void shouldRenderSuccessPageForApproval() {
-        String html = BudgetDecisionPageRenderer.successPage("APPROVED");
+    @ParameterizedTest
+    @MethodSource("successPageProvider")
+    @DisplayName("Deve renderizar pagina de sucesso para cada acao")
+    void shouldRenderSuccessPageForAction(String action, String expectedMessage) {
+        String html = BudgetDecisionPageRenderer.successPage(action);
 
         assertNotNull(html);
         assertTrue(html.contains("Resposta Registrada"));
-        assertTrue(html.contains("Orçamento aprovado com sucesso!"));
+        assertTrue(html.contains(expectedMessage));
         assertTrue(html.contains("MecânicaDM"));
     }
 
-    @Test
-    @DisplayName("Deve renderizar pagina de sucesso para rejeicao")
-    void shouldRenderSuccessPageForRejection() {
-        String html = BudgetDecisionPageRenderer.successPage("REJECTED");
-
-        assertNotNull(html);
-        assertTrue(html.contains("Orçamento rejeitado. Obrigado pela resposta."));
-    }
-
-    @Test
-    @DisplayName("Deve renderizar pagina de sucesso para solicitacao de alteracoes")
-    void shouldRenderSuccessPageForChangesRequested() {
-        String html = BudgetDecisionPageRenderer.successPage("CHANGES_REQUESTED");
-
-        assertNotNull(html);
-        assertTrue(html.contains("Solicitação de alterações enviada com sucesso!"));
+    static Stream<Arguments> successPageProvider() {
+        return Stream.of(
+                Arguments.of("APPROVED", "Orçamento aprovado com sucesso!"),
+                Arguments.of("REJECTED", "Orçamento rejeitado. Obrigado pela resposta."),
+                Arguments.of("CHANGES_REQUESTED", "Solicitação de alterações enviada com sucesso!")
+        );
     }
 
     @Test
