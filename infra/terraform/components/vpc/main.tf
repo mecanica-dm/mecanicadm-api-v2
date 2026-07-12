@@ -42,8 +42,9 @@ resource "aws_subnet" "private" {
   count  = 2
   vpc_id = aws_vpc.main.id
   # Subnets privadas usarão os índices 2 e 3 (ex: 10.0.2.0/24 e 10.0.3.0/24)
-  cidr_block        = cidrsubnet(var.vpc_cidr_block, 8, count.index + 2)
-  availability_zone = data.aws_availability_zones.available.names[count.index]
+  cidr_block              = cidrsubnet(var.vpc_cidr_block, 8, count.index + 2)
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch = true
 
   tags = {
     Name                                                   = "${var.environment}-private-subnet-${count.index}"
