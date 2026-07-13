@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - feat/k8s-smtp
 
 jobs:
   build-and-test:
@@ -63,6 +64,18 @@ jobs:
       - name: Atualizar Kubeconfig
         run: |
           aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+      - name: Criar namespace se não existir
+        run: |
+          kubectl create namespace mecanicadm --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Criar Secret de credenciais de email
+        run: |
+          kubectl create secret generic app-credentials \
+            --namespace=mecanicadm \
+            --from-literal=MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
+            --from-literal=MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Apply dos manifestos Kubernetes usando Kustomize
         run: |

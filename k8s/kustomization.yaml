@@ -5,6 +5,7 @@ resources:
   - ./manifests/metrics-server.yaml
   - ./manifests/namespace.yaml
   - ./manifests/app-configmap.yaml
+  - ./manifests/app-secret.yaml
   - ./manifests/db/db-secret.yaml
   - ./manifests/db/db-configmap.yaml
   - ./manifests/db/db-deployment.yaml
