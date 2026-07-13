@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: Deployment  # Responsável por gerenciar Pods e ReplicaSets
 metadata:
   name: mecanica-dm-api
   namespace: mecanicadm
@@ -24,6 +24,7 @@ spec:
           ports:
             - containerPort: 8080
           resources: # É necessário definir essa propriedade para o HPA saber quando escalar
+            # Esses valores são os recursos padrão de cada replica gerada
             requests:
               cpu: "250m"
               memory: "256Mi"

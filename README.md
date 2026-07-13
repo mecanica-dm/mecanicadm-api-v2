@@ -41,15 +41,15 @@ A rota de impressão de orçamentos retorna o arquivo PDF codificado em uma stri
 
 ## 🚀 Tecnologias Utilizadas
 
-| Categoria | Tecnologia |
-|-----------|--------------------------------------------------------------------------------|
-| **Core** | Java 21, Spring Boot 3 |
-| **Dados** | Spring Data JPA, PostgreSQL, Flyway (Migrations) |
-| **Segurança** | Spring Security, JWT (Java JWT) |
-| **Documentação**| Springdoc (Swagger/OpenAPI 3) |
-| **Testes** | JUnit 5, Mockito, REST Assured, H2 (Banco em memória) |
-| **Build** | Maven |
-| **Container** | Docker, Docker Compose |
+| Categoria        | Tecnologia                                            |
+|------------------|-------------------------------------------------------|
+| **Core**         | Java 21, Spring Boot 3                                |
+| **Dados**        | Spring Data JPA, PostgreSQL, Flyway (Migrations)      |
+| **Segurança**    | Spring Security, JWT (Java JWT)                       |
+| **Documentação** | Springdoc (Swagger/OpenAPI 3)                         |
+| **Testes**       | JUnit 5, Mockito, REST Assured, H2 (Banco em memória) |
+| **Build**        | Maven                                                 |
+| **Container**    | Docker, Docker Compose                                |
 
 ### Uso do PostgreSQL
 
@@ -70,7 +70,7 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 ### 📝 Nossas ADRs (`docs/adr/`):
 
 - **[ADR 001 - Nomenclatura de Consultas](docs/adr/001-nomenclatura_consultas.md)**
-- **[ADR 002 - Padrão UseCases e Commands](docs/adr/002-padrao_usecases_commands.md)**
+- ~~**[ADR 002 - Padrão UseCases e Commands](docs/adr/002-padrao_usecases_commands.md)**~~
 - **[ADR 003 - Lógica de Negócio no Domínio](docs/adr/003-logica_negocio_dominio.md)**
 - **[ADR 004 - Padrão de Exceções Modulares](docs/adr/004-padrao_excecoes_modulares.md)**
 - **[ADR 005 - Estratégia de Soft Delete e Auditoria](docs/adr/005-estrategia_soft_delete_auditoria.md)**
@@ -79,6 +79,22 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 - **[ADR 008 - Padrões de Testes de Integração](docs/adr/008-padroes_testes_integracao.md)**
 - **[ADR 009 - Nomenclatura e Documentação de Testes](docs/adr/009-nomenclatura_documentacao_testes.md)**
 - **[ADR 010 - Estratégia de i18n e Múltiplos Idiomas](docs/adr/010-estrategia_i18n_multi_idioma.md)**
+- **[ADR 011 - Arquitetura Limpa Purista para Novas Features 🆕](docs/adr/011-arquitetura-limpa-purista-novas-features.md)**
+
+### Fluxo de deploy
+
+![Fluxo de deploy](docs/assets/fluxo-deploy-mermaid.png)
+
+### Infraestrutura provisionada
+
+![Infraestrutura provisionada](docs/assets/infra-provisionada_02.png)
+
+* VPC: Virtual Private Cloud, um ambiente seguro e isolado onde podemos rodar os nossos recursos.  
+* Internet Gateway: Necessário para comunicação da VPC com a internet.
+* NAT Gateway: Permite que os recursos que estão nas subnets privadas consigam acessar a internet, mas impede que a internet inicie uma conexão direta com nossos recursos.
+* EC2: Elastic Compute Cloud, as máquinas que criamos para executar os nossos serviços.
+* EKS: Elastic Kubernetes Service, serviço onde orquestramos os containers Kubernetes.
+
 ---
 
 ## 🏁 Como Começar
@@ -86,22 +102,21 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 ### Pré-requisitos
 
 - [Docker](https://www.docker.com/get-started) e [Docker Compose](https://docs.docker.com/compose/install/)
+- [Kubectl](https://kubernetes.io/pt-br/docs/tasks/tools/)
 
-### 1. Ambiente Completo com Docker (Recomendado)
+### 1. Ambiente Completo com Docker e Kubernetes (Fase 02)
 
-A forma mais simples de executar todo o ambiente (API + Banco de Dados) é com Docker Compose.
+Utilize o Kustomize para aplicar todos os manifestos de uma vez:
 
-Na raiz do projeto, execute:
-```bash
-docker compose up -d --build
-```
-O comando irá:
-1. Iniciar um container PostgreSQL.
-2. Construir a imagem da API.
-3. Iniciar a API, conectando-a ao banco de dados.
-4. Executar as migrações do Flyway e popular o banco com dados iniciais.
+ ```bash
+ kubectl apply -k ./k8s/
+ ```
 
-A API estará disponível em `http://localhost:8080`.
+Confirme se todos os Pods, Services e Deployments foram criados no namespace correto:
+
+ ```bash
+ kubectl get all -n mecanicadm
+ ```
 
 ---
 
@@ -109,7 +124,7 @@ A API estará disponível em `http://localhost:8080`.
 
 Com a API em execução, a documentação interativa do Swagger UI fica disponível em:
 
-`http://localhost:8080/swagger-ui.html`
+`http://localhost:80/swagger-ui.html`
 
 A especificação OpenAPI 3 pode ser acessada em `/v3/api-docs`.
 

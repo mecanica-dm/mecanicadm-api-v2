@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout no repositório
+        uses: actions/checkout@v6
+
+      - name: Setup da JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build com Maven
+        run: mvn clean install -DskipTests
+
+      - name: Execucao dos testes com Maven
+        run: mvn test
+
+  build-docker-image:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout no repositório
+        uses: actions/checkout@v6
+
+      - name: Log in no Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build e push da imagem Docker
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: true
+          tags: guilhermemuchon/mecanica-dm-api:latest
+
+  deploy-to-kubernetes:
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout no repositório
+        uses: actions/checkout@v6
+
+      - name: Configurar as credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Atualizar Kubeconfig
+        run: |
+          aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
+
+      - name: Apply dos manifestos Kubernetes usando Kustomize
+        run: |
+          echo "Apply dos manifestos Kubernetes usando Kustomize..."
+          kubectl apply -k k8s/
