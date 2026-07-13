@@ -73,8 +73,8 @@ jobs:
         run: |
           kubectl create secret generic app-credentials \
             --namespace=mecanicadm \
-            --from-literal=MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
-            --from-literal=MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+            --from-literal=MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
+            --from-literal=MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Apply dos manifestos Kubernetes usando Kustomize
