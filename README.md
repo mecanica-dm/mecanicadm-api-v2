@@ -5,6 +5,8 @@
 
 API RESTful para o sistema **Mecânica DM**, uma solução completa para gerenciamento de ordens de serviço, clientes, estoque e fluxo de trabalho em oficinas mecânicas.
 
+Na **Fase 02** do 15SOAT, temos o objetivo de refatorar a arquitetura do projeto para Clean Architecture e implementar manifestos Kubernetes e o provisionamento da estrutura através do Terraform.
+
 ---
 
 ## 📚 Documentação Externa e Modelagem
@@ -51,10 +53,6 @@ A rota de impressão de orçamentos retorna o arquivo PDF codificado em uma stri
 | **Build**        | Maven                                                 |
 | **Container**    | Docker, Docker Compose                                |
 
-### Uso do PostgreSQL
-
-O time decidiu pela utilização do PostgreSQL pelo fato de ser um banco relacional, robusto, de fácil configuração e uso. Os membros já tinham experiência com o uso de PostgreSQL e chegaram em um acordo de utilizá-lo como padrão do projeto.
-
 ---
 
 ## 🏛️ Arquitetura e Decisões (ADRs)
@@ -81,9 +79,17 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 - **[ADR 010 - Estratégia de i18n e Múltiplos Idiomas](docs/adr/010-estrategia_i18n_multi_idioma.md)**
 - **[ADR 011 - Arquitetura Limpa Purista para Novas Features 🆕](docs/adr/011-arquitetura-limpa-purista-novas-features.md)**
 
+### Componentes da aplicação
+
+![Componentes da aplicaçãõ](docs/assets/c4-componentes-mecanicadm.png)
+
 ### Fluxo de deploy
 
 ![Fluxo de deploy](docs/assets/fluxo-deploy-mermaid.png)
+
+* build-and-test: Responsável por fazer o maven build e executar os testes da aplicação
+* build-docker-image: Aqui fazemos o build da imagem docker e publicamos para o Docker Hub
+* deploy-to-kubernetes: Nessa etapa configuramos as credenciais da AWS e fazemos a aplicação do manifestos K8s
 
 ### Infraestrutura provisionada
 
@@ -95,16 +101,20 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 * EC2: Elastic Compute Cloud, as máquinas que criamos para executar os nossos serviços.
 * EKS: Elastic Kubernetes Service, serviço onde orquestramos os containers Kubernetes.
 
+Para ir mais a fundo em como executar o terraform do projeto, basta acessar a doc de [instruções do terraform](infra/terraform/instrucoes.md).
+
 ---
 
 ## 🏁 Como Começar
+
+Obs: Caso queira executar o ambiente sem o kubernetes, o passo a passo para execução com apenas o docker compose pode ser encontrado no README da fase um no [diretório de READMEs antigos](docs/old-readme/README-fase01.md).
 
 ### Pré-requisitos
 
 - [Docker](https://www.docker.com/get-started) e [Docker Compose](https://docs.docker.com/compose/install/)
 - [Kubectl](https://kubernetes.io/pt-br/docs/tasks/tools/)
 
-### 1. Ambiente Completo com Docker e Kubernetes (Fase 02)
+### Ambiente Completo com Docker e Kubernetes (Fase 02)
 
 Utilize o Kustomize para aplicar todos os manifestos de uma vez:
 
@@ -117,6 +127,8 @@ Confirme se todos os Pods, Services e Deployments foram criados no namespace cor
  ```bash
  kubectl get all -n mecanicadm
  ```
+
+Para ir mais a fundo em como executar o kubernetes no projeto, basta acessar a doc de [instruções do kubernetes](k8s/instrucoes.md).
 
 ---
 

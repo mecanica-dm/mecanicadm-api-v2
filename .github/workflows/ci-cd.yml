@@ -69,15 +69,15 @@ jobs:
         run: |
           kubectl create namespace mecanicadm --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Atualizar Secret de credenciais de email
-        run: |
-          kubectl delete secret app-credentials --namespace=mecanicadm --ignore-not-found
-          kubectl create secret generic app-credentials \
-            --namespace=mecanicadm \
-            --from-literal=MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
-            --from-literal=MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
-
       - name: Apply dos manifestos Kubernetes usando Kustomize
         run: |
           echo "Apply dos manifestos Kubernetes usando Kustomize..."
           kubectl apply -k k8s/
+
+      - name: Atualizar Secret de credenciais de email
+        run: |
+          kubectl create secret generic app-credentials \
+            --namespace=mecanicadm \
+            --from-literal=MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
+            --from-literal=MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
