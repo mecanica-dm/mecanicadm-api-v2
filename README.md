@@ -108,6 +108,7 @@ Para ir mais a fundo em como executar o terraform do projeto, basta acessar a do
 ## 🏁 Como Começar
 
 Obs: Caso queira executar o ambiente sem o kubernetes, o passo a passo para execução com apenas o docker compose pode ser encontrado no README da fase um no [diretório de READMEs antigos](docs/old-readme/README-fase01.md).
+* Apenas se atentar para criar o arquivo .env, temos o exemplo .env.example para isso
 
 ### Pré-requisitos
 

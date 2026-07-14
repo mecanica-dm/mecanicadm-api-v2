@@ -3,12 +3,6 @@ module "vpc" {
   environment = var.environment
 }
 
-# Para AWS LABS não funciona
-# module "eks_iam_roles" {
-#   source      = "./components/eks-iam-roles"
-#   environment = var.environment
-# }
-
 module "eks" {
   source                   = "./components/eks"
   environment              = var.environment
@@ -17,10 +11,6 @@ module "eks" {
   private_subnet_ids       = module.vpc.private_subnet_ids
   eks_cluster_iam_role_arn = data.aws_iam_role.lab_role.arn
   eks_nodes_iam_role_arn   = data.aws_iam_role.lab_role.arn
-
-  # Para AWS LABS não funciona
-  # eks_cluster_iam_role_arn = module.eks_iam_roles.eks_cluster_iam_role_arn
-  # eks_nodes_iam_role_arn = module.eks_iam_roles.eks_nodes_iam_role_arn
 }
 
 resource "time_sleep" "wait_for_eks" {
