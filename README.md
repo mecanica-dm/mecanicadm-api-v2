@@ -5,7 +5,7 @@
 
 API RESTful para o sistema **Mecânica DM**, uma solução completa para gerenciamento de ordens de serviço, clientes, estoque e fluxo de trabalho em oficinas mecânicas.
 
-Na **Fase 02** do 15SOAT, temos o objetivo de refatorar a arquitetura do projeto para Clean Architecture e implementar manifestos Kubernetes e o provisionamento da estrutura através do Terraform.
+Na **Fase 02** do 15SOAT, temos o objetivo de refatorar a arquitetura do projeto para Clean Architecture, implementar manifestos Kubernetes e o provisionamento da estrutura através do Terraform.
 
 ---
 

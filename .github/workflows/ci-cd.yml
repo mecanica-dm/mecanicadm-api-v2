@@ -69,6 +69,10 @@ jobs:
         run: |
           kubectl create namespace mecanicadm --dry-run=client -o yaml | kubectl apply -f -
 
+      - name: Substituir BUDGET_BASE_URL no ConfigMap
+        run: |
+          sed -i 's|BUDGET_BASE_URL: ".*"|BUDGET_BASE_URL: "${{ secrets.BUDGET_BASE_URL }}"|' k8s/manifests/app-configmap.yaml
+
       - name: Apply dos manifestos Kubernetes usando Kustomize
         run: |
           echo "Apply dos manifestos Kubernetes usando Kustomize..."
