@@ -128,6 +128,11 @@ Confirme se todos os Pods, Services e Deployments foram criados no namespace cor
  ```bash
  kubectl get all -n mecanicadm
  ```
+ 
+Para testar o HPA, criamos um bash script simples que gera stress na API:
+```bash
+ ./k8s/load-test.sh
+ ```
 
 Para ir mais a fundo em como executar o kubernetes no projeto, basta acessar a doc de [instruções do kubernetes](k8s/instrucoes.md).
 
