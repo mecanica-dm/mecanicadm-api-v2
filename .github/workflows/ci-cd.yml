@@ -64,7 +64,23 @@ jobs:
         run: |
           aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ secrets.AWS_REGION }}
 
+      - name: Criar namespace se não existir
+        run: |
+          kubectl create namespace mecanicadm --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Substituir BUDGET_BASE_URL no ConfigMap
+        run: |
+          sed -i 's|BUDGET_BASE_URL: ".*"|BUDGET_BASE_URL: "${{ secrets.BUDGET_BASE_URL }}"|' k8s/manifests/app-configmap.yaml
+
       - name: Apply dos manifestos Kubernetes usando Kustomize
         run: |
           echo "Apply dos manifestos Kubernetes usando Kustomize..."
           kubectl apply -k k8s/
+
+      - name: Atualizar Secret de credenciais de email
+        run: |
+          kubectl create secret generic app-credentials \
+            --namespace=mecanicadm \
+            --from-literal=MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}" \
+            --from-literal=MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" \
+            --dry-run=client -o yaml | kubectl apply -f -

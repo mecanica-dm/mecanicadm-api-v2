@@ -52,6 +52,36 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: postgres-password
+            - name: MAIL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MAIL_HOST
+            - name: MAIL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MAIL_PORT
+            - name: MAIL_SMTP_AUTH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MAIL_SMTP_AUTH
+            - name: MAIL_SMTP_STARTTLS
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MAIL_SMTP_STARTTLS
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-credentials
+                  key: MAIL_USERNAME
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-credentials
+                  key: MAIL_PASSWORD
           startupProbe:
             httpGet:
               path: /actuator/health/liveness

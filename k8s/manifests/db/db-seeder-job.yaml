@@ -11,6 +11,13 @@ spec:
       containers:
         - name: seeder
           image: guilhermemuchon/mecanica-dm-seeder:latest
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
           env:
             - name: POSTGRES_DB
               valueFrom:

@@ -6,3 +6,8 @@ metadata:
   namespace: mecanicadm
 data:
   SPRING_PROFILES_ACTIVE: "prod"
+  MAIL_HOST: "smtp.gmail.com"
+  MAIL_PORT: "587"
+  MAIL_SMTP_AUTH: "true"
+  MAIL_SMTP_STARTTLS: "true"
+  BUDGET_BASE_URL: "http://localhost:8080"
