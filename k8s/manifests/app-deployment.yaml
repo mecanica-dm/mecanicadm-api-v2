@@ -72,6 +72,11 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: MAIL_SMTP_STARTTLS
+            - name: BUDGET_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: BUDGET_BASE_URL
             - name: MAIL_USERNAME
               valueFrom:
                 secretKeyRef:
