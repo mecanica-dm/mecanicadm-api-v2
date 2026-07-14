@@ -26,7 +26,8 @@ Adotamos a seguinte organização como padrão para novas features:
   - contém a configuração dos beans de use case.
 
 - **Use cases recebem apenas tipos do core**:
-  - comandos e queries vivem no pacote do core e podem conter anotações `jakarta.validation` para validação declarativa;
+  - comandos e queries vivem no pacote do core e são records imutáveis;
+  - validação de formato (ex.: `@NotBlank`, `@Email`, `@NotNull`) fica nos DTOs de request da infraestrutura, não nos comandos/queries do core;
   - controllers fazem a tradução entre DTOs da API e comandos/queries do core.
 
 - **Exceções seguem contrato de domínio**:
@@ -92,8 +93,9 @@ Ao criar uma nova feature, seguir este fluxo:
   - **não realizar validação de formato** (ex.: campos obrigatórios, formato de e-mail) — essa validação fica declarativamente no command via anotações `jakarta.validation`;
   - não conhecer controller, request, response, JPA ou HTTP.
 - **Commands e Queries**:
-  - São records anotados com `jakarta.validation` para validação declarativa de campos (ex.: `@NotBlank`, `@Email`, `@NotNull`).
-  - Vivem no pacote do core, mas podem conter anotações `jakarta.validation` — isso é aceito pois são regras de contrato de entrada, não de infraestrutura.
+  - São records imutáveis no pacote do core.
+  - **Não contêm anotações `jakarta.validation`** — validação de formato fica nos DTOs de request da infraestrutura.
+  - Validam apenas regras de negócio dentro do use case.
 - **Configuração dos use cases**:
   - Os beans são registrados diretamente na configuração da infraestrutura, sem decoradores:
     ```java
@@ -146,9 +148,11 @@ Ao criar uma nova feature, seguir este fluxo:
   - O domínio marca a exclusão via `entidade.delete()` (seta `deletedAt`).
   - O gateway persiste a mudança chamando `update()`, **não** `delete()`.
   - `@SQLDelete` do Hibernate não deve ser usado — o controle é do domínio.
-  - Consultas no repositório JPA devem filtrar `deleted_at IS NULL` via `@SQLRestriction` ou explicitamente na query.
+  - `@SQLRestriction("deleted_at IS NULL")` é usado nas entidades JPA para filtrar automaticamente queries JPQL padrão (findAll, findById).
+  - **Native queries não são cobertas por `@SQLRestriction`** — todas as native queries devem incluir `deleted_at IS NULL` explicitamente, incluindo queries de unicidade (ex.: `existsByEmail`).
+  - Consultas em tabelas associadas (ex.: items de ordem de serviço) que fazem join com entidades soft-deletáveis também devem considerar o filtro.
 - **Infraestrutura**:
-  - `AuditEntity` (em `infra/baseentities`) é a contraparte JPA, mapeia as colunas `date_created`, `date_updated`, `deleted_at`.
+  - `AuditEntity` (em `infra/audit`) é a contraparte JPA, mapeia as colunas `date_created`, `date_updated`, `deleted_at`.
   - `@CreationTimestamp` e `@UpdateTimestamp` não devem ser usados — os timestamps vêm do domínio.
   - O mapper JPA sincroniza os timestamps do domínio com a entidade JPA nos dois sentidos.
 
@@ -192,7 +196,7 @@ Ao iniciar uma feature nova, seguir este checklist:
 - Mais etapas de mapeamento entre borda e core.
 - Maior disciplina necessária para não “vazar” dependências da infra para o core.
 - Pode haver sensação de boilerplate em features pequenas, mas isso é aceito em troca de isolamento e clareza arquitetural.
-- Commands no core com anotações `jakarta.validation` podem gerar dúvida sobre o que é "core" vs "infra" — a decisão é que validação declarativa de contrato é diferente de dependência de infraestrutura.
+- Validação de formato fica apenas nos DTOs de request da infraestrutura, o que significa que comandos/queries do core são simples records sem validação embutida — o use case recebe dados já validados pelo controller.
 
 ## 6. Relação com Outras ADRs
 
@@ -202,5 +206,10 @@ Esta ADR complementa e reforça:
 - [ADR 004 - Padrão de Exceções Modulares](docs/adr/004-padrao_excecoes_modulares.md)
 - [ADR 006 - Contrato de Exceções de Domínio e i18n](docs/adr/006-contrato_excecoes_dominio_i18n.md)
 - [ADR 010 - Estratégia de i18n e Múltiplos Idiomas](docs/adr/010-estrategia_i18n_multi_idioma.md)
+
+Substitui:
+
+- [ADR 002 - Padrão de UseCases e Commands](docs/adr/002-padrao_usecases_commands.md)
+- [ADR 005 - Estratégia de Soft Delete e Auditoria](docs/adr/005-estrategia_soft_delete_auditoria.md)
 
 
