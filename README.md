@@ -97,7 +97,6 @@ O projeto segue uma arquitetura em camadas, inspirada em princípios de _Clean A
 
 * VPC: Virtual Private Cloud, um ambiente seguro e isolado onde podemos rodar os nossos recursos.  
 * Internet Gateway: Necessário para comunicação da VPC com a internet.
-* NAT Gateway: Permite que os recursos que estão nas subnets privadas consigam acessar a internet, mas impede que a internet inicie uma conexão direta com nossos recursos.
 * EC2: Elastic Compute Cloud, as máquinas que criamos para executar os nossos serviços.
 * EKS: Elastic Kubernetes Service, serviço onde orquestramos os containers Kubernetes.
 
